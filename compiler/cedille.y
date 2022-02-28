@@ -5,20 +5,37 @@ int var[26];
 void yyerror(char *s);
 %}
 %union { int nb; char var; }
-%token tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR
-%token <nb> tINT
-%token <var> tSTRING
-%type <nb> Expr DivMul Terme
-%start Calculatrice
+%token tINT tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC
+//%token <nb> tINT
+//%token <var> tSTRING
+//%type <nb> Expr DivMul Terme
+%start Functions
 %%
-Function : tFUNC tP0 Param tPF
-Elem : tVAR | tCONST | tINT
-Param : Elem | Elem tVIR Param
+Functions : FunctionDef Functions | Main
 
-Declaration : tVAR 
+Main : FunctionDef
 
-Print : tPRINTF tPO Expr tPF;
-Expr : tVAR | tINT | tCONST
+Type : tINT | tCONST
+Objet : tNB 
+Variables : tVAR | tVAR tVIR Variables
+
+FunctionCall : tFUNC tPO Arg tPF tSTOP
+ElemArg : tVAR | Objet 
+Arg : ElemArg | ElemArg tVIR Arg
+
+FunctionDef : Type tFUNC tPO Param tPF tCO Corps tCF
+ElemParam : Type tVAR 
+Param : ElemParam | ElemParam tVIR Param
+Corps : Instruction Corps | Instruction
+Instruction : Declaration | Affectation | FunctionCall
+
+
+Declaration : Type Variables tSTOP 
+Declaration : Type 
+
+//Declaration : Type (Affectation | Variables tSTOP )
+
+Affectation : tVAR tEGAL tNB
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {

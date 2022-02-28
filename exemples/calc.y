@@ -23,6 +23,7 @@ DivMul :	  DivMul tMUL Terme { $$ = $1 * $3; }
 Terme :		  tPO Expr tPF { $$ = $2; }
 		| tID { $$ = var[$1]; }
 		| tNB { $$ = $1; } ;
+
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {

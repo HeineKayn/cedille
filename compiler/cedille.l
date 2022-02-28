@@ -8,28 +8,27 @@
 
 %%
 
-main   { return tMAIN }
-printf { return tFUNC }
+main   { return tMAIN; }
 
-const  { return tCONST }
-int    { return tINT }
+if     { return tCOND; }
+while  { return tWHILE; }
+printf { return tFUNC; }
+
+const  { return tCONST; }
+int    { return tINT; }
 
 [a-zA-Z][a-zA-Z0-9_]* {
 	yylval.var = yytext[0];
 	return tVAR;
 }
-0|(-?[1-9][0-9]*)	{
-	yylval.nb = atoi(yytext);
-	return tCLASSICINT;
+
+-?[0-9]+(e-?[0-9]+)?	{
+	yylval.nb = strtold(yytext, NULL);
+	return tNB;
 }
 
--?[0-9]e-?[0-9]+	{
-	yylval.nb = atoi(yytext);
-	return tEXPINT;
-}
-
-; { return tSTOP }
-, { return tVIR }
+; { return tSTOP; }
+, { return tVIR; }
 
 "="	{ return tEGAL; }
 "-"	{ return tSOU; }
@@ -38,8 +37,8 @@ int    { return tINT }
 "/"	{ return tDIV; }
 "("	{ return tPO; }
 ")"	{ return tPF; }
+"{" { return tCO; }
+"}" { return tCF; }
 
 .	{ return tERROR; }
-
-\n	{ return tFL; }
-[ \t]+	{};
+[\n \t]+	{};

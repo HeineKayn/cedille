@@ -37,6 +37,8 @@ int    { return tINT; }
 "/"	{ return tDIV; }
 "("	{ return tPO; }
 ")"	{ return tPF; }
+"{" { return tCO; }
+"}" { return tCF; }
 
 .	{ return tERROR; }
 [\n \t]+	{};

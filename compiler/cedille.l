@@ -12,20 +12,16 @@ main   { return tMAIN }
 printf { return tFUNC }
 
 const  { return tCONST }
-int    { return tINT }
+int    { return tINT; }
 
 [a-zA-Z][a-zA-Z0-9_]* {
 	yylval.var = yytext[0];
 	return tVAR;
 }
-0|(-?[1-9][0-9]*)	{
-	yylval.nb = atoi(yytext);
-	return tCLASSICINT;
-}
 
--?[0-9]e-?[0-9]+	{
-	yylval.nb = atoi(yytext);
-	return tEXPINT;
+-?[0-9]+(e-?[0-9]+)?	{
+	yylval.nb = strtold(yytext, NULL);
+	return tNB;
 }
 
 ; { return tSTOP }

@@ -9,6 +9,9 @@
 %%
 
 main   { return tMAIN; }
+
+if     { return tCOND; }
+while  { return tWHILE; }
 printf { return tFUNC; }
 
 const  { return tCONST; }
@@ -36,6 +39,4 @@ int    { return tINT; }
 ")"	{ return tPF; }
 
 .	{ return tERROR; }
-
-\n	{ return tFL; }
-[ \t]+	{};
+[\n \t]+	{};

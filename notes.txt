@@ -1,0 +1,5 @@
+bison -d calc.y
+flex calc.l
+gcc lex.yy.c calc.tab.c -o an-lex.exe -lfl
+
+(penser à faire un makefile)

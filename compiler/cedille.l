@@ -6,19 +6,27 @@
 
 %option noyywrap
 
+VAR [a-zA-Z][a-zA-Z0-9_]*
+
 %%
 
+main   { return tMAIN }
+printf { return tPRINTF }
 
-
+const  { return tCONST }
+int    { return tINT }
 
 [0-9]+	{
 	  yylval.nb = atoi(yytext);
 	  return tINT;
 	}
-\"[a-z]\"	{
-	  yylval.var = yytext[0];
+\"[a-z]+\"	{
+	  yylval.str = yytext[0];
 	  return tSTRING;
 	}
+
+; { return tSTOP }
+, { return tVIR }
 
 "="	{ return tEGAL; }
 "-"	{ return tSOU; }
@@ -27,6 +35,7 @@
 "/"	{ return tDIV; }
 "("	{ return tPO; }
 ")"	{ return tPF; }
+
 .	{ return tERROR; }
 
 \n	{ return tFL; }

@@ -6,8 +6,6 @@
 
 %option noyywrap
 
-VAR [a-zA-Z][a-zA-Z0-9_]*
-
 %%
 
 main   { return tMAIN }
@@ -16,14 +14,14 @@ printf { return tPRINTF }
 const  { return tCONST }
 int    { return tINT }
 
-[0-9]+	{
+[a-zA-Z][a-zA-Z0-9_]* {
+	yylval.var = atoi(yytext);
+	return tVAR;
+	}
+0|([1-9][0-9]*)	{
 	  yylval.nb = atoi(yytext);
-	  return tINT;
-	}
-\"[a-z]+\"	{
-	  yylval.str = yytext[0];
-	  return tSTRING;
-	}
+	  return tNB;
+}
 
 ; { return tSTOP }
 , { return tVIR }

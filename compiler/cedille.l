@@ -8,10 +8,10 @@
 
 %%
 
-main   { return tMAIN }
-printf { return tFUNC }
+main   { return tMAIN; }
+printf { return tFUNC; }
 
-const  { return tCONST }
+const  { return tCONST; }
 int    { return tINT; }
 
 [a-zA-Z][a-zA-Z0-9_]* {
@@ -24,8 +24,8 @@ int    { return tINT; }
 	return tNB;
 }
 
-; { return tSTOP }
-, { return tVIR }
+; { return tSTOP; }
+, { return tVIR; }
 
 "="	{ return tEGAL; }
 "-"	{ return tSOU; }

@@ -9,7 +9,7 @@
 %%
 
 main   { return tMAIN }
-printf { return tPRINTF }
+printf { return tFUNC }
 
 const  { return tCONST }
 int    { return tINT }

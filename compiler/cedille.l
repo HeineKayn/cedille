@@ -15,12 +15,17 @@ const  { return tCONST }
 int    { return tINT }
 
 [a-zA-Z][a-zA-Z0-9_]* {
-	yylval.var = atoi(yytext);
+	yylval.var = yytext[0];
 	return tVAR;
-	}
-0|([1-9][0-9]*)	{
-	  yylval.nb = atoi(yytext);
-	  return tNB;
+}
+0|(-?[1-9][0-9]*)	{
+	yylval.nb = atoi(yytext);
+	return tCLASSICINT;
+}
+
+-?[0-9]e-?[0-9]+	{
+	yylval.nb = atoi(yytext);
+	return tEXPINT;
 }
 
 ; { return tSTOP }

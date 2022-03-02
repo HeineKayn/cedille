@@ -15,7 +15,9 @@ while  { return tWHILE; }
 printf { return tFUNC; }
 
 const  { return tCONST; }
-int    { return tINT; }
+int    {
+	return tINT; 
+}
 
 [a-zA-Z][a-zA-Z0-9_]* {
 	yylval.var = yytext[0];
@@ -39,6 +41,7 @@ int    { return tINT; }
 ")"	{ return tPF; }
 "{" { return tCO; }
 "}" { return tCF; }
+"!" { return tNOT; }
+[ \n\t]+	{}
 
 .	{ return tERROR; }
-[\n \t]+	{}

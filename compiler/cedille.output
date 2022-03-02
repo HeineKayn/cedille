@@ -1,0 +1,927 @@
+Non-terminaux inutiles dans la grammaire
+
+    Objet
+
+
+Terminaux inutilisés dans la grammaire
+
+    tFL
+    tERROR
+    tPRINT
+
+
+Règles inutiles dans la grammaire
+
+   42 Objet: tNB
+
+
+Grammaire
+
+    0 $accept: Functions $end
+
+    1 Functions: FunctionDef Functions
+    2          | Main
+
+    3 Main: tMAIN tPO Param tPF Corps
+
+    4 Elem: tNB
+    5     | tVAR
+
+    6 Type: tINT
+    7     | tCONST
+
+    8 Variables: tVAR
+    9          | tVAR tVIR Variables
+
+   10 FunctionCall: tFUNC tPO Arg tPF tSTOP
+
+   11 Arg: Elem
+   12    | Elem tVIR Arg
+   13    | %empty
+
+   14 FunctionDef: Type tFUNC tPO Param tPF Corps
+
+   15 ElemParam: Type tVAR
+
+   16 Param: ElemParam
+   17      | ElemParam tVIR Param
+   18      | %empty
+
+   19 Corps: tCO Instructions tCF
+
+   20 Instructions: Instruction Instructions
+   21             | %empty
+
+   22 Instruction: Declaration
+   23            | Affectation
+   24            | FunctionCall
+   25            | Operation
+   26            | If
+   27            | While
+
+   28 Operation: Operation tADD DivMul
+   29          | Operation tSOU DivMul
+   30          | DivMul
+
+   31 DivMul: DivMul tMUL Terme
+   32       | DivMul tDIV Terme
+   33       | Terme
+
+   34 Terme: tPO Operation tPF
+   35      | tNB
+
+   36 Declaration: Type Variables tSTOP
+
+   37 Affectation: tVAR tEGAL tNB tSTOP
+
+   38 Cond: Elem tEGAL tEGAL Elem
+   39     | Elem
+
+   40 If: tIF tPO Cond tPF Corps
+
+   41 While: tWHILE tPO Cond tPF Corps
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+    $end (0) 0
+    error (256)
+    tINT (258) 6
+    tFL (259)
+    tEGAL (260) 37 38
+    tPO (261) 3 10 14 34 40 41
+    tPF (262) 3 10 14 34 40 41
+    tSOU (263) 29
+    tADD (264) 28
+    tDIV (265) 32
+    tMUL (266) 31
+    tERROR (267)
+    tPRINT (268)
+    tVAR (269) 5 8 9 15 37
+    tNB (270) 4 35 37
+    tCONST (271) 7
+    tSTOP (272) 10 36 37
+    tVIR (273) 9 12 17
+    tFUNC (274) 10 14
+    tCO (275) 19
+    tCF (276) 19
+    tMAIN (277) 3
+    tIF (278) 40
+    tWHILE (279) 41
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+    $accept (25)
+        à gauche: 0
+    Functions (26)
+        à gauche: 1 2
+        à droite: 0 1
+    Main (27)
+        à gauche: 3
+        à droite: 2
+    Elem (28)
+        à gauche: 4 5
+        à droite: 11 12 38 39
+    Type (29)
+        à gauche: 6 7
+        à droite: 14 15 36
+    Variables (30)
+        à gauche: 8 9
+        à droite: 9 36
+    FunctionCall (31)
+        à gauche: 10
+        à droite: 24
+    Arg (32)
+        à gauche: 11 12 13
+        à droite: 10 12
+    FunctionDef (33)
+        à gauche: 14
+        à droite: 1
+    ElemParam (34)
+        à gauche: 15
+        à droite: 16 17
+    Param (35)
+        à gauche: 16 17 18
+        à droite: 3 14 17
+    Corps (36)
+        à gauche: 19
+        à droite: 3 14 40 41
+    Instructions (37)
+        à gauche: 20 21
+        à droite: 19 20
+    Instruction (38)
+        à gauche: 22 23 24 25 26 27
+        à droite: 20
+    Operation (39)
+        à gauche: 28 29 30
+        à droite: 25 28 29 34
+    DivMul (40)
+        à gauche: 31 32 33
+        à droite: 28 29 30 31 32
+    Terme (41)
+        à gauche: 34 35
+        à droite: 31 32 33
+    Declaration (42)
+        à gauche: 36
+        à droite: 22
+    Affectation (43)
+        à gauche: 37
+        à droite: 23
+    Cond (44)
+        à gauche: 38 39
+        à droite: 40 41
+    If (45)
+        à gauche: 40
+        à droite: 26
+    While (46)
+        à gauche: 41
+        à droite: 27
+
+
+État 0
+
+    0 $accept: . Functions $end
+
+    tINT    décalage et aller à l'état 1
+    tCONST  décalage et aller à l'état 2
+    tMAIN   décalage et aller à l'état 3
+
+    Functions    aller à l'état 4
+    Main         aller à l'état 5
+    Type         aller à l'état 6
+    FunctionDef  aller à l'état 7
+
+
+État 1
+
+    6 Type: tINT .
+
+    $défaut  réduction par utilisation de la règle 6 (Type)
+
+
+État 2
+
+    7 Type: tCONST .
+
+    $défaut  réduction par utilisation de la règle 7 (Type)
+
+
+État 3
+
+    3 Main: tMAIN . tPO Param tPF Corps
+
+    tPO  décalage et aller à l'état 8
+
+
+État 4
+
+    0 $accept: Functions . $end
+
+    $end  décalage et aller à l'état 9
+
+
+État 5
+
+    2 Functions: Main .
+
+    $défaut  réduction par utilisation de la règle 2 (Functions)
+
+
+État 6
+
+   14 FunctionDef: Type . tFUNC tPO Param tPF Corps
+
+    tFUNC  décalage et aller à l'état 10
+
+
+État 7
+
+    1 Functions: FunctionDef . Functions
+
+    tINT    décalage et aller à l'état 1
+    tCONST  décalage et aller à l'état 2
+    tMAIN   décalage et aller à l'état 3
+
+    Functions    aller à l'état 11
+    Main         aller à l'état 5
+    Type         aller à l'état 6
+    FunctionDef  aller à l'état 7
+
+
+État 8
+
+    3 Main: tMAIN tPO . Param tPF Corps
+
+    tINT    décalage et aller à l'état 1
+    tCONST  décalage et aller à l'état 2
+
+    $défaut  réduction par utilisation de la règle 18 (Param)
+
+    Type       aller à l'état 12
+    ElemParam  aller à l'état 13
+    Param      aller à l'état 14
+
+
+État 9
+
+    0 $accept: Functions $end .
+
+    $défaut  accepter
+
+
+État 10
+
+   14 FunctionDef: Type tFUNC . tPO Param tPF Corps
+
+    tPO  décalage et aller à l'état 15
+
+
+État 11
+
+    1 Functions: FunctionDef Functions .
+
+    $défaut  réduction par utilisation de la règle 1 (Functions)
+
+
+État 12
+
+   15 ElemParam: Type . tVAR
+
+    tVAR  décalage et aller à l'état 16
+
+
+État 13
+
+   16 Param: ElemParam .
+   17      | ElemParam . tVIR Param
+
+    tVIR  décalage et aller à l'état 17
+
+    $défaut  réduction par utilisation de la règle 16 (Param)
+
+
+État 14
+
+    3 Main: tMAIN tPO Param . tPF Corps
+
+    tPF  décalage et aller à l'état 18
+
+
+État 15
+
+   14 FunctionDef: Type tFUNC tPO . Param tPF Corps
+
+    tINT    décalage et aller à l'état 1
+    tCONST  décalage et aller à l'état 2
+
+    $défaut  réduction par utilisation de la règle 18 (Param)
+
+    Type       aller à l'état 12
+    ElemParam  aller à l'état 13
+    Param      aller à l'état 19
+
+
+État 16
+
+   15 ElemParam: Type tVAR .
+
+    $défaut  réduction par utilisation de la règle 15 (ElemParam)
+
+
+État 17
+
+   17 Param: ElemParam tVIR . Param
+
+    tINT    décalage et aller à l'état 1
+    tCONST  décalage et aller à l'état 2
+
+    $défaut  réduction par utilisation de la règle 18 (Param)
+
+    Type       aller à l'état 12
+    ElemParam  aller à l'état 13
+    Param      aller à l'état 20
+
+
+État 18
+
+    3 Main: tMAIN tPO Param tPF . Corps
+
+    tCO  décalage et aller à l'état 21
+
+    Corps  aller à l'état 22
+
+
+État 19
+
+   14 FunctionDef: Type tFUNC tPO Param . tPF Corps
+
+    tPF  décalage et aller à l'état 23
+
+
+État 20
+
+   17 Param: ElemParam tVIR Param .
+
+    $défaut  réduction par utilisation de la règle 17 (Param)
+
+
+État 21
+
+   19 Corps: tCO . Instructions tCF
+
+    tINT    décalage et aller à l'état 1
+    tPO     décalage et aller à l'état 24
+    tVAR    décalage et aller à l'état 25
+    tNB     décalage et aller à l'état 26
+    tCONST  décalage et aller à l'état 2
+    tFUNC   décalage et aller à l'état 27
+    tIF     décalage et aller à l'état 28
+    tWHILE  décalage et aller à l'état 29
+
+    $défaut  réduction par utilisation de la règle 21 (Instructions)
+
+    Type          aller à l'état 30
+    FunctionCall  aller à l'état 31
+    Instructions  aller à l'état 32
+    Instruction   aller à l'état 33
+    Operation     aller à l'état 34
+    DivMul        aller à l'état 35
+    Terme         aller à l'état 36
+    Declaration   aller à l'état 37
+    Affectation   aller à l'état 38
+    If            aller à l'état 39
+    While         aller à l'état 40
+
+
+État 22
+
+    3 Main: tMAIN tPO Param tPF Corps .
+
+    $défaut  réduction par utilisation de la règle 3 (Main)
+
+
+État 23
+
+   14 FunctionDef: Type tFUNC tPO Param tPF . Corps
+
+    tCO  décalage et aller à l'état 21
+
+    Corps  aller à l'état 41
+
+
+État 24
+
+   34 Terme: tPO . Operation tPF
+
+    tPO  décalage et aller à l'état 24
+    tNB  décalage et aller à l'état 26
+
+    Operation  aller à l'état 42
+    DivMul     aller à l'état 35
+    Terme      aller à l'état 36
+
+
+État 25
+
+   37 Affectation: tVAR . tEGAL tNB tSTOP
+
+    tEGAL  décalage et aller à l'état 43
+
+
+État 26
+
+   35 Terme: tNB .
+
+    $défaut  réduction par utilisation de la règle 35 (Terme)
+
+
+État 27
+
+   10 FunctionCall: tFUNC . tPO Arg tPF tSTOP
+
+    tPO  décalage et aller à l'état 44
+
+
+État 28
+
+   40 If: tIF . tPO Cond tPF Corps
+
+    tPO  décalage et aller à l'état 45
+
+
+État 29
+
+   41 While: tWHILE . tPO Cond tPF Corps
+
+    tPO  décalage et aller à l'état 46
+
+
+État 30
+
+   36 Declaration: Type . Variables tSTOP
+
+    tVAR  décalage et aller à l'état 47
+
+    Variables  aller à l'état 48
+
+
+État 31
+
+   24 Instruction: FunctionCall .
+
+    $défaut  réduction par utilisation de la règle 24 (Instruction)
+
+
+État 32
+
+   19 Corps: tCO Instructions . tCF
+
+    tCF  décalage et aller à l'état 49
+
+
+État 33
+
+   20 Instructions: Instruction . Instructions
+
+    tINT    décalage et aller à l'état 1
+    tPO     décalage et aller à l'état 24
+    tVAR    décalage et aller à l'état 25
+    tNB     décalage et aller à l'état 26
+    tCONST  décalage et aller à l'état 2
+    tFUNC   décalage et aller à l'état 27
+    tIF     décalage et aller à l'état 28
+    tWHILE  décalage et aller à l'état 29
+
+    $défaut  réduction par utilisation de la règle 21 (Instructions)
+
+    Type          aller à l'état 30
+    FunctionCall  aller à l'état 31
+    Instructions  aller à l'état 50
+    Instruction   aller à l'état 33
+    Operation     aller à l'état 34
+    DivMul        aller à l'état 35
+    Terme         aller à l'état 36
+    Declaration   aller à l'état 37
+    Affectation   aller à l'état 38
+    If            aller à l'état 39
+    While         aller à l'état 40
+
+
+État 34
+
+   25 Instruction: Operation .
+   28 Operation: Operation . tADD DivMul
+   29          | Operation . tSOU DivMul
+
+    tSOU  décalage et aller à l'état 51
+    tADD  décalage et aller à l'état 52
+
+    $défaut  réduction par utilisation de la règle 25 (Instruction)
+
+
+État 35
+
+   30 Operation: DivMul .
+   31 DivMul: DivMul . tMUL Terme
+   32       | DivMul . tDIV Terme
+
+    tDIV  décalage et aller à l'état 53
+    tMUL  décalage et aller à l'état 54
+
+    $défaut  réduction par utilisation de la règle 30 (Operation)
+
+
+État 36
+
+   33 DivMul: Terme .
+
+    $défaut  réduction par utilisation de la règle 33 (DivMul)
+
+
+État 37
+
+   22 Instruction: Declaration .
+
+    $défaut  réduction par utilisation de la règle 22 (Instruction)
+
+
+État 38
+
+   23 Instruction: Affectation .
+
+    $défaut  réduction par utilisation de la règle 23 (Instruction)
+
+
+État 39
+
+   26 Instruction: If .
+
+    $défaut  réduction par utilisation de la règle 26 (Instruction)
+
+
+État 40
+
+   27 Instruction: While .
+
+    $défaut  réduction par utilisation de la règle 27 (Instruction)
+
+
+État 41
+
+   14 FunctionDef: Type tFUNC tPO Param tPF Corps .
+
+    $défaut  réduction par utilisation de la règle 14 (FunctionDef)
+
+
+État 42
+
+   28 Operation: Operation . tADD DivMul
+   29          | Operation . tSOU DivMul
+   34 Terme: tPO Operation . tPF
+
+    tPF   décalage et aller à l'état 55
+    tSOU  décalage et aller à l'état 51
+    tADD  décalage et aller à l'état 52
+
+
+État 43
+
+   37 Affectation: tVAR tEGAL . tNB tSTOP
+
+    tNB  décalage et aller à l'état 56
+
+
+État 44
+
+   10 FunctionCall: tFUNC tPO . Arg tPF tSTOP
+
+    tVAR  décalage et aller à l'état 57
+    tNB   décalage et aller à l'état 58
+
+    $défaut  réduction par utilisation de la règle 13 (Arg)
+
+    Elem  aller à l'état 59
+    Arg   aller à l'état 60
+
+
+État 45
+
+   40 If: tIF tPO . Cond tPF Corps
+
+    tVAR  décalage et aller à l'état 57
+    tNB   décalage et aller à l'état 58
+
+    Elem  aller à l'état 61
+    Cond  aller à l'état 62
+
+
+État 46
+
+   41 While: tWHILE tPO . Cond tPF Corps
+
+    tVAR  décalage et aller à l'état 57
+    tNB   décalage et aller à l'état 58
+
+    Elem  aller à l'état 61
+    Cond  aller à l'état 63
+
+
+État 47
+
+    8 Variables: tVAR .
+    9          | tVAR . tVIR Variables
+
+    tVIR  décalage et aller à l'état 64
+
+    $défaut  réduction par utilisation de la règle 8 (Variables)
+
+
+État 48
+
+   36 Declaration: Type Variables . tSTOP
+
+    tSTOP  décalage et aller à l'état 65
+
+
+État 49
+
+   19 Corps: tCO Instructions tCF .
+
+    $défaut  réduction par utilisation de la règle 19 (Corps)
+
+
+État 50
+
+   20 Instructions: Instruction Instructions .
+
+    $défaut  réduction par utilisation de la règle 20 (Instructions)
+
+
+État 51
+
+   29 Operation: Operation tSOU . DivMul
+
+    tPO  décalage et aller à l'état 24
+    tNB  décalage et aller à l'état 26
+
+    DivMul  aller à l'état 66
+    Terme   aller à l'état 36
+
+
+État 52
+
+   28 Operation: Operation tADD . DivMul
+
+    tPO  décalage et aller à l'état 24
+    tNB  décalage et aller à l'état 26
+
+    DivMul  aller à l'état 67
+    Terme   aller à l'état 36
+
+
+État 53
+
+   32 DivMul: DivMul tDIV . Terme
+
+    tPO  décalage et aller à l'état 24
+    tNB  décalage et aller à l'état 26
+
+    Terme  aller à l'état 68
+
+
+État 54
+
+   31 DivMul: DivMul tMUL . Terme
+
+    tPO  décalage et aller à l'état 24
+    tNB  décalage et aller à l'état 26
+
+    Terme  aller à l'état 69
+
+
+État 55
+
+   34 Terme: tPO Operation tPF .
+
+    $défaut  réduction par utilisation de la règle 34 (Terme)
+
+
+État 56
+
+   37 Affectation: tVAR tEGAL tNB . tSTOP
+
+    tSTOP  décalage et aller à l'état 70
+
+
+État 57
+
+    5 Elem: tVAR .
+
+    $défaut  réduction par utilisation de la règle 5 (Elem)
+
+
+État 58
+
+    4 Elem: tNB .
+
+    $défaut  réduction par utilisation de la règle 4 (Elem)
+
+
+État 59
+
+   11 Arg: Elem .
+   12    | Elem . tVIR Arg
+
+    tVIR  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 11 (Arg)
+
+
+État 60
+
+   10 FunctionCall: tFUNC tPO Arg . tPF tSTOP
+
+    tPF  décalage et aller à l'état 72
+
+
+État 61
+
+   38 Cond: Elem . tEGAL tEGAL Elem
+   39     | Elem .
+
+    tEGAL  décalage et aller à l'état 73
+
+    $défaut  réduction par utilisation de la règle 39 (Cond)
+
+
+État 62
+
+   40 If: tIF tPO Cond . tPF Corps
+
+    tPF  décalage et aller à l'état 74
+
+
+État 63
+
+   41 While: tWHILE tPO Cond . tPF Corps
+
+    tPF  décalage et aller à l'état 75
+
+
+État 64
+
+    9 Variables: tVAR tVIR . Variables
+
+    tVAR  décalage et aller à l'état 47
+
+    Variables  aller à l'état 76
+
+
+État 65
+
+   36 Declaration: Type Variables tSTOP .
+
+    $défaut  réduction par utilisation de la règle 36 (Declaration)
+
+
+État 66
+
+   29 Operation: Operation tSOU DivMul .
+   31 DivMul: DivMul . tMUL Terme
+   32       | DivMul . tDIV Terme
+
+    tDIV  décalage et aller à l'état 53
+    tMUL  décalage et aller à l'état 54
+
+    $défaut  réduction par utilisation de la règle 29 (Operation)
+
+
+État 67
+
+   28 Operation: Operation tADD DivMul .
+   31 DivMul: DivMul . tMUL Terme
+   32       | DivMul . tDIV Terme
+
+    tDIV  décalage et aller à l'état 53
+    tMUL  décalage et aller à l'état 54
+
+    $défaut  réduction par utilisation de la règle 28 (Operation)
+
+
+État 68
+
+   32 DivMul: DivMul tDIV Terme .
+
+    $défaut  réduction par utilisation de la règle 32 (DivMul)
+
+
+État 69
+
+   31 DivMul: DivMul tMUL Terme .
+
+    $défaut  réduction par utilisation de la règle 31 (DivMul)
+
+
+État 70
+
+   37 Affectation: tVAR tEGAL tNB tSTOP .
+
+    $défaut  réduction par utilisation de la règle 37 (Affectation)
+
+
+État 71
+
+   12 Arg: Elem tVIR . Arg
+
+    tVAR  décalage et aller à l'état 57
+    tNB   décalage et aller à l'état 58
+
+    $défaut  réduction par utilisation de la règle 13 (Arg)
+
+    Elem  aller à l'état 59
+    Arg   aller à l'état 77
+
+
+État 72
+
+   10 FunctionCall: tFUNC tPO Arg tPF . tSTOP
+
+    tSTOP  décalage et aller à l'état 78
+
+
+État 73
+
+   38 Cond: Elem tEGAL . tEGAL Elem
+
+    tEGAL  décalage et aller à l'état 79
+
+
+État 74
+
+   40 If: tIF tPO Cond tPF . Corps
+
+    tCO  décalage et aller à l'état 21
+
+    Corps  aller à l'état 80
+
+
+État 75
+
+   41 While: tWHILE tPO Cond tPF . Corps
+
+    tCO  décalage et aller à l'état 21
+
+    Corps  aller à l'état 81
+
+
+État 76
+
+    9 Variables: tVAR tVIR Variables .
+
+    $défaut  réduction par utilisation de la règle 9 (Variables)
+
+
+État 77
+
+   12 Arg: Elem tVIR Arg .
+
+    $défaut  réduction par utilisation de la règle 12 (Arg)
+
+
+État 78
+
+   10 FunctionCall: tFUNC tPO Arg tPF tSTOP .
+
+    $défaut  réduction par utilisation de la règle 10 (FunctionCall)
+
+
+État 79
+
+   38 Cond: Elem tEGAL tEGAL . Elem
+
+    tVAR  décalage et aller à l'état 57
+    tNB   décalage et aller à l'état 58
+
+    Elem  aller à l'état 82
+
+
+État 80
+
+   40 If: tIF tPO Cond tPF Corps .
+
+    $défaut  réduction par utilisation de la règle 40 (If)
+
+
+État 81
+
+   41 While: tWHILE tPO Cond tPF Corps .
+
+    $défaut  réduction par utilisation de la règle 41 (While)
+
+
+État 82
+
+   38 Cond: Elem tEGAL tEGAL Elem .
+
+    $défaut  réduction par utilisation de la règle 38 (Cond)

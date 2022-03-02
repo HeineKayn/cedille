@@ -363,9 +363,9 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[51] =
     {   0,
-        0,    0,   23,   20,   20,   21,   16,   17,   14,   13,
+        0,    0,   23,   21,   20,   20,   16,   17,   14,   13,
        10,   12,   15,    8,    9,   11,    7,    7,    7,    7,
-        7,    7,   18,   19,   21,    8,    0,    7,    7,    2,
+        7,    7,   18,   19,   20,    8,    0,    7,    7,    2,
         7,    7,    7,    7,    0,    8,    7,    6,    7,    7,
         7,    7,    1,    7,    7,    5,    7,    3,    4,    0
     } ;
@@ -787,94 +787,98 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 18 "cedille.l"
-{ return tINT; }
+{ printf("Int reconnu\n");
+	return tINT; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 20 "cedille.l"
+#line 21 "cedille.l"
 {
+	printf("Var reconnu\n");
+	yylval.var = yytext[0];
 	return tVAR;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "cedille.l"
+#line 27 "cedille.l"
 {
+	yylval.nb = strtold(yytext, NULL);
 	return tNB;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 28 "cedille.l"
+#line 32 "cedille.l"
 { return tSTOP; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "cedille.l"
+#line 33 "cedille.l"
 { return tVIR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 31 "cedille.l"
+#line 35 "cedille.l"
 { return tEGAL; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 32 "cedille.l"
+#line 36 "cedille.l"
 { return tSOU; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 33 "cedille.l"
+#line 37 "cedille.l"
 { return tADD; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 34 "cedille.l"
+#line 38 "cedille.l"
 { return tMUL; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 35 "cedille.l"
+#line 39 "cedille.l"
 { return tDIV; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 36 "cedille.l"
+#line 40 "cedille.l"
 { return tPO; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 37 "cedille.l"
+#line 41 "cedille.l"
 { return tPF; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 38 "cedille.l"
+#line 42 "cedille.l"
 { return tCO; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 39 "cedille.l"
+#line 43 "cedille.l"
 { return tCF; }
 	YY_BREAK
 case 20:
+/* rule 20 can match eol */
 YY_RULE_SETUP
-#line 41 "cedille.l"
-{ return tERROR; }
+#line 44 "cedille.l"
+{}
 	YY_BREAK
 case 21:
-/* rule 21 can match eol */
 YY_RULE_SETUP
-#line 42 "cedille.l"
-{}
+#line 46 "cedille.l"
+{ return tERROR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 43 "cedille.l"
+#line 47 "cedille.l"
 ECHO;
 	YY_BREAK
-#line 878 "lex.yy.c"
+#line 882 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1879,4 +1883,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 43 "cedille.l"
+#line 47 "cedille.l"

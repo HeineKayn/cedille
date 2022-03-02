@@ -14,7 +14,7 @@ all: $(BIN)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 cedille.tab.c: $(GRM)
-	bison -d $<
+	bison -d -v $< 
 
 lex.yy.c: $(LEX)
 	flex $<
@@ -25,3 +25,5 @@ $(BIN): $(OBJ)
 clean:
 	rm $(OBJ) cedille.tab.c cedille.tab.h lex.yy.c
 
+test: all
+	echo "main(){int a;}" | ./cedille

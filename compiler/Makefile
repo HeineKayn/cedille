@@ -26,5 +26,4 @@ clean:
 	rm $(OBJ) cedille.tab.c cedille.tab.h lex.yy.c
 
 test: all
-	echo "main(){int a;}" | ./cedille
-	echo "main(){int a; int b; }" | ./cedille
+	./test.sh

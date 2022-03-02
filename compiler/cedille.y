@@ -45,18 +45,21 @@ Instructions : Instruction Instructions
 Instruction : Declaration 
 	| Affectation 
 	| FunctionCall 
-	| Operation 
+	| Operations
 	| If 
 	| While
 
 //Operations
-Operation :		  Operation tADD DivMul 
+Calculatrices : Operation Operations | Calcul 
+Calcul : Expr tFL
+		| tID tEGAL Expr tFL 
+Operation : Operation tADD DivMul 
 		| Operation tSOU DivMul 
 		| DivMul  
-DivMul :	  DivMul tMUL Terme 
+DivMul : DivMul tMUL Terme 
 		| DivMul tDIV Terme 
 		| Terme 
-Terme :		  tPO Operation tPF 
+Terme : tPO Operation tPF 
 		| tNB 
 
 //Actions sur variabless

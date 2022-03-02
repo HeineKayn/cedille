@@ -1,19 +1,19 @@
-GRM=calc.y
-LEX=calc.l
-BIN=calc
+GRM=cedille.y
+LEX=cedille.l
+BIN=cedille
 DIRECTORY=exemples
 
 CC=gcc
 CFLAGS=-Wall -g
 
-OBJ=calc.tab.o lex.yy.o 
+OBJ=cedille.tab.o lex.yy.o 
 
 all: $(BIN)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-calc.tab.c: $(GRM)
+cedille.tab.c: $(GRM)
 	bison -d $<
 
 lex.yy.c: $(LEX)
@@ -23,5 +23,5 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
 clean:
-	rm $(OBJ) calc.tab.c calc.tab.h lex.yy.c
+	rm $(OBJ) cedille.tab.c cedille.tab.h lex.yy.c
 

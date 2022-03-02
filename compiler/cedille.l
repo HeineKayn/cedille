@@ -1,7 +1,7 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-#include "y.tab.h"
+#include "cedille.tab.h"
 %}
 
 %option noyywrap
@@ -10,7 +10,7 @@
 
 main   { return tMAIN; }
 
-if     { return tCOND; }
+if     { return tIF; }
 while  { return tWHILE; }
 printf { return tFUNC; }
 
@@ -41,4 +41,4 @@ int    { return tINT; }
 "}" { return tCF; }
 
 .	{ return tERROR; }
-[\n \t]+	{};
+[\n \t]+	{}

@@ -5,7 +5,7 @@ int var[26];
 void yyerror(char *s);
 %}
 %union { int nb; char var; }
-%token tINT tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC
+%token tINT tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE
 //%token <nb> tINT
 //%token <var> tSTRING
 //%type <nb> Expr DivMul Terme
@@ -13,33 +13,50 @@ void yyerror(char *s);
 %%
 Functions : FunctionDef Functions | Main
 
-Main : FunctionDef
+Main : tMAIN tPO Param tPF Corps
 
-Type : tINT | tCONST
+//Variable et types
+Elem : tNB | tVAR //{check_exist($1)}
+Type : tINT | tCONST 
 Objet : tNB 
-Variables : tVAR | tVAR tVIR Variables
+Variables : tVAR | tVAR tVIR Variables //{check_exist($1)}
 
+//Appel d'une fonction en général
 FunctionCall : tFUNC tPO Arg tPF tSTOP
-ElemArg : tVAR | Objet 
-Arg : ElemArg | ElemArg tVIR Arg
+Arg : Elem | Elem tVIR Arg |
 
-FunctionDef : Type tFUNC tPO Param tPF tCO Corps tCF
+//Definition d'une fonction en général
+FunctionDef : Type tFUNC tPO Param tPF Corps
 ElemParam : Type tVAR 
-Param : ElemParam | ElemParam tVIR Param
-Corps : Instruction Corps | Instruction
-Instruction : Declaration | Affectation | FunctionCall
+Param : ElemParam | ElemParam tVIR Param |
+Corps : tCO Instructions tCF 
 
+//Instructions possibles
+Instructions : Instruction Instructions |
+Instruction : Declaration | Affectation | FunctionCall | Operation | If | While
 
-Declaration : Type Variables tSTOP 
-Declaration : Type 
+//Operations
+Operateur : tSOU | tADD | tMUL | tDIV
+Operations : Operation Operateur Operations tSTOP| Operation tSTOP
+Operation : Elem Operateur Elem
 
-//Declaration : Type (Affectation | Variables tSTOP )
+//Actions sur variabless
+Declaration : Type Variables tSTOP // {add_symb_in_table()}
+Affectation : tVAR tEGAL tNB tSTOP //{check_exist($1), check_type($1,$3)}
 
-Affectation : tVAR tEGAL tNB
+//Conditionnel
+Cond : Elem tEGAL tEGAL Elem | Elem
+
+//If
+If : tIF tPO Cond tPF Corps
+
+//While
+While : tWHILE tPO Cond tPF Corps
+
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
-  printf("Calculatrice\n"); // yydebug=1;
+  printf("Bienvenue dans cedille\n"); // yydebug=1;
   yyparse();
   return 0;
 }

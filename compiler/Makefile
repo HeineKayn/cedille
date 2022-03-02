@@ -17,7 +17,7 @@ cedille.tab.c: $(GRM)
 	bison -d -v -t $< 
 
 lex.yy.c: $(LEX)
-	flex --debug$<
+	flex --debug $<
 
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@

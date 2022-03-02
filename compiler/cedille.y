@@ -49,18 +49,19 @@ Instruction : Declaration
 	| If 
 	| While
 
-//Operations
-Calculatrices : Operation Operations | Calcul 
-Calcul : Expr tFL
-		| tID tEGAL Expr tFL 
-Operation : Operation tADD DivMul 
-		| Operation tSOU DivMul 
-		| DivMul  
+//Operations de calcul
+Operations : Operation Operations 
+	| Operation
+Operation : Expr tFL
+	| tVAR tEGAL Expr tFL 
+Expr : Expr tADD DivMul 
+	| Expr tSOU DivMul 
+	| DivMul  
 DivMul : DivMul tMUL Terme 
-		| DivMul tDIV Terme 
-		| Terme 
-Terme : tPO Operation tPF 
-		| tNB 
+	| DivMul tDIV Terme 
+	| Terme 
+Terme : tPO Expr tPF 
+	| tNB 
 
 //Actions sur variabless
 Declaration : Type Variables tSTOP // {add_symb_in_table()}

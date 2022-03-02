@@ -14,10 +14,10 @@ all: $(BIN)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 cedille.tab.c: $(GRM)
-	bison -d -v $< 
+	bison -d -v -t $< 
 
 lex.yy.c: $(LEX)
-	flex $<
+	flex --debug $<
 
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
@@ -27,3 +27,4 @@ clean:
 
 test: all
 	echo "main(){int a;}" | ./cedille
+	echo "main(){int a; int b; }" | ./cedille

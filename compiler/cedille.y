@@ -78,9 +78,9 @@ While : tWHILE tPO Cond tPF Corps
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
-/*#ifdef YYDEBUG
+#ifdef YYDEBUG
   yydebug = 1;
-#endif*/
+#endif
   printf("Bienvenue dans cedille\n"); // yydebug=1;
   yyparse();
   return 0;

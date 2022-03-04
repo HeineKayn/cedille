@@ -1,14 +1,14 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 2.3.  */
 
-/* Bison interface for Yacc-like parsers in C
+/* Skeleton interface for Bison's Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
-   Inc.
+   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+   Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
+   This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,9 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,68 +33,76 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
-
-#ifndef YY_YY_CEDILLE_TAB_H_INCLUDED
-# define YY_YY_CEDILLE_TAB_H_INCLUDED
-/* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 1
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
-
-/* Token type.  */
+/* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
-  {
-    tINT = 258,
-    tFL = 259,
-    tEGAL = 260,
-    tPO = 261,
-    tPF = 262,
-    tSOU = 263,
-    tADD = 264,
-    tDIV = 265,
-    tMUL = 266,
-    tERROR = 267,
-    tPRINT = 268,
-    tVAR = 269,
-    tNB = 270,
-    tCONST = 271,
-    tSTOP = 272,
-    tVIR = 273,
-    tFUNC = 274,
-    tCO = 275,
-    tCF = 276,
-    tMAIN = 277,
-    tIF = 278,
-    tWHILE = 279,
-    tNOT = 280
-  };
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     tINT = 258,
+     tFL = 259,
+     tEGAL = 260,
+     tPO = 261,
+     tPF = 262,
+     tSOU = 263,
+     tADD = 264,
+     tDIV = 265,
+     tMUL = 266,
+     tERROR = 267,
+     tPRINT = 268,
+     tVAR = 269,
+     tNB = 270,
+     tCONST = 271,
+     tSTOP = 272,
+     tVIR = 273,
+     tFUNC = 274,
+     tCO = 275,
+     tCF = 276,
+     tMAIN = 277,
+     tIF = 278,
+     tWHILE = 279,
+     tNOT = 280
+   };
 #endif
+/* Tokens.  */
+#define tINT 258
+#define tFL 259
+#define tEGAL 260
+#define tPO 261
+#define tPF 262
+#define tSOU 263
+#define tADD 264
+#define tDIV 265
+#define tMUL 266
+#define tERROR 267
+#define tPRINT 268
+#define tVAR 269
+#define tNB 270
+#define tCONST 271
+#define tSTOP 272
+#define tVIR 273
+#define tFUNC 274
+#define tCO 275
+#define tCF 276
+#define tMAIN 277
+#define tIF 278
+#define tWHILE 279
+#define tNOT 280
 
-/* Value type.  */
+
+
+
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
-#line 7 "cedille.y"
- int nb; char var; 
-
-#line 86 "cedille.tab.h"
-
-};
-typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
+typedef union YYSTYPE
+#line 8 "cedille.y"
+{ int nb; char var; }
+/* Line 1529 of yacc.c.  */
+#line 101 "cedille.tab.h"
+	YYSTYPE;
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
 #endif
-
 
 extern YYSTYPE yylval;
 
-int yyparse (void);
-
-#endif /* !YY_YY_CEDILLE_TAB_H_INCLUDED  */

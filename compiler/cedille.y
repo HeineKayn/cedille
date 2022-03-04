@@ -3,6 +3,7 @@
 #include <stdio.h>
 int var[26];
 void yyerror(char *s);
+int yylex();
 %}
 %union { int nb; char var; }
 %token tINT tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE tNOT
@@ -52,8 +53,8 @@ Instruction : Declaration
 //Operations de calcul
 Operations : Operation Operations 
 	| Operation
-Operation : Expr tFL
-	| tVAR tEGAL Expr tFL 
+Operation : Expr
+	| tVAR tEGAL Expr
 Expr : Expr tADD DivMul 
 	| Expr tSOU DivMul 
 	| DivMul  
@@ -65,7 +66,8 @@ Terme : tPO Expr tPF
 
 //Actions sur variabless
 Declaration : Type Variables tSTOP // {add_symb_in_table()}
-Affectation : tVAR tEGAL tNB tSTOP //{check_exist($1), check_type($1,$3)}
+Affectation : tVAR tEGAL tNB tSTOP
+	| tVAR tEGAL Operations tSTOP//{check_exist($1), check_type($1,$3)}
 
 //Conditionnel
 Cond : Elem tEGAL tEGAL Elem 

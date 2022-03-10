@@ -2,7 +2,7 @@
 typedef struct {
     char * var;
     char * type;
-    unsigned address;
+    int address;
     int profondeur;
 } ligneSymbole;
 
@@ -10,3 +10,4 @@ int addSymbole(char * var,char * type);
 void delProfondeur();
 ligneSymbole* findSymbole(char * var);
 void addProfondeur();
+void displayTable();

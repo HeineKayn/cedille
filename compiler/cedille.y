@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ts.h"
-int var[26];
+
+int type;
+
 void yyerror(char *s);
 int yylex();
 %}
@@ -21,8 +23,8 @@ Main : tMAIN tPO Param tPF Corps
 //Variable et types
 Elem : tNB 
 	| tVAR //{check_exist($1)}
-Type : tINT 
-	| tCONST 
+Type : tINT { type = 0; }
+	| tCONST { type = 1; }
 Objet : tNB 
 
 //Appel d'une fonction en général
@@ -65,9 +67,9 @@ Terme : tPO Expr tPF
 	| tNB 
 
 //Actions sur variables
-Variables : tVAR 
-	| tVAR tVIR Variables 
-Declaration : Type Variables tSTOP // {addSymbole()}
+Variables : tVAR {addSymbole($1,type)}
+	| tVAR tVIR Variables {addSymbole($1,type)}
+Declaration : Type Variables tSTOP
 Affectation : tVAR tEGAL tNB tSTOP
 	| tVAR tEGAL Operations tSTOP
 	| tVAR tEGAL tVAR tSTOP //{check_exist($1), check_type($1,$3)}

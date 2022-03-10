@@ -24,8 +24,6 @@ Elem : tNB
 Type : tINT 
 	| tCONST 
 Objet : tNB 
-Variables : tVAR {addSymbole($1,)}
-	| tVAR tVIR Variables {addSymbole($1,)}
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF tSTOP

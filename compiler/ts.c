@@ -17,7 +17,7 @@ void init_table(){
     }
 }
 
-int addSymbole(char * var,char * type){
+int addSymbole(char * var,int type){
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = var;
     newSymb->type = type;
@@ -66,7 +66,7 @@ void displayTable(){
     for (int i=0;i<TABLESIZE;i++){
         ligne = tableSymbole[i];
         if (ligne != NULL){
-            printf("Symbole : type=%s, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
+            printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
         }   
     }
 }

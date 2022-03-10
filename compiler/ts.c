@@ -20,7 +20,7 @@ void delSymboles(int depth){
 }
 
 ligneSymbole* findSymbole(char * var, int depth){
-    ligneSymbole * ligne;
+    ligneSymbole * ligne = NULL;
     int i = 0;
     int found = 0;
 

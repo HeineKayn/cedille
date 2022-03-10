@@ -6,6 +6,7 @@ typedef struct {
     int profondeur;
 } ligneSymbole;
 
-int addSymbole();
+int addSymbole(char * var,char * type, unsigned adress);
 void delProfondeur();
-ligneSymbole* findSymbole(char *);
+ligneSymbole* findSymbole(char * var);
+void addProfondeur();

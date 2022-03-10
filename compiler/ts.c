@@ -6,20 +6,24 @@
 ligneSymbole * tableSymbole[TABLESIZE];
 int depth = 0;
 
+void addProfondeur(){
+    depth++;
+}
+
 void init_table(){
     for (int i=0;i<TABLESIZE;i++){
         tableSymbole[i]= NULL;
     }
 }
 
-int addSymbole(char * var,char * type,unsigned adress){
+int addSymbole(char * var,char * type){
     ligneSymbole * newSymb = malloc(sizeof(ligneSymbole));
     newSymb->var = var;
     newSymb->type = type;
-    newSymb->address = adress;
     newSymb->profondeur = depth;
     for (int i=0;i<TABLESIZE;i++){
         if(tableSymbole[i]==NULL){
+            newSymb->address = i;
             tableSymbole[i] = newSymb;
             return 0;
         }

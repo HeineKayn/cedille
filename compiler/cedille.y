@@ -1,14 +1,15 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include "ts.h"
 int var[26];
 void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char var; }
-%token tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE tNOT
+%token tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE tNOT
 %token <nb> tINT
-%token <var> tSTRING
+%token <var> tVAR
 //%type <nb> Expr DivMul Terme
 %start Functions
 %%
@@ -23,8 +24,8 @@ Elem : tNB
 Type : tINT 
 	| tCONST 
 Objet : tNB 
-Variables : tVAR 
-	| tVAR tVIR Variables //{check_exist($1)}
+Variables : tVAR {addSymbole($1,)}
+	| tVAR tVIR Variables {addSymbole($1,)}
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF tSTOP

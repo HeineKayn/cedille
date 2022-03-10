@@ -9,7 +9,7 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char var; }
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tERROR
 %token <nb> tINT
 %token <var> tVAR
 //%type <nb> Expr DivMul Terme

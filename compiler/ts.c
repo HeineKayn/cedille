@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ts.h>
+#include "ts.h"
 #define TABLESIZE 100
 
 ligneSymbole * tableSymbole[TABLESIZE];

@@ -4,15 +4,14 @@
 #define TABLESIZE 100
 
 ligneSymbole * tableSymbole[TABLESIZE];
-int tableLength = 0;
 
 int addSymbole(){
 
 }
 
-int delSymboles(int depth){
+void delSymboles(int depth){
     ligneSymbole * ligne;
-    for (int i = 0; i < tableLength; i++){
+    for (int i = 0; i < TABLESIZE; i++){
         ligne = tableSymbole[i];
         if (ligne != NULL && ligne->profondeur == depth){
             tableSymbole[i] = NULL;  
@@ -20,7 +19,18 @@ int delSymboles(int depth){
     }
 }
 
-ligneSymbole findSymbole(){
+ligneSymbole* findSymbole(char * var, int depth){
+    ligneSymbole * ligne;
+    int i = 0;
+    int found = 0;
 
+    while(i<TABLESIZE && !found){
+        ligne = tableSymbole[i];
+        if (ligne != NULL && ligne->profondeur == depth && ligne->var == var){
+            found = 1;
+        }
+        i++;
+    }
+    return ligne;
 }
 

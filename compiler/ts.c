@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <ts.h>
 #define TABLESIZE 100
@@ -12,14 +13,14 @@ void init_table(){
     }
 }
 
-int addSymbole(char * var,char * type,unsigned adress){
-    ligneSymbole * newSymb = malloc(sizeof(ligneSymbole));
+int addSymbole(char * var,char * type){
+    ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = var;
     newSymb->type = type;
-    newSymb->address = adress;
     newSymb->profondeur = depth;
     for (int i=0;i<TABLESIZE;i++){
         if(tableSymbole[i]==NULL){
+            newSymb->address = i;
             tableSymbole[i] = newSymb;
             return 0;
         }
@@ -33,6 +34,7 @@ void delProfondeur(){
         for (int i = 0; i < TABLESIZE; i++){
             ligne = tableSymbole[i];
             if (ligne != NULL && ligne->profondeur == depth){
+                free(tableSymbole[i]);
                 tableSymbole[i] = NULL;  
             }
         }

@@ -18,7 +18,7 @@ int    {
 }
 
 [a-zA-Z][a-zA-Z0-9_]* {
-	yylval.var = yytext[0]; //ylval.str = strdup(yytext);
+	yylval.var =  strdup(yytext[0])
 	return tVAR;
 }
 

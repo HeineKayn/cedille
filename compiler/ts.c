@@ -1,3 +1,7 @@
+#include <ts.h>
+
+ligneSymbole tableSymbole[100];
+
 int addSymbole(){
 
 }

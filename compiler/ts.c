@@ -62,9 +62,11 @@ ligneSymbole* findSymbole(char * var){
 }
 
 void displayTable(){
+    ligneSymbole * ligne = NULL;
     for (int i=0;i<TABLESIZE;i++){
-        if (tableSymbole[i] != NULL){
-            printf("Symbole ");
+        ligne = tableSymbole[i];
+        if (ligne != NULL){
+            printf("Symbole : type=%s, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
         }   
     }
 }

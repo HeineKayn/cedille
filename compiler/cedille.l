@@ -12,7 +12,6 @@ main   { return tMAIN; }
 
 if     { return tIF; }
 while  { return tWHILE; }
-printf { return tFUNC; }
 
 const  { return tCONST; }
 int    {

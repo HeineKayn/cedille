@@ -22,9 +22,7 @@ Elem : tNB
 	| tVAR //{check_exist($1)}
 Type : tINT 
 	| tCONST 
-Objet : tNB 
-Variables : tVAR 
-	| tVAR tVIR Variables 
+Objet : tNB
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF tSTOP
@@ -65,12 +63,13 @@ DivMul : DivMul tMUL Terme
 Terme : tPO Expr tPF 
 	| tNB 
 
-//Actions sur variabless
+//Actions sur variables
+Variables : tVAR 
+	| tVAR tVIR Variables 
 Declaration : Type Variables tSTOP // {addSymbole()}
 Affectation : tVAR tEGAL tNB tSTOP
 	| tVAR tEGAL Operations tSTOP
 	| tVAR tEGAL tVAR tSTOP //{check_exist($1), check_type($1,$3)}
-
 DeclareAffect : Type Affectation
 
 //Conditionnel

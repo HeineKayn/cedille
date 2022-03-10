@@ -1,0 +1,1 @@
+cat Tests_ok/declaration_hard | ./cedille

@@ -67,8 +67,14 @@ Terme : tPO Expr tPF
 	| tNB 
 
 //Actions sur variables
-Variables : tVAR {addSymbole($1,type)}
-	| tVAR tVIR Variables {addSymbole($1,type)}
+Variables : tVAR {
+		addSymbole($1,type);
+		displayTable();
+	}
+	| tVAR tVIR Variables {
+		addSymbole($1,type);
+		displayTable();
+	}
 Declaration : Type Variables tSTOP
 Affectation : tVAR tEGAL tNB tSTOP
 	| tVAR tEGAL Operations tSTOP

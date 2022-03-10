@@ -27,3 +27,6 @@ clean:
 
 test: all
 	./test.sh
+
+generalTest: all
+	./generalTest.sh

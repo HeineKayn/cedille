@@ -1,12 +1,12 @@
 #include <stdlib.h>
 typedef struct {
     char * var;
-    char * type;
+    int type;
     int address;
     int profondeur;
 } ligneSymbole;
 
-int addSymbole(char * var,char * type);
+int addSymbole(char * var,int type);
 void delProfondeur();
 ligneSymbole* findSymbole(char * var);
 void addProfondeur();

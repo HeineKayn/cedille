@@ -66,12 +66,13 @@ DivMul : DivMul tMUL Terme
 Terme : tPO Expr tPF 
 	| tNB 
 
-//Actions sur variabless
+//Actions sur variables
+Variables : tVAR 
+	| tVAR tVIR Variables 
 Declaration : Type Variables tSTOP // {addSymbole()}
 Affectation : tVAR tEGAL tNB tSTOP
 	| tVAR tEGAL Operations tSTOP
 	| tVAR tEGAL tVAR tSTOP //{check_exist($1), check_type($1,$3)}
-
 DeclareAffect : Type Affectation
 
 //Conditionnel

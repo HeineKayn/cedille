@@ -54,3 +54,4 @@ dkms.conf
 compiler/lex.yy.*
 compiler/cedille
 compiler/cedille.tab.*
+compiler/cedille.output

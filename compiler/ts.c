@@ -18,6 +18,7 @@ void init_table(){
 }
 
 int addSymbole(char * var,int type){
+    printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = var;
     newSymb->type = type;

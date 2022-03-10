@@ -7,5 +7,5 @@ typedef struct {
 } ligneSymbole;
 
 int addSymbole();
-int delSymboles();
-int findSymbole();
+void delProfondeur();
+ligneSymbole* findSymbole(char *);

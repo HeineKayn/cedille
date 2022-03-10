@@ -4,12 +4,13 @@
 #define TABLESIZE 100
 
 ligneSymbole * tableSymbole[TABLESIZE];
+int depth = 0;
 
 int addSymbole(){
 
 }
 
-void delSymboles(int depth){
+void delProfondeur(){
     ligneSymbole * ligne;
     for (int i = 0; i < TABLESIZE; i++){
         ligne = tableSymbole[i];
@@ -19,7 +20,7 @@ void delSymboles(int depth){
     }
 }
 
-ligneSymbole* findSymbole(char * var, int depth){
+ligneSymbole* findSymbole(char * var){
     ligneSymbole * ligne = NULL;
     int i = 0;
     int found = 0;

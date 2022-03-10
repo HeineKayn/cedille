@@ -66,10 +66,10 @@ Terme : tPO Expr tPF
 	| tNB 
 
 //Actions sur variabless
-Declaration : Type Variables tSTOP // {add_symb_in_table()}
+Declaration : Type Variables tSTOP // {addSymbole()}
 Affectation : tVAR tEGAL tNB tSTOP
 	| tVAR tEGAL Operations tSTOP
-	| tVAR tEGAL tVAR tSTOP//{check_exist($1), check_type($1,$3)}
+	| tVAR tEGAL tVAR tSTOP //{check_exist($1), check_type($1,$3)}
 
 DeclareAffect : Type Affectation
 

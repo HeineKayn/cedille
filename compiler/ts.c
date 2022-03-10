@@ -29,12 +29,15 @@ int addSymbole(char * var,char * type,unsigned adress){
 
 void delProfondeur(){
     ligneSymbole * ligne;
-    for (int i = 0; i < TABLESIZE; i++){
-        ligne = tableSymbole[i];
-        if (ligne != NULL && ligne->profondeur == depth){
-            tableSymbole[i] = NULL;  
+    if (depth){
+        for (int i = 0; i < TABLESIZE; i++){
+            ligne = tableSymbole[i];
+            if (ligne != NULL && ligne->profondeur == depth){
+                tableSymbole[i] = NULL;  
+            }
         }
     }
+    depth --;
 }
 
 ligneSymbole* findSymbole(char * var){

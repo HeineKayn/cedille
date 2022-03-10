@@ -1,11 +1,28 @@
 #include <ts.h>
 #define TABLESIZE 100
 
-ligneSymbole tableSymbole[TABLESIZE];
+ligneSymbole * tableSymbole[TABLESIZE];
 int tableLength = 0;
 
-int addSymbole(){
+void init_table(){
+    for (int i=0;i<TABLESIZE;i++){
+        tableSymbole[i]= NULL;
+    }
+}
 
+int addSymbole(char * var,char * type,unsigned adress){
+    ligneSymbole * newSymb = malloc(sizeof(ligneSymbole));
+    newSymb->var = var;
+    newSymb->type = type;
+    newSymb->address = adress;
+    newSymb->profondeur = depth;
+    for (int i=0;i<TABLESIZE;i++){
+        if(tableSymbole[i]==NULL){
+            tableSymbole[i] = newSymb;
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int delSymboles(){

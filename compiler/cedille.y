@@ -6,9 +6,9 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char var; }
-%token tINT tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE tNOT
-//%token <nb> tINT
-//%token <var> tSTRING
+%token tFL tEGAL tPO tPF tSOU tADD tDIV tMUL tERROR tPRINT tVAR tNB tCONST tSTOP tVIR tFUNC tCO tCF tMAIN tIF tWHILE tNOT
+%token <nb> tINT
+%token <var> tSTRING
 //%type <nb> Expr DivMul Terme
 %start Functions
 %%
@@ -27,13 +27,13 @@ Variables : tVAR
 	| tVAR tVIR Variables //{check_exist($1)}
 
 //Appel d'une fonction en général
-FunctionCall : tFUNC tPO Arg tPF tSTOP
+FunctionCall : tVAR tPO Arg tPF tSTOP
 Arg : Elem 
 	| Elem tVIR Arg 
 	|
 
 //Definition d'une fonction en général
-FunctionDef : Type tFUNC tPO Param tPF Corps
+FunctionDef : Type tVAR tPO Param tPF Corps
 ElemParam : Type tVAR 
 Param : ElemParam 
 	| ElemParam tVIR Param 
@@ -49,6 +49,7 @@ Instruction : Declaration
 	| Operations
 	| If 
 	| While
+	| DeclareAffect
 
 //Operations de calcul
 Operations : Operation Operations 
@@ -67,7 +68,10 @@ Terme : tPO Expr tPF
 //Actions sur variabless
 Declaration : Type Variables tSTOP // {add_symb_in_table()}
 Affectation : tVAR tEGAL tNB tSTOP
-	| tVAR tEGAL Operations tSTOP//{check_exist($1), check_type($1,$3)}
+	| tVAR tEGAL Operations tSTOP
+	| tVAR tEGAL tVAR tSTOP//{check_exist($1), check_type($1,$3)}
+
+DeclareAffect : Type Affectation
 
 //Conditionnel
 Cond : Elem tEGAL tEGAL Elem 

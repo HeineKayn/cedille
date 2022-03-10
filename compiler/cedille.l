@@ -12,7 +12,6 @@ main   { return tMAIN; }
 
 if     { return tIF; }
 while  { return tWHILE; }
-
 const  { return tCONST; }
 int    {
 	return tINT; 

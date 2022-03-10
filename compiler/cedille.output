@@ -8,16 +8,18 @@ Terminals which are not used
    tFL
    tERROR
    tPRINT
+   tFUNC
+   tSTRING
 
 
 Useless rules
 
-   49 Objet: tNB
+   52 Objet: tNB
 
 
-State 35 conflicts: 3 shift/reduce
-State 60 conflicts: 1 shift/reduce
-State 62 conflicts: 3 reduce/reduce
+State 34 conflicts: 3 shift/reduce
+State 62 conflicts: 1 shift/reduce
+State 64 conflicts: 3 reduce/reduce
 
 
 Grammar
@@ -38,13 +40,13 @@ Grammar
     8 Variables: tVAR
     9          | tVAR tVIR Variables
 
-   10 FunctionCall: tFUNC tPO Arg tPF tSTOP
+   10 FunctionCall: tVAR tPO Arg tPF tSTOP
 
    11 Arg: Elem
    12    | Elem tVIR Arg
    13    | /* empty */
 
-   14 FunctionDef: Type tFUNC tPO Param tPF Corps
+   14 FunctionDef: Type tVAR tPO Param tPF Corps
 
    15 ElemParam: Type tVAR
 
@@ -63,127 +65,134 @@ Grammar
    25            | Operations
    26            | If
    27            | While
+   28            | DeclareAffect
 
-   28 Operations: Operation Operations
-   29           | Operation
+   29 Operations: Operation Operations
+   30           | Operation
 
-   30 Operation: Expr
-   31          | tVAR tEGAL Expr
+   31 Operation: Expr
+   32          | tVAR tEGAL Expr
 
-   32 Expr: Expr tADD DivMul
-   33     | Expr tSOU DivMul
-   34     | DivMul
+   33 Expr: Expr tADD DivMul
+   34     | Expr tSOU DivMul
+   35     | DivMul
 
-   35 DivMul: DivMul tMUL Terme
-   36       | DivMul tDIV Terme
-   37       | Terme
+   36 DivMul: DivMul tMUL Terme
+   37       | DivMul tDIV Terme
+   38       | Terme
 
-   38 Terme: tPO Expr tPF
-   39      | tNB
+   39 Terme: tPO Expr tPF
+   40      | tNB
 
-   40 Declaration: Type Variables tSTOP
+   41 Declaration: Type Variables tSTOP
 
-   41 Affectation: tVAR tEGAL tNB tSTOP
-   42            | tVAR tEGAL Operations tSTOP
+   42 Affectation: tVAR tEGAL tNB tSTOP
+   43            | tVAR tEGAL Operations tSTOP
+   44            | tVAR tEGAL tVAR tSTOP
 
-   43 Cond: Elem tEGAL tEGAL Elem
-   44     | Elem tNOT tEGAL Elem
-   45     | Elem
-   46     | tNOT Elem
+   45 DeclareAffect: Type Affectation
 
-   47 If: tIF tPO Cond tPF Corps
+   46 Cond: Elem tEGAL tEGAL Elem
+   47     | Elem tNOT tEGAL Elem
+   48     | Elem
+   49     | tNOT Elem
 
-   48 While: tWHILE tPO Cond tPF Corps
+   50 If: tIF tPO Cond tPF Corps
+
+   51 While: tWHILE tPO Cond tPF Corps
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-tINT (258) 6
-tFL (259)
-tEGAL (260) 31 41 42 43 44
-tPO (261) 3 10 14 38 47 48
-tPF (262) 3 10 14 38 47 48
-tSOU (263) 33
-tADD (264) 32
-tDIV (265) 36
-tMUL (266) 35
-tERROR (267)
-tPRINT (268)
-tVAR (269) 5 8 9 15 31 41 42
-tNB (270) 4 39 41
-tCONST (271) 7
-tSTOP (272) 10 40 41 42
-tVIR (273) 9 12 17
-tFUNC (274) 10 14
-tCO (275) 19
-tCF (276) 19
-tMAIN (277) 3
-tIF (278) 47
-tWHILE (279) 48
-tNOT (280) 44 46
+tFL (258)
+tEGAL (259) 32 42 43 44 46 47
+tPO (260) 3 10 14 39 50 51
+tPF (261) 3 10 14 39 50 51
+tSOU (262) 34
+tADD (263) 33
+tDIV (264) 37
+tMUL (265) 36
+tERROR (266)
+tPRINT (267)
+tVAR (268) 5 8 9 10 14 15 32 42 43 44
+tNB (269) 4 40 42
+tCONST (270) 7
+tSTOP (271) 10 41 42 43 44
+tVIR (272) 9 12 17
+tFUNC (273)
+tCO (274) 19
+tCF (275) 19
+tMAIN (276) 3
+tIF (277) 50
+tWHILE (278) 51
+tNOT (279) 47 49
+tINT (280) 6
+tSTRING (281)
 
 
 Nonterminals, with rules where they appear
 
-$accept (26)
+$accept (27)
     on left: 0
-Functions (27)
+Functions (28)
     on left: 1 2, on right: 0 1
-Main (28)
+Main (29)
     on left: 3, on right: 2
-Elem (29)
-    on left: 4 5, on right: 11 12 43 44 45 46
-Type (30)
-    on left: 6 7, on right: 14 15 40
-Variables (31)
-    on left: 8 9, on right: 9 40
-FunctionCall (32)
+Elem (30)
+    on left: 4 5, on right: 11 12 46 47 48 49
+Type (31)
+    on left: 6 7, on right: 14 15 41 45
+Variables (32)
+    on left: 8 9, on right: 9 41
+FunctionCall (33)
     on left: 10, on right: 24
-Arg (33)
+Arg (34)
     on left: 11 12 13, on right: 10 12
-FunctionDef (34)
+FunctionDef (35)
     on left: 14, on right: 1
-ElemParam (35)
+ElemParam (36)
     on left: 15, on right: 16 17
-Param (36)
+Param (37)
     on left: 16 17 18, on right: 3 14 17
-Corps (37)
-    on left: 19, on right: 3 14 47 48
-Instructions (38)
+Corps (38)
+    on left: 19, on right: 3 14 50 51
+Instructions (39)
     on left: 20 21, on right: 19 20
-Instruction (39)
-    on left: 22 23 24 25 26 27, on right: 20
-Operations (40)
-    on left: 28 29, on right: 25 28 42
-Operation (41)
-    on left: 30 31, on right: 28 29
-Expr (42)
-    on left: 32 33 34, on right: 30 31 32 33 38
-DivMul (43)
-    on left: 35 36 37, on right: 32 33 34 35 36
-Terme (44)
-    on left: 38 39, on right: 35 36 37
-Declaration (45)
-    on left: 40, on right: 22
-Affectation (46)
-    on left: 41 42, on right: 23
-Cond (47)
-    on left: 43 44 45 46, on right: 47 48
-If (48)
-    on left: 47, on right: 26
-While (49)
-    on left: 48, on right: 27
+Instruction (40)
+    on left: 22 23 24 25 26 27 28, on right: 20
+Operations (41)
+    on left: 29 30, on right: 25 29 43
+Operation (42)
+    on left: 31 32, on right: 29 30
+Expr (43)
+    on left: 33 34 35, on right: 31 32 33 34 39
+DivMul (44)
+    on left: 36 37 38, on right: 33 34 35 36 37
+Terme (45)
+    on left: 39 40, on right: 36 37 38
+Declaration (46)
+    on left: 41, on right: 22
+Affectation (47)
+    on left: 42 43 44, on right: 23 45
+DeclareAffect (48)
+    on left: 45, on right: 28
+Cond (49)
+    on left: 46 47 48 49, on right: 50 51
+If (50)
+    on left: 50, on right: 26
+While (51)
+    on left: 51, on right: 27
 
 
 state 0
 
     0 $accept: . Functions $end
 
-    tINT    shift, and go to state 1
-    tCONST  shift, and go to state 2
-    tMAIN   shift, and go to state 3
+    tCONST  shift, and go to state 1
+    tMAIN   shift, and go to state 2
+    tINT    shift, and go to state 3
 
     Functions    go to state 4
     Main         go to state 5
@@ -193,23 +202,23 @@ state 0
 
 state 1
 
-    6 Type: tINT .
-
-    $default  reduce using rule 6 (Type)
-
-
-state 2
-
     7 Type: tCONST .
 
     $default  reduce using rule 7 (Type)
 
 
-state 3
+state 2
 
     3 Main: tMAIN . tPO Param tPF Corps
 
     tPO  shift, and go to state 8
+
+
+state 3
+
+    6 Type: tINT .
+
+    $default  reduce using rule 6 (Type)
 
 
 state 4
@@ -228,18 +237,18 @@ state 5
 
 state 6
 
-   14 FunctionDef: Type . tFUNC tPO Param tPF Corps
+   14 FunctionDef: Type . tVAR tPO Param tPF Corps
 
-    tFUNC  shift, and go to state 10
+    tVAR  shift, and go to state 10
 
 
 state 7
 
     1 Functions: FunctionDef . Functions
 
-    tINT    shift, and go to state 1
-    tCONST  shift, and go to state 2
-    tMAIN   shift, and go to state 3
+    tCONST  shift, and go to state 1
+    tMAIN   shift, and go to state 2
+    tINT    shift, and go to state 3
 
     Functions    go to state 11
     Main         go to state 5
@@ -251,8 +260,8 @@ state 8
 
     3 Main: tMAIN tPO . Param tPF Corps
 
-    tINT    shift, and go to state 1
-    tCONST  shift, and go to state 2
+    tCONST  shift, and go to state 1
+    tINT    shift, and go to state 3
 
     $default  reduce using rule 18 (Param)
 
@@ -270,7 +279,7 @@ state 9
 
 state 10
 
-   14 FunctionDef: Type tFUNC . tPO Param tPF Corps
+   14 FunctionDef: Type tVAR . tPO Param tPF Corps
 
     tPO  shift, and go to state 15
 
@@ -308,10 +317,10 @@ state 14
 
 state 15
 
-   14 FunctionDef: Type tFUNC tPO . Param tPF Corps
+   14 FunctionDef: Type tVAR tPO . Param tPF Corps
 
-    tINT    shift, and go to state 1
-    tCONST  shift, and go to state 2
+    tCONST  shift, and go to state 1
+    tINT    shift, and go to state 3
 
     $default  reduce using rule 18 (Param)
 
@@ -331,8 +340,8 @@ state 17
 
    17 Param: ElemParam tVIR . Param
 
-    tINT    shift, and go to state 1
-    tCONST  shift, and go to state 2
+    tCONST  shift, and go to state 1
+    tINT    shift, and go to state 3
 
     $default  reduce using rule 18 (Param)
 
@@ -352,7 +361,7 @@ state 18
 
 state 19
 
-   14 FunctionDef: Type tFUNC tPO Param . tPF Corps
+   14 FunctionDef: Type tVAR tPO Param . tPF Corps
 
     tPF  shift, and go to state 23
 
@@ -368,30 +377,30 @@ state 21
 
    19 Corps: tCO . Instructions tCF
 
-    tINT    shift, and go to state 1
     tPO     shift, and go to state 24
     tVAR    shift, and go to state 25
     tNB     shift, and go to state 26
-    tCONST  shift, and go to state 2
-    tFUNC   shift, and go to state 27
-    tIF     shift, and go to state 28
-    tWHILE  shift, and go to state 29
+    tCONST  shift, and go to state 1
+    tIF     shift, and go to state 27
+    tWHILE  shift, and go to state 28
+    tINT    shift, and go to state 3
 
     $default  reduce using rule 21 (Instructions)
 
-    Type          go to state 30
-    FunctionCall  go to state 31
-    Instructions  go to state 32
-    Instruction   go to state 33
-    Operations    go to state 34
-    Operation     go to state 35
-    Expr          go to state 36
-    DivMul        go to state 37
-    Terme         go to state 38
-    Declaration   go to state 39
-    Affectation   go to state 40
-    If            go to state 41
-    While         go to state 42
+    Type           go to state 29
+    FunctionCall   go to state 30
+    Instructions   go to state 31
+    Instruction    go to state 32
+    Operations     go to state 33
+    Operation      go to state 34
+    Expr           go to state 35
+    DivMul         go to state 36
+    Terme          go to state 37
+    Declaration    go to state 38
+    Affectation    go to state 39
+    DeclareAffect  go to state 40
+    If             go to state 41
+    While          go to state 42
 
 
 state 22
@@ -403,7 +412,7 @@ state 22
 
 state 23
 
-   14 FunctionDef: Type tFUNC tPO Param tPF . Corps
+   14 FunctionDef: Type tVAR tPO Param tPF . Corps
 
     tCO  shift, and go to state 21
 
@@ -412,177 +421,182 @@ state 23
 
 state 24
 
-   38 Terme: tPO . Expr tPF
+   39 Terme: tPO . Expr tPF
 
     tPO  shift, and go to state 24
     tNB  shift, and go to state 26
 
     Expr    go to state 44
-    DivMul  go to state 37
-    Terme   go to state 38
+    DivMul  go to state 36
+    Terme   go to state 37
 
 
 state 25
 
-   31 Operation: tVAR . tEGAL Expr
-   41 Affectation: tVAR . tEGAL tNB tSTOP
-   42            | tVAR . tEGAL Operations tSTOP
+   10 FunctionCall: tVAR . tPO Arg tPF tSTOP
+   32 Operation: tVAR . tEGAL Expr
+   42 Affectation: tVAR . tEGAL tNB tSTOP
+   43            | tVAR . tEGAL Operations tSTOP
+   44            | tVAR . tEGAL tVAR tSTOP
 
     tEGAL  shift, and go to state 45
+    tPO    shift, and go to state 46
 
 
 state 26
 
-   39 Terme: tNB .
+   40 Terme: tNB .
 
-    $default  reduce using rule 39 (Terme)
+    $default  reduce using rule 40 (Terme)
 
 
 state 27
 
-   10 FunctionCall: tFUNC . tPO Arg tPF tSTOP
-
-    tPO  shift, and go to state 46
-
-
-state 28
-
-   47 If: tIF . tPO Cond tPF Corps
+   50 If: tIF . tPO Cond tPF Corps
 
     tPO  shift, and go to state 47
 
 
-state 29
+state 28
 
-   48 While: tWHILE . tPO Cond tPF Corps
+   51 While: tWHILE . tPO Cond tPF Corps
 
     tPO  shift, and go to state 48
 
 
-state 30
+state 29
 
-   40 Declaration: Type . Variables tSTOP
+   41 Declaration: Type . Variables tSTOP
+   45 DeclareAffect: Type . Affectation
 
     tVAR  shift, and go to state 49
 
-    Variables  go to state 50
+    Variables    go to state 50
+    Affectation  go to state 51
 
 
-state 31
+state 30
 
    24 Instruction: FunctionCall .
 
     $default  reduce using rule 24 (Instruction)
 
 
-state 32
+state 31
 
    19 Corps: tCO Instructions . tCF
 
-    tCF  shift, and go to state 51
+    tCF  shift, and go to state 52
 
 
-state 33
+state 32
 
    20 Instructions: Instruction . Instructions
 
-    tINT    shift, and go to state 1
     tPO     shift, and go to state 24
     tVAR    shift, and go to state 25
     tNB     shift, and go to state 26
-    tCONST  shift, and go to state 2
-    tFUNC   shift, and go to state 27
-    tIF     shift, and go to state 28
-    tWHILE  shift, and go to state 29
+    tCONST  shift, and go to state 1
+    tIF     shift, and go to state 27
+    tWHILE  shift, and go to state 28
+    tINT    shift, and go to state 3
 
     $default  reduce using rule 21 (Instructions)
 
-    Type          go to state 30
-    FunctionCall  go to state 31
-    Instructions  go to state 52
-    Instruction   go to state 33
-    Operations    go to state 34
-    Operation     go to state 35
-    Expr          go to state 36
-    DivMul        go to state 37
-    Terme         go to state 38
-    Declaration   go to state 39
-    Affectation   go to state 40
-    If            go to state 41
-    While         go to state 42
+    Type           go to state 29
+    FunctionCall   go to state 30
+    Instructions   go to state 53
+    Instruction    go to state 32
+    Operations     go to state 33
+    Operation      go to state 34
+    Expr           go to state 35
+    DivMul         go to state 36
+    Terme          go to state 37
+    Declaration    go to state 38
+    Affectation    go to state 39
+    DeclareAffect  go to state 40
+    If             go to state 41
+    While          go to state 42
 
 
-state 34
+state 33
 
    25 Instruction: Operations .
 
     $default  reduce using rule 25 (Instruction)
 
 
-state 35
+state 34
 
-   28 Operations: Operation . Operations
-   29           | Operation .
+   29 Operations: Operation . Operations
+   30           | Operation .
 
     tPO   shift, and go to state 24
-    tVAR  shift, and go to state 53
+    tVAR  shift, and go to state 54
     tNB   shift, and go to state 26
 
-    tPO       [reduce using rule 29 (Operations)]
-    tVAR      [reduce using rule 29 (Operations)]
-    tNB       [reduce using rule 29 (Operations)]
-    $default  reduce using rule 29 (Operations)
+    tPO       [reduce using rule 30 (Operations)]
+    tVAR      [reduce using rule 30 (Operations)]
+    tNB       [reduce using rule 30 (Operations)]
+    $default  reduce using rule 30 (Operations)
 
-    Operations  go to state 54
-    Operation   go to state 35
-    Expr        go to state 36
-    DivMul      go to state 37
-    Terme       go to state 38
+    Operations  go to state 55
+    Operation   go to state 34
+    Expr        go to state 35
+    DivMul      go to state 36
+    Terme       go to state 37
+
+
+state 35
+
+   31 Operation: Expr .
+   33 Expr: Expr . tADD DivMul
+   34     | Expr . tSOU DivMul
+
+    tSOU  shift, and go to state 56
+    tADD  shift, and go to state 57
+
+    $default  reduce using rule 31 (Operation)
 
 
 state 36
 
-   30 Operation: Expr .
-   32 Expr: Expr . tADD DivMul
-   33     | Expr . tSOU DivMul
+   35 Expr: DivMul .
+   36 DivMul: DivMul . tMUL Terme
+   37       | DivMul . tDIV Terme
 
-    tSOU  shift, and go to state 55
-    tADD  shift, and go to state 56
+    tDIV  shift, and go to state 58
+    tMUL  shift, and go to state 59
 
-    $default  reduce using rule 30 (Operation)
+    $default  reduce using rule 35 (Expr)
 
 
 state 37
 
-   34 Expr: DivMul .
-   35 DivMul: DivMul . tMUL Terme
-   36       | DivMul . tDIV Terme
+   38 DivMul: Terme .
 
-    tDIV  shift, and go to state 57
-    tMUL  shift, and go to state 58
-
-    $default  reduce using rule 34 (Expr)
+    $default  reduce using rule 38 (DivMul)
 
 
 state 38
-
-   37 DivMul: Terme .
-
-    $default  reduce using rule 37 (DivMul)
-
-
-state 39
 
    22 Instruction: Declaration .
 
     $default  reduce using rule 22 (Instruction)
 
 
-state 40
+state 39
 
    23 Instruction: Affectation .
 
     $default  reduce using rule 23 (Instruction)
+
+
+state 40
+
+   28 Instruction: DeclareAffect .
+
+    $default  reduce using rule 28 (Instruction)
 
 
 state 41
@@ -601,490 +615,545 @@ state 42
 
 state 43
 
-   14 FunctionDef: Type tFUNC tPO Param tPF Corps .
+   14 FunctionDef: Type tVAR tPO Param tPF Corps .
 
     $default  reduce using rule 14 (FunctionDef)
 
 
 state 44
 
-   32 Expr: Expr . tADD DivMul
-   33     | Expr . tSOU DivMul
-   38 Terme: tPO Expr . tPF
+   33 Expr: Expr . tADD DivMul
+   34     | Expr . tSOU DivMul
+   39 Terme: tPO Expr . tPF
 
-    tPF   shift, and go to state 59
-    tSOU  shift, and go to state 55
-    tADD  shift, and go to state 56
+    tPF   shift, and go to state 60
+    tSOU  shift, and go to state 56
+    tADD  shift, and go to state 57
 
 
 state 45
 
-   31 Operation: tVAR tEGAL . Expr
-   41 Affectation: tVAR tEGAL . tNB tSTOP
-   42            | tVAR tEGAL . Operations tSTOP
+   32 Operation: tVAR tEGAL . Expr
+   42 Affectation: tVAR tEGAL . tNB tSTOP
+   43            | tVAR tEGAL . Operations tSTOP
+   44            | tVAR tEGAL . tVAR tSTOP
 
     tPO   shift, and go to state 24
-    tVAR  shift, and go to state 53
-    tNB   shift, and go to state 60
+    tVAR  shift, and go to state 61
+    tNB   shift, and go to state 62
 
-    Operations  go to state 61
-    Operation   go to state 35
-    Expr        go to state 62
-    DivMul      go to state 37
-    Terme       go to state 38
+    Operations  go to state 63
+    Operation   go to state 34
+    Expr        go to state 64
+    DivMul      go to state 36
+    Terme       go to state 37
 
 
 state 46
 
-   10 FunctionCall: tFUNC tPO . Arg tPF tSTOP
+   10 FunctionCall: tVAR tPO . Arg tPF tSTOP
 
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
 
     $default  reduce using rule 13 (Arg)
 
-    Elem  go to state 65
-    Arg   go to state 66
+    Elem  go to state 67
+    Arg   go to state 68
 
 
 state 47
 
-   47 If: tIF tPO . Cond tPF Corps
+   50 If: tIF tPO . Cond tPF Corps
 
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-    tNOT  shift, and go to state 67
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+    tNOT  shift, and go to state 69
 
-    Elem  go to state 68
-    Cond  go to state 69
+    Elem  go to state 70
+    Cond  go to state 71
 
 
 state 48
 
-   48 While: tWHILE tPO . Cond tPF Corps
+   51 While: tWHILE tPO . Cond tPF Corps
 
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-    tNOT  shift, and go to state 67
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+    tNOT  shift, and go to state 69
 
-    Elem  go to state 68
-    Cond  go to state 70
+    Elem  go to state 70
+    Cond  go to state 72
 
 
 state 49
 
     8 Variables: tVAR .
     9          | tVAR . tVIR Variables
+   42 Affectation: tVAR . tEGAL tNB tSTOP
+   43            | tVAR . tEGAL Operations tSTOP
+   44            | tVAR . tEGAL tVAR tSTOP
 
-    tVIR  shift, and go to state 71
+    tEGAL  shift, and go to state 73
+    tVIR   shift, and go to state 74
 
     $default  reduce using rule 8 (Variables)
 
 
 state 50
 
-   40 Declaration: Type Variables . tSTOP
+   41 Declaration: Type Variables . tSTOP
 
-    tSTOP  shift, and go to state 72
+    tSTOP  shift, and go to state 75
 
 
 state 51
+
+   45 DeclareAffect: Type Affectation .
+
+    $default  reduce using rule 45 (DeclareAffect)
+
+
+state 52
 
    19 Corps: tCO Instructions tCF .
 
     $default  reduce using rule 19 (Corps)
 
 
-state 52
+state 53
 
    20 Instructions: Instruction Instructions .
 
     $default  reduce using rule 20 (Instructions)
 
 
-state 53
-
-   31 Operation: tVAR . tEGAL Expr
-
-    tEGAL  shift, and go to state 73
-
-
 state 54
 
-   28 Operations: Operation Operations .
+   32 Operation: tVAR . tEGAL Expr
 
-    $default  reduce using rule 28 (Operations)
+    tEGAL  shift, and go to state 76
 
 
 state 55
 
-   33 Expr: Expr tSOU . DivMul
+   29 Operations: Operation Operations .
 
-    tPO  shift, and go to state 24
-    tNB  shift, and go to state 26
-
-    DivMul  go to state 74
-    Terme   go to state 38
+    $default  reduce using rule 29 (Operations)
 
 
 state 56
 
-   32 Expr: Expr tADD . DivMul
+   34 Expr: Expr tSOU . DivMul
 
     tPO  shift, and go to state 24
     tNB  shift, and go to state 26
 
-    DivMul  go to state 75
-    Terme   go to state 38
+    DivMul  go to state 77
+    Terme   go to state 37
 
 
 state 57
 
-   36 DivMul: DivMul tDIV . Terme
+   33 Expr: Expr tADD . DivMul
 
     tPO  shift, and go to state 24
     tNB  shift, and go to state 26
 
-    Terme  go to state 76
+    DivMul  go to state 78
+    Terme   go to state 37
 
 
 state 58
 
-   35 DivMul: DivMul tMUL . Terme
+   37 DivMul: DivMul tDIV . Terme
 
     tPO  shift, and go to state 24
     tNB  shift, and go to state 26
 
-    Terme  go to state 77
+    Terme  go to state 79
 
 
 state 59
 
-   38 Terme: tPO Expr tPF .
+   36 DivMul: DivMul tMUL . Terme
 
-    $default  reduce using rule 38 (Terme)
+    tPO  shift, and go to state 24
+    tNB  shift, and go to state 26
+
+    Terme  go to state 80
 
 
 state 60
 
-   39 Terme: tNB .
-   41 Affectation: tVAR tEGAL tNB . tSTOP
+   39 Terme: tPO Expr tPF .
 
-    tSTOP  shift, and go to state 78
-
-    tSTOP     [reduce using rule 39 (Terme)]
     $default  reduce using rule 39 (Terme)
 
 
 state 61
 
-   42 Affectation: tVAR tEGAL Operations . tSTOP
+   32 Operation: tVAR . tEGAL Expr
+   44 Affectation: tVAR tEGAL tVAR . tSTOP
 
-    tSTOP  shift, and go to state 79
+    tEGAL  shift, and go to state 76
+    tSTOP  shift, and go to state 81
 
 
 state 62
 
-   30 Operation: Expr .
-   31          | tVAR tEGAL Expr .
-   32 Expr: Expr . tADD DivMul
-   33     | Expr . tSOU DivMul
+   40 Terme: tNB .
+   42 Affectation: tVAR tEGAL tNB . tSTOP
 
-    tSOU  shift, and go to state 55
-    tADD  shift, and go to state 56
+    tSTOP  shift, and go to state 82
 
-    tPO       reduce using rule 30 (Operation)
-    tPO       [reduce using rule 31 (Operation)]
-    tVAR      reduce using rule 30 (Operation)
-    tVAR      [reduce using rule 31 (Operation)]
-    tNB       reduce using rule 30 (Operation)
-    tNB       [reduce using rule 31 (Operation)]
-    tSTOP     reduce using rule 30 (Operation)
-    $default  reduce using rule 31 (Operation)
+    tSTOP     [reduce using rule 40 (Terme)]
+    $default  reduce using rule 40 (Terme)
 
 
 state 63
+
+   43 Affectation: tVAR tEGAL Operations . tSTOP
+
+    tSTOP  shift, and go to state 83
+
+
+state 64
+
+   31 Operation: Expr .
+   32          | tVAR tEGAL Expr .
+   33 Expr: Expr . tADD DivMul
+   34     | Expr . tSOU DivMul
+
+    tSOU  shift, and go to state 56
+    tADD  shift, and go to state 57
+
+    tPO       reduce using rule 31 (Operation)
+    tPO       [reduce using rule 32 (Operation)]
+    tVAR      reduce using rule 31 (Operation)
+    tVAR      [reduce using rule 32 (Operation)]
+    tNB       reduce using rule 31 (Operation)
+    tNB       [reduce using rule 32 (Operation)]
+    tSTOP     reduce using rule 31 (Operation)
+    $default  reduce using rule 32 (Operation)
+
+
+state 65
 
     5 Elem: tVAR .
 
     $default  reduce using rule 5 (Elem)
 
 
-state 64
+state 66
 
     4 Elem: tNB .
 
     $default  reduce using rule 4 (Elem)
 
 
-state 65
+state 67
 
    11 Arg: Elem .
    12    | Elem . tVIR Arg
 
-    tVIR  shift, and go to state 80
+    tVIR  shift, and go to state 84
 
     $default  reduce using rule 11 (Arg)
 
 
-state 66
-
-   10 FunctionCall: tFUNC tPO Arg . tPF tSTOP
-
-    tPF  shift, and go to state 81
-
-
-state 67
-
-   46 Cond: tNOT . Elem
-
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-
-    Elem  go to state 82
-
-
 state 68
 
-   43 Cond: Elem . tEGAL tEGAL Elem
-   44     | Elem . tNOT tEGAL Elem
-   45     | Elem .
-
-    tEGAL  shift, and go to state 83
-    tNOT   shift, and go to state 84
-
-    $default  reduce using rule 45 (Cond)
-
-
-state 69
-
-   47 If: tIF tPO Cond . tPF Corps
+   10 FunctionCall: tVAR tPO Arg . tPF tSTOP
 
     tPF  shift, and go to state 85
 
 
+state 69
+
+   49 Cond: tNOT . Elem
+
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+
+    Elem  go to state 86
+
+
 state 70
 
-   48 While: tWHILE tPO Cond . tPF Corps
+   46 Cond: Elem . tEGAL tEGAL Elem
+   47     | Elem . tNOT tEGAL Elem
+   48     | Elem .
 
-    tPF  shift, and go to state 86
+    tEGAL  shift, and go to state 87
+    tNOT   shift, and go to state 88
+
+    $default  reduce using rule 48 (Cond)
 
 
 state 71
 
-    9 Variables: tVAR tVIR . Variables
+   50 If: tIF tPO Cond . tPF Corps
 
-    tVAR  shift, and go to state 49
-
-    Variables  go to state 87
+    tPF  shift, and go to state 89
 
 
 state 72
 
-   40 Declaration: Type Variables tSTOP .
+   51 While: tWHILE tPO Cond . tPF Corps
 
-    $default  reduce using rule 40 (Declaration)
+    tPF  shift, and go to state 90
 
 
 state 73
 
-   31 Operation: tVAR tEGAL . Expr
+   42 Affectation: tVAR tEGAL . tNB tSTOP
+   43            | tVAR tEGAL . Operations tSTOP
+   44            | tVAR tEGAL . tVAR tSTOP
 
-    tPO  shift, and go to state 24
-    tNB  shift, and go to state 26
+    tPO   shift, and go to state 24
+    tVAR  shift, and go to state 61
+    tNB   shift, and go to state 62
 
-    Expr    go to state 88
-    DivMul  go to state 37
-    Terme   go to state 38
+    Operations  go to state 63
+    Operation   go to state 34
+    Expr        go to state 35
+    DivMul      go to state 36
+    Terme       go to state 37
 
 
 state 74
 
-   33 Expr: Expr tSOU DivMul .
-   35 DivMul: DivMul . tMUL Terme
-   36       | DivMul . tDIV Terme
+    9 Variables: tVAR tVIR . Variables
 
-    tDIV  shift, and go to state 57
-    tMUL  shift, and go to state 58
+    tVAR  shift, and go to state 91
 
-    $default  reduce using rule 33 (Expr)
+    Variables  go to state 92
 
 
 state 75
 
-   32 Expr: Expr tADD DivMul .
-   35 DivMul: DivMul . tMUL Terme
-   36       | DivMul . tDIV Terme
+   41 Declaration: Type Variables tSTOP .
 
-    tDIV  shift, and go to state 57
-    tMUL  shift, and go to state 58
-
-    $default  reduce using rule 32 (Expr)
+    $default  reduce using rule 41 (Declaration)
 
 
 state 76
 
-   36 DivMul: DivMul tDIV Terme .
+   32 Operation: tVAR tEGAL . Expr
 
-    $default  reduce using rule 36 (DivMul)
+    tPO  shift, and go to state 24
+    tNB  shift, and go to state 26
+
+    Expr    go to state 93
+    DivMul  go to state 36
+    Terme   go to state 37
 
 
 state 77
 
-   35 DivMul: DivMul tMUL Terme .
+   34 Expr: Expr tSOU DivMul .
+   36 DivMul: DivMul . tMUL Terme
+   37       | DivMul . tDIV Terme
 
-    $default  reduce using rule 35 (DivMul)
+    tDIV  shift, and go to state 58
+    tMUL  shift, and go to state 59
+
+    $default  reduce using rule 34 (Expr)
 
 
 state 78
 
-   41 Affectation: tVAR tEGAL tNB tSTOP .
+   33 Expr: Expr tADD DivMul .
+   36 DivMul: DivMul . tMUL Terme
+   37       | DivMul . tDIV Terme
 
-    $default  reduce using rule 41 (Affectation)
+    tDIV  shift, and go to state 58
+    tMUL  shift, and go to state 59
+
+    $default  reduce using rule 33 (Expr)
 
 
 state 79
 
-   42 Affectation: tVAR tEGAL Operations tSTOP .
+   37 DivMul: DivMul tDIV Terme .
 
-    $default  reduce using rule 42 (Affectation)
+    $default  reduce using rule 37 (DivMul)
 
 
 state 80
 
-   12 Arg: Elem tVIR . Arg
+   36 DivMul: DivMul tMUL Terme .
 
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-
-    $default  reduce using rule 13 (Arg)
-
-    Elem  go to state 65
-    Arg   go to state 89
+    $default  reduce using rule 36 (DivMul)
 
 
 state 81
 
-   10 FunctionCall: tFUNC tPO Arg tPF . tSTOP
+   44 Affectation: tVAR tEGAL tVAR tSTOP .
 
-    tSTOP  shift, and go to state 90
+    $default  reduce using rule 44 (Affectation)
 
 
 state 82
 
-   46 Cond: tNOT Elem .
+   42 Affectation: tVAR tEGAL tNB tSTOP .
 
-    $default  reduce using rule 46 (Cond)
+    $default  reduce using rule 42 (Affectation)
 
 
 state 83
 
-   43 Cond: Elem tEGAL . tEGAL Elem
+   43 Affectation: tVAR tEGAL Operations tSTOP .
 
-    tEGAL  shift, and go to state 91
+    $default  reduce using rule 43 (Affectation)
 
 
 state 84
 
-   44 Cond: Elem tNOT . tEGAL Elem
+   12 Arg: Elem tVIR . Arg
 
-    tEGAL  shift, and go to state 92
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+
+    $default  reduce using rule 13 (Arg)
+
+    Elem  go to state 67
+    Arg   go to state 94
 
 
 state 85
 
-   47 If: tIF tPO Cond tPF . Corps
+   10 FunctionCall: tVAR tPO Arg tPF . tSTOP
 
-    tCO  shift, and go to state 21
-
-    Corps  go to state 93
+    tSTOP  shift, and go to state 95
 
 
 state 86
 
-   48 While: tWHILE tPO Cond tPF . Corps
+   49 Cond: tNOT Elem .
 
-    tCO  shift, and go to state 21
-
-    Corps  go to state 94
+    $default  reduce using rule 49 (Cond)
 
 
 state 87
+
+   46 Cond: Elem tEGAL . tEGAL Elem
+
+    tEGAL  shift, and go to state 96
+
+
+state 88
+
+   47 Cond: Elem tNOT . tEGAL Elem
+
+    tEGAL  shift, and go to state 97
+
+
+state 89
+
+   50 If: tIF tPO Cond tPF . Corps
+
+    tCO  shift, and go to state 21
+
+    Corps  go to state 98
+
+
+state 90
+
+   51 While: tWHILE tPO Cond tPF . Corps
+
+    tCO  shift, and go to state 21
+
+    Corps  go to state 99
+
+
+state 91
+
+    8 Variables: tVAR .
+    9          | tVAR . tVIR Variables
+
+    tVIR  shift, and go to state 74
+
+    $default  reduce using rule 8 (Variables)
+
+
+state 92
 
     9 Variables: tVAR tVIR Variables .
 
     $default  reduce using rule 9 (Variables)
 
 
-state 88
+state 93
 
-   31 Operation: tVAR tEGAL Expr .
-   32 Expr: Expr . tADD DivMul
-   33     | Expr . tSOU DivMul
+   32 Operation: tVAR tEGAL Expr .
+   33 Expr: Expr . tADD DivMul
+   34     | Expr . tSOU DivMul
 
-    tSOU  shift, and go to state 55
-    tADD  shift, and go to state 56
+    tSOU  shift, and go to state 56
+    tADD  shift, and go to state 57
 
-    $default  reduce using rule 31 (Operation)
+    $default  reduce using rule 32 (Operation)
 
 
-state 89
+state 94
 
    12 Arg: Elem tVIR Arg .
 
     $default  reduce using rule 12 (Arg)
 
 
-state 90
+state 95
 
-   10 FunctionCall: tFUNC tPO Arg tPF tSTOP .
+   10 FunctionCall: tVAR tPO Arg tPF tSTOP .
 
     $default  reduce using rule 10 (FunctionCall)
 
 
-state 91
-
-   43 Cond: Elem tEGAL tEGAL . Elem
-
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-
-    Elem  go to state 95
-
-
-state 92
-
-   44 Cond: Elem tNOT tEGAL . Elem
-
-    tVAR  shift, and go to state 63
-    tNB   shift, and go to state 64
-
-    Elem  go to state 96
-
-
-state 93
-
-   47 If: tIF tPO Cond tPF Corps .
-
-    $default  reduce using rule 47 (If)
-
-
-state 94
-
-   48 While: tWHILE tPO Cond tPF Corps .
-
-    $default  reduce using rule 48 (While)
-
-
-state 95
-
-   43 Cond: Elem tEGAL tEGAL Elem .
-
-    $default  reduce using rule 43 (Cond)
-
-
 state 96
 
-   44 Cond: Elem tNOT tEGAL Elem .
+   46 Cond: Elem tEGAL tEGAL . Elem
 
-    $default  reduce using rule 44 (Cond)
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+
+    Elem  go to state 100
+
+
+state 97
+
+   47 Cond: Elem tNOT tEGAL . Elem
+
+    tVAR  shift, and go to state 65
+    tNB   shift, and go to state 66
+
+    Elem  go to state 101
+
+
+state 98
+
+   50 If: tIF tPO Cond tPF Corps .
+
+    $default  reduce using rule 50 (If)
+
+
+state 99
+
+   51 While: tWHILE tPO Cond tPF Corps .
+
+    $default  reduce using rule 51 (While)
+
+
+state 100
+
+   46 Cond: Elem tEGAL tEGAL Elem .
+
+    $default  reduce using rule 46 (Cond)
+
+
+state 101
+
+   47 Cond: Elem tNOT tEGAL Elem .
+
+    $default  reduce using rule 47 (Cond)

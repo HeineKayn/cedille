@@ -10,3 +10,4 @@ int addSymbole(char * var,char * type);
 void delProfondeur();
 ligneSymbole* findSymbole(char * var);
 void addProfondeur();
+void displayTable();

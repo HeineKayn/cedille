@@ -61,3 +61,10 @@ ligneSymbole* findSymbole(char * var){
     return ligne;
 }
 
+void displayTable(){
+    for (int i=0;i<TABLESIZE;i++){
+        if (tableSymbole[i] != NULL){
+            printf("Symbole ");
+        }   
+    }
+}

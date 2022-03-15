@@ -4,7 +4,7 @@
 #include "ts.h"
 
 int type;
-
+init_table();
 void yyerror(char *s);
 int yylex();
 %}
@@ -70,6 +70,7 @@ Terme : tPO Expr tPF
 Variables : tVAR {
 		addSymbole($1,type);
 		displayTable();
+		printf("Ca va\n");
 	}
 	| tVAR tVIR Variables {
 		addSymbole($1,type);

@@ -6,7 +6,7 @@ DIRECTORY=exemples
 CC=gcc
 CFLAGS=-Wall -g
 
-OBJ=cedille.tab.o lex.yy.o ts.o
+OBJ=cedille.tab.o lex.yy.o ts.o asm_code.o
 
 all: $(BIN)
 

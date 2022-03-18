@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ts.h"
+#include "asm_code.h"
 
 int type;
 void yyerror(char *s);
@@ -22,8 +23,8 @@ Main : tMAIN tPO Param tPF Corps
 //Variable et types
 Elem : tNB 
 	| tVAR //{check_exist($1)}
-Type : tINT { type = 0; }
-	| tCONST { type = 1; }
+Type : tINT { type = INT; }
+	| tCONST { type = CONST; }
 Objet : tNB 
 
 //Appel d'une fonction en général

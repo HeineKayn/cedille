@@ -2,6 +2,7 @@
 
 char OpAsm(Operation ope){
     switch(ope){
+        case MOVE:return 0;
         case ADD:return 1;
         case MUL:return 2;
         case SOU:return 3;

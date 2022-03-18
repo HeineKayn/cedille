@@ -10,7 +10,7 @@ typedef struct {
 } asmInstruct;
 
 enum Operation {
-    ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
+    MOV,ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
 };
 
 char OpAsm(Operation ope);

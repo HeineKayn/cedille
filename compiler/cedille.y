@@ -53,12 +53,12 @@ Instruction : Declaration
 //Operations de calcul
 
 Expr : Expr tADD Expr
-| Expr tSOU Expr
-| Expr tMUL Expr
-| Expr tDIV Expr
-| tNB
-| tVAR
-| tVAR tPO Arg tPF
+	| Expr tSOU Expr
+	| Expr tMUL Expr
+	| Expr tDIV Expr
+	| tNB
+	| tVAR
+	| tVAR tPO Arg tPF
 
 
 //Actions sur variables

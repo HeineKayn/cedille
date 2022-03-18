@@ -98,7 +98,7 @@ AddVar : tVAR {
 	if(addr < 0){
 		printf("La variable n'existait pas on l'a crée dans la table\n", $1);
 		addSymbole(tableSymbole,$1,type);
-		displayTable();
+		displayTable(tableSymbole);
 	}
 	else{
 		printf("La variable existait déjà dans la table\n");
@@ -135,6 +135,6 @@ int main(void) {
 #endif
   printf("Bienvenue dans cedille\n"); // yydebug=1;
   yyparse();
-  displayTable();
+  displayTable(tableSymbole);
   return 0;
 }

@@ -28,7 +28,7 @@ int addSymbole(char * var,int type){
         if(tableSymbole[i]==NULL){
             newSymb->address = i;
             tableSymbole[i] = newSymb;
-            return 0;
+            return i;
         }
     }
     return 1;

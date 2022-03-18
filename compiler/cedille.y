@@ -4,6 +4,8 @@
 #include "ts.h"
 
 int type;
+char * currentVar;
+
 void yyerror(char *s);
 int yylex();
 %}
@@ -20,25 +22,34 @@ Functions : FunctionDef Functions
 Main : tMAIN tPO Param tPF Corps
 
 //Variable et types
+Var : tVAR {
+	int addr = findSymboleAddr($1);
+	if(addr < 0){
+		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+	}
+	else{
+		printf("%s est bien définie\n", $1);
+	}
+}
 Elem : tNB 
-	| tVAR //{check_exist($1)}
+	|  Var
 Type : tINT { type = 0; }
 	| tCONST { type = 1; }
 Objet : tNB 
 
 //Appel d'une fonction en général
-FunctionCall : tVAR tPO Arg tPF tSTOP
+FunctionCall : tVAR tPO Arg tPF tSTOP // check existe 
 Arg : Elem 
 	| Elem tVIR Arg 
 	|
 
 //Definition d'une fonction en général
-FunctionDef : Type tVAR tPO Param tPF Corps
+FunctionDef : Type tVAR tPO Param tPF Corps // ajoute à table fonc
 ElemParam : Type tVAR 
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
-Corps : tCO Instructions tCF 
+Corps : tCO { addProfondeur(); } Instructions tCF { delProfondeur(); }
 
 //Instructions possibles
 Instructions : Instruction Instructions 
@@ -51,27 +62,36 @@ Instruction : Declaration
 	| DeclareAffect
 
 //Operations de calcul
-Expr : Expr tADD Expr
-| Expr tSOU Expr
-| Expr tMUL Expr
-| Expr tDIV Expr
-| tNB
-| tVAR
-| tVAR tPO Arg tPF
-
+// COMMENT EFFACER VAR TEMP APRES CALCUL
+// FAUT REMPLACER LES TEMPINDEX
+Expr : Expr tADD Expr {printf("ADD %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| Expr tSOU Expr {printf("SOU %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| Expr tMUL Expr {printf("MUL %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| Expr tDIV Expr {printf("DIV %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| tNB {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
+| tVAR {int addr = addSymbole($1); $$ = addr;}
+| tVAR tPO Arg tPF // fonction
+| Expr tEGAL tEGAL Expr  
+| Expr tNOT tEGAL Expr
+| tNOT Expr 
 
 //Actions sur variables
-Variables : tVAR {
-		addSymbole($1,type);
-		displayTable();
-		printf("Ca va\n");
-	}
-	| tVAR tVIR Variables {
+AddVar : tVAR {
+	int addr = findSymboleAddr($1);
+	if(addr < 0){
+		printf("La variable n'existait pas on l'a crée dans la table\n", $1);
 		addSymbole($1,type);
 		displayTable();
 	}
+	else{
+		printf("La variable existait déjà dans la table\n");
+	}
+}
+Variables : AddVar 
+	| AddVar tVIR Variables 
+
 Declaration : Type Variables tSTOP
-Affectation : tVAR tEGAL Expr tSTOP {
+Affectation : Var tEGAL Expr tSTOP {
 		int addr = findSymboleAddr($1);
 		printf("MOV %d XXX\n", addr);
 	}
@@ -81,17 +101,11 @@ DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	printf("déclaraffect %d\n", addr);
 }
 
-//Conditionnel
-Cond : Elem tEGAL tEGAL Elem 
-	| Elem tNOT tEGAL Elem
-	| Elem 
-	| tNOT Elem
-
 //If
-If : tIF tPO Cond tPF Corps
+If : tIF tPO Expr tPF Corps 
 
 //While
-While : tWHILE tPO Cond tPF Corps
+While : tWHILE tPO Expr tPF Corps
 
 %%
 

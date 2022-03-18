@@ -9,5 +9,7 @@ typedef struct {
 int addSymbole(char * var,int type);
 void delProfondeur();
 ligneSymbole* findSymbole(char * var);
+int findSymboleAddr(char * var);
 void addProfondeur();
 void displayTable();
+

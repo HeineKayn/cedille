@@ -11,10 +11,10 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char * var; }
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tERROR
-%token <nb> tINT
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA
+%token <nb> tINT 
 %token <var> tVAR
-//%type <nb> Expr DivMul Terme
+%type <nb> Expr 
 %start Functions
 %%
 Functions : FunctionDef Functions 
@@ -37,6 +37,9 @@ Elem : tNB
 Type : tINT { type = 0; }
 	| tCONST { type = 1; }
 Objet : tNB 
+
+// FAUT FAIRE TABLE SYMBOLE POUR FONCTION
+// MEME TRUC MAIS PROFONDEUR OSEF (ON FAIT PAS IMBRIQUE)
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF tSTOP // check existe 
@@ -66,15 +69,23 @@ Instruction : Declaration
 // COMMENT EFFACER VAR TEMP APRES CALCUL
 // FAUT REMPLACER LES TEMPINDEX
 Expr : Expr tADD Expr {printf("ADD %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-	| Expr tSOU Expr {printf("SOU %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-	| Expr tMUL Expr {printf("MUL %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-	| Expr tDIV Expr {printf("DIV %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-	| tNB {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
-	| tVAR {int addr = addSymbole($1); $$ = addr;}
-	| tVAR tPO Arg tPF // fonction
-	| Expr tEGAL tEGAL Expr  
-	| Expr tNOT tEGAL Expr
-	| tNOT Expr 
+| Expr tSOU Expr {printf("SOU %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| Expr tMUL Expr {printf("MUL %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| Expr tDIV Expr {printf("DIV %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+| tNB {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
+| tVAR {int addr = addSymbole($1); $$ = addr;}
+| tVAR tPO Arg tPF // fonction
+| Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
+						else{$$ = 0;}}
+| Expr tNOT tEGAL Expr {if ($1 != $4){$$ = 1;} 
+						else{$$ = 0;}}
+| Expr tSUPA Expr {if ($1 > $3){$$ = 1;} 
+						else{$$ = 0;}}
+| Expr tINFA Expr {if ($1 < $3){$$ = 1;} 
+						else{$$ = 0;}}
+| tNOT Expr {int addr = findSymboleAddr($2);
+			if (addr < 0){$$ = 0;} 
+			else{$$ = 1;}}
 
 //Actions sur variables
 AddVar : tVAR {

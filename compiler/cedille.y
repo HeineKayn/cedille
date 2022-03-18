@@ -4,7 +4,6 @@
 #include "ts.h"
 
 int type;
-init_table();
 void yyerror(char *s);
 int yylex();
 %}
@@ -46,25 +45,21 @@ Instructions : Instruction Instructions
 	|
 Instruction : Declaration 
 	| Affectation 
-	| FunctionCall 
-	| Operations
+	| FunctionCall
 	| If 
 	| While
 	| DeclareAffect
 
 //Operations de calcul
-Operations : Operation Operations 
-	| Operation
-Operation : Expr
-	| tVAR tEGAL Expr
-Expr : Expr tADD DivMul 
-	| Expr tSOU DivMul 
-	| DivMul  
-DivMul : DivMul tMUL Terme 
-	| DivMul tDIV Terme 
-	| Terme 
-Terme : tPO Expr tPF 
-	| tNB 
+
+Expr : Expr tADD Expr
+| Expr tSOU Expr
+| Expr tMUL Expr
+| Expr tDIV Expr
+| tNB
+| tVAR
+| tVAR tPO Arg tPF
+
 
 //Actions sur variables
 Variables : tVAR {
@@ -77,9 +72,11 @@ Variables : tVAR {
 		displayTable();
 	}
 Declaration : Type Variables tSTOP
-Affectation : tVAR tEGAL tNB tSTOP
-	| tVAR tEGAL Operations tSTOP
-	| tVAR tEGAL tVAR tSTOP //{check_exist($1), check_type($1,$3)}
+Affectation : tVAR tEGAL Expr tSTOP
+	{
+		int addr = findSymboleAddr($1);
+		printf("MOV %d XXX\n", addr);
+	}
 DeclareAffect : Type Affectation
 
 //Conditionnel
@@ -95,12 +92,19 @@ If : tIF tPO Cond tPF Corps
 While : tWHILE tPO Cond tPF Corps
 
 %%
+/*
+
+*/
+
+
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
+	init_table();
 #ifdef YYDEBUG
   yydebug = 1;
 #endif
   printf("Bienvenue dans cedille\n"); // yydebug=1;
   yyparse();
+  displayTable();
   return 0;
 }

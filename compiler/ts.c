@@ -51,16 +51,23 @@ void delProfondeur(){
 ligneSymbole* findSymbole(char * var){
     ligneSymbole * ligne = NULL;
     int i = 0;
-    int found = 0;
 
-    while(i<TABLESIZE && !found){
+    while(i<TABLESIZE){
         ligne = tableSymbole[i];
         if (ligne != NULL && ligne->profondeur == depth && ligne->var == var){
-            found = 1;
+            return ligne;
         }
         i++;
     }
-    return ligne;
+    return NULL;
+}
+
+int findSymboleAddr(char * var){
+    ligneSymbole * ligne = findSymbole(var);
+    if (ligne) {
+        return ligne->address;
+    }
+    return -1;
 }
 
 void displayTable(){

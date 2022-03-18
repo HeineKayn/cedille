@@ -23,6 +23,7 @@ int addSymbole(char * var,int type){
     newSymb->var = var;
     newSymb->type = type;
     newSymb->profondeur = depth;
+    printf("Var = %s, type = %d, profondeur = %d.\n",newSymb->var,newSymb->type,newSymb->profondeur);
     for (int i=0;i<TABLESIZE;i++){
         if(tableSymbole[i]==NULL){
             newSymb->address = i;
@@ -63,6 +64,7 @@ ligneSymbole* findSymbole(char * var){
 }
 
 void displayTable(){
+    printf("Affichage table\n");
     ligneSymbole * ligne = NULL;
     for (int i=0;i<TABLESIZE;i++){
         ligne = tableSymbole[i];

@@ -1,1 +1,1 @@
-cat Tests_ok/declaration_hard | ./cedille
+cat Tests_ok/declaration_medium | ./cedille 2> /dev/null

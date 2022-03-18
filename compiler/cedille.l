@@ -1,7 +1,9 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "cedille.tab.h"
+
 %}
 
 %option noyywrap
@@ -18,7 +20,7 @@ int    {
 }
 
 [a-zA-Z][a-zA-Z0-9_]* {
-	yylval.var =  strdup(yytext[0]);
+	yylval.var = strdup(yytext);
 	return tVAR;
 }
 

@@ -6,7 +6,7 @@ echo "-----------EXECUTING OK TESTS---------"
 for i in `ls $OK_FOLDER`
 do
     a="OK"
-    lol=$(cat $OK_FOLDER/$i | ./cedille 2>&1 | grep "syntax error" | wc -l)
+    lol=$(cat $OK_FOLDER/$i | ./cedille  2>&1 | grep "syntax error" | wc -l)
     if test $lol -eq 1
     then
         a="KO"

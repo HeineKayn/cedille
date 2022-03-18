@@ -66,15 +66,15 @@ Instruction : Declaration
 // COMMENT EFFACER VAR TEMP APRES CALCUL
 // FAUT REMPLACER LES TEMPINDEX
 Expr : Expr tADD Expr {printf("ADD %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-| Expr tSOU Expr {printf("SOU %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-| Expr tMUL Expr {printf("MUL %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-| Expr tDIV Expr {printf("DIV %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
-| tNB {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
-| tVAR {int addr = addSymbole($1); $$ = addr;}
-| tVAR tPO Arg tPF // fonction
-| Expr tEGAL tEGAL Expr  
-| Expr tNOT tEGAL Expr
-| tNOT Expr 
+	| Expr tSOU Expr {printf("SOU %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+	| Expr tMUL Expr {printf("MUL %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+	| Expr tDIV Expr {printf("DIV %d %d %d", TEMPINDEX, $1, $3); $$ = $1;}
+	| tNB {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
+	| tVAR {int addr = addSymbole($1); $$ = addr;}
+	| tVAR tPO Arg tPF // fonction
+	| Expr tEGAL tEGAL Expr  
+	| Expr tNOT tEGAL Expr
+	| tNOT Expr 
 
 //Actions sur variables
 AddVar : tVAR {

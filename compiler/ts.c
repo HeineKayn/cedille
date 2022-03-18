@@ -24,7 +24,7 @@ int addSymbole(char * var,enum Type type){
     newSymb->profondeur = depth;
     printf("Var = %s, type = %d, profondeur = %d.\n",newSymb->var,newSymb->type,newSymb->profondeur);
     for (int i=0;i<TABLESIZE;i++){
-        if(tableSymbole[i]==NULL){
+        if(!tableSymbole[i]){
             newSymb->address = i;
             tableSymbole[i] = newSymb;
             return i;
@@ -38,7 +38,7 @@ void delProfondeur(){
     if (depth){
         for (int i = 0; i < TABLESIZE; i++){
             ligne = tableSymbole[i];
-            if (ligne != NULL && ligne->profondeur == depth){
+            if (ligne && ligne->profondeur == depth){
                 free(tableSymbole[i]);
                 tableSymbole[i] = NULL;  
             }
@@ -52,7 +52,7 @@ ligneSymbole* findSymbole(char * var){
     ligneSymbole * ligne;
     while(i<TABLESIZE){
         ligne = tableSymbole[i];
-        if (ligne != NULL && ligne->profondeur == depth && ligne->var == var)
+        if (ligne && ligne->profondeur == depth && ligne->var == var)
             return ligne;
         i++;
     }
@@ -72,7 +72,7 @@ void displayTable(){
     ligneSymbole * ligne = NULL;
     for (int i=0;i<TABLESIZE;i++){
         ligne = tableSymbole[i];
-        if (ligne != NULL){
+        if (ligne){
             printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
         }   
     }

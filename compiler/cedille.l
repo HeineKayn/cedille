@@ -42,6 +42,10 @@ int    {
 "{" { return tCO; }
 "}" { return tCF; }
 "!" { return tNOT; }
+
+"<" { return tINFA; }
+">" { return tSUPA; }
+
 [ \n\t]+	{}
 
 .	{ return tERROR; }

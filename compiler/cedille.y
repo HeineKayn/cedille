@@ -51,7 +51,6 @@ Instruction : Declaration
 	| DeclareAffect
 
 //Operations de calcul
-
 Expr : Expr tADD Expr
 	| Expr tSOU Expr
 	| Expr tMUL Expr
@@ -72,12 +71,15 @@ Variables : tVAR {
 		displayTable();
 	}
 Declaration : Type Variables tSTOP
-Affectation : tVAR tEGAL Expr tSTOP
-	{
+Affectation : tVAR tEGAL Expr tSTOP {
 		int addr = findSymboleAddr($1);
 		printf("MOV %d XXX\n", addr);
 	}
-DeclareAffect : Type Affectation
+DeclareAffect : Type tVAR tEGAL Expr tSTOP{
+	addSymbole($2,type);
+	int addr = findSymboleAddr($2);
+	printf("déclaraffect %d\n", addr);
+}
 
 //Conditionnel
 Cond : Elem tEGAL tEGAL Elem 
@@ -92,10 +94,6 @@ If : tIF tPO Cond tPF Corps
 While : tWHILE tPO Cond tPF Corps
 
 %%
-/*
-
-*/
-
 
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {

@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+enum Operation {
+    MOV,ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
+};
+
 typedef struct {
     char opération;
     int * resultat;
@@ -9,8 +13,4 @@ typedef struct {
     int * numeroInstruction;
 } asmInstruct;
 
-enum Operation {
-    ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
-};
-
-char OpAsm(Operation ope);
+void addAsmInstruct(enum Operation operation,int * resultat,int * operande1,int * operande2);

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ts.h"
+#include "asm_code.h"
 
 int type;
 char * currentVar;

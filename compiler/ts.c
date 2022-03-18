@@ -12,12 +12,11 @@ void addProfondeur(){
 }
 
 void init_table(){
-    for (int i=0;i<TABLESIZE;i++){
+    for (int i=0;i<TABLESIZE;i++)
         tableSymbole[i]= NULL;
-    }
 }
 
-int addSymbole(char * var,int type){
+int addSymbole(char * var,enum Type type){
     printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = var;
@@ -49,14 +48,12 @@ void delProfondeur(){
 }
 
 ligneSymbole* findSymbole(char * var){
-    ligneSymbole * ligne = NULL;
     int i = 0;
-
+    ligneSymbole * ligne;
     while(i<TABLESIZE){
         ligne = tableSymbole[i];
-        if (ligne != NULL && ligne->profondeur == depth && ligne->var == var){
+        if (ligne != NULL && ligne->profondeur == depth && ligne->var == var)
             return ligne;
-        }
         i++;
     }
     return NULL;
@@ -64,13 +61,13 @@ ligneSymbole* findSymbole(char * var){
 
 int findSymboleAddr(char * var){
     ligneSymbole * ligne = findSymbole(var);
-    if (ligne) {
+    if (ligne) 
         return ligne->address;
-    }
     return -1;
 }
 
 void displayTable(){
+    printf("\n");
     printf("Affichage table\n");
     ligneSymbole * ligne = NULL;
     for (int i=0;i<TABLESIZE;i++){
@@ -79,4 +76,5 @@ void displayTable(){
             printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
         }   
     }
+    printf("\n");
 }

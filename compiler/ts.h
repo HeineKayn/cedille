@@ -1,12 +1,14 @@
 #include <stdlib.h>
+enum Type {INT,CONST};
+
 typedef struct {
     char * var;
-    int type;
+    enum Type type;
     int address;
     int profondeur;
 } ligneSymbole;
 
-int addSymbole(char * var,int type);
+int addSymbole(char * var,enum Type type);
 void delProfondeur();
 ligneSymbole* findSymbole(char * var);
 int findSymboleAddr(char * var);

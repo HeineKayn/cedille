@@ -14,3 +14,17 @@ a faire :
 optionnel :
 - pointeur 
 - erreurs
+
+-------------------
+
+Questions prof :
+
+- Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc, à définition ou à l'appel ?
+- Est-ce que param dans une table spécifique et relié à sa Fonction
+
+- Opérations marche pas, quand est-ce qu'on met la csnt dans l'espace temporaire
+
+(nous)
+- Estce que certaines instructions pas avant 
+- Là c'est chiant FunctionDef execute Corps qui execute add profondeur et rm profondeur
+- peut etre qu'on peut mettre 2x le même nom de var dans functionCall

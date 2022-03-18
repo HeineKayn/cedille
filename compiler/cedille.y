@@ -44,13 +44,32 @@ Objet : tNB
 // MEME TRUC MAIS PROFONDEUR OSEF (ON FAIT PAS IMBRIQUE)
 
 //Appel d'une fonction en général
-FunctionCall : tVAR tPO Arg tPF tSTOP // check existe 
+FunctionCall : tVAR tPO Arg tPF tSTOP {
+	int addr = findSymboleAddr(tableFunction,$1);
+	if(addr < 0){
+		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+	}
+	else{
+		printf("%s est bien définie\n", $1);
+	}
+}
 Arg : Elem 
 	| Elem tVIR Arg 
 	|
 
 //Definition d'une fonction en général
-FunctionDef : Type tVAR tPO Param tPF Corps // ajoute à table fonc
+//Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
+FunctionDef : Type tVAR tPO Param tPF Corps{
+	int addr = findSymboleAddr(tableFunction,$2);
+	if(addr < 0){
+		printf("La fonction n'existait pas on l'a crée dans la table\n", $2);
+		addSymbole(tableFunction,$2,type);
+		displayTable(tableFunction);
+	}
+	else{
+		printf("La fonction existait déjà dans la table\n");
+	}
+}
 ElemParam : Type tVAR 
 Param : ElemParam 
 	| ElemParam tVIR Param 
@@ -77,7 +96,7 @@ Expr : Expr tADD Expr {printf("ADD %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tSOU Expr {printf("SOU %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tMUL Expr {printf("MUL %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tDIV Expr {printf("DIV %d %d %d", $1, $1, $3); $$ = $1;}
-| tNB //{printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}
+| tNB  {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}  // là ça va pas parce que si on a "x = 1+2" on va écraser 1 par 2
 | tVAR {int addr = addSymbole(tableSymbole,$1); $$ = addr;}
 | tVAR tPO Arg tPF // fonction
 | Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
@@ -88,9 +107,6 @@ Expr : Expr tADD Expr {printf("ADD %d %d %d", $1, $1, $3); $$ = $1;}
 						else{$$ = 0;}}
 | Expr tINFA Expr {if ($1 < $3){$$ = 1;} 
 						else{$$ = 0;}}
-| tNOT Expr {int addr = findSymboleAddr(tableSymbole,$2);
-			if (addr < 0){$$ = 0;} 
-			else{$$ = 1;}}
 
 //Actions sur variables
 AddVar : tVAR {

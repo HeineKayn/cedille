@@ -4,11 +4,29 @@
 #include "ts.h"
 #include "asm_code.h"
 
+#ifndef TABLESIZE
+#define TABLESIZE 100
+#endif
+
 int type;
 int depth=0;
 
-ligneSymbole * tableSymbole[TABLESIZE];
-ligneSymbole * tableFunction[TABLESIZE];
+int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
+int adresseCalc = TABLESIZE;
+int notinit;
+
+// 2 var temp par profondeur
+// quand premiere (accu) utilisée on met dans 2eme
+int varTemp(){
+	notinit = 0;
+	if(!tableCalc[(depth-1)*2]){
+		tablCalc[(depth-1)*2] = 1;}
+	else{
+		notinit = 1;}
+	printf("MOVE %d %d", adressCalc+((depth-1)*2)+notinit, $1);
+	return adressCalc+((depth-1)*2+notinit);
+}
+
 
 void yyerror(char *s);
 int yylex();
@@ -18,6 +36,7 @@ int yylex();
 %token <nb> tINT 
 %token <var> tVAR
 %type <nb> Expr 
+%type <var> Var
 %start Functions
 %%
 Functions : FunctionDef Functions 
@@ -33,6 +52,7 @@ Var : tVAR {
 	}
 	else{
 		printf("%s est bien définie\n", $1);
+		$$ = addr;
 	}
 }
 Elem : tNB 
@@ -87,18 +107,12 @@ Instruction : Declaration
 	| While
 	| DeclareAffect
 
-//Operations de calcul
-// COMMENT EFFACER VAR TEMP APRES CALCUL
-// FAUT REMPLACER LES TEMPINDEX
-// CA VA PAS FAUT DE L'AIDE : 
-//		un seul var temporaire et on fold vers gauche ou 
-//		plusieurs var temporaire (on les traite comme symbole pur) -> comment les delete après ligne
 Expr : Expr tADD Expr {printf("ADD %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tSOU Expr {printf("SOU %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tMUL Expr {printf("MUL %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tDIV Expr {printf("DIV %d %d %d", $1, $1, $3); $$ = $1;}
-| tNB  {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}  // là ça va pas parce que si on a "x = 1+2" on va écraser 1 par 2
-| tVAR {} // check symbole existe
+| tNB  {$$ = varTemp();}
+| Var  {$$ = varTemp();}
 | tVAR tPO Arg tPF // fonction
 | Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
 						else{$$ = 0;}}
@@ -126,8 +140,7 @@ Variables : AddVar
 
 Declaration : Type Variables tSTOP
 Affectation : Var tEGAL Expr tSTOP {
-		int addr = findSymboleAddr(tableSymbole,$1,depth);
-		printf("MOV %d XXX\n", addr);
+		printf("MOV %d %d\n", $1, $3);
 	}
 DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	addSymbole(tableSymbole,$2,type,depth);
@@ -147,6 +160,10 @@ void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
 	init_table(tableSymbole);
 	init_table(tableFunction);
+
+    for (int i=0;i<TABLESIZE;i++)
+        tableCalc[i] = NULL;
+	}
 #ifdef YYDEBUG
   yydebug = 1;
 #endif

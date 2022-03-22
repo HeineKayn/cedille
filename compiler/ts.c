@@ -5,6 +5,9 @@
 #define TABLESIZE 100
 
 ligneSymbole * tableSymbole[TABLESIZE];
+ligneSymbole * tableVarTemp[TABLESIZE];
+ligneSymbole * tableFunc[TABLESIZE];
+
 int depth = 0;
 
 void addProfondeur(){

@@ -1,3 +1,6 @@
+#ifndef ASM_CODE_H
+#define ASM_CODE_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -18,3 +21,5 @@ typedef struct {
 void addAsmInstruct(enum Operation operation,int nombreArgument,...);
 
 void printAsmTable();
+
+#endif

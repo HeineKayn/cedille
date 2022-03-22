@@ -1,3 +1,6 @@
+#ifndef TS_H
+#define TS_H
+
 #include <stdlib.h>
 enum Type {INT,CONST};
 
@@ -15,3 +18,4 @@ int findSymboleAddr(char * var);
 void addProfondeur();
 void displayTable();
 
+#endif

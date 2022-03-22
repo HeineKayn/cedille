@@ -1,3 +1,11 @@
+#ifndef TABLESIZE
+#define TABLESIZE 100
+#endif
+
+#ifndef TS_H
+#define TS_H
+
+#include <stdio.h>
 #include <stdlib.h>
 enum Type {INT,CONST};
 
@@ -13,4 +21,6 @@ void delProfondeur(ligneSymbole ** tableSymbole, int depth);
 ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var, int depth);
 int findSymboleAddr(ligneSymbole ** tableSymbole,char * var, int depth);
 void addProfondeur();
-void displayTable(ligneSymbole ** tableSymbole);
+void displayTable();
+
+#endif

@@ -18,6 +18,7 @@ const  { return tCONST; }
 int    {
 	return tINT; 
 }
+return {return tRETURN; }
 
 [a-zA-Z][a-zA-Z0-9_]* {
 	yylval.var = strdup(yytext);

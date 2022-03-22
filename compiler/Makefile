@@ -7,6 +7,8 @@ CC=gcc
 CFLAGS=-Wall -g
 
 OBJ=cedille.tab.o lex.yy.o ts.o asm_code.o
+ASMTESTS=asm_code.o Test_asm.o
+TFTESTS=tf.o tableFonction_test.o
 
 all: $(BIN)
 
@@ -31,8 +33,10 @@ test: all
 generalTest: all
 	./generalTest.sh
 
-asmTest:
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) asm_code.c -o asm_code.o
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) Test_asm.c -o Test_asm.o
-	$(CC) $(CFLAGS) $(CPPFLAGS) Test_asm.o asm_code.o -o testAsm
-	./testAsm
+asmTest: $(ASMTESTS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+	./$@
+
+tableFonctionTest: $(TFTESTS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+	./$@

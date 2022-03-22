@@ -54,6 +54,7 @@ Param : ElemParam
 	| ElemParam tVIR Param 
 	|
 Corps : tCO { addProfondeur(); } Instructions tCF { delProfondeur(); }
+	| tCO { addProfondeur(); } Instructions tRETURN Elem tCF { delProfondeur(); }
 
 //Instructions possibles
 Instructions : Instruction Instructions 

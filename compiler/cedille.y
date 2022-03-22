@@ -15,6 +15,10 @@ int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
 int adresseCalc = TABLESIZE;
 int notinit;
 
+int pileIF[TABLESIZE];
+int currentPileIF = 0;
+
+
 // 2 var temp par profondeur
 // quand premiere (accu) utilisée on met dans 2eme
 int varTemp(){
@@ -149,7 +153,15 @@ DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 }
 
 //If
-If : tIF tPO Expr tPF Corps 
+/* If : tIF tPO Expr tPF Corps  */
+If : tIF tPO {
+		pileIF[currentPileIF] = addAsmInstruct("JMP",0); // est-ce que c'est ça ?
+		currentPileIF ++;
+	} 
+	Expr tPF {
+		editAsmInstruct(pileIF[currentPileIF],lastAsmInstruct()); // a l'address de l'instruction du if on met la bonne adresse
+		currentPileIF --;
+	} Corps 
 
 //While
 While : tWHILE tPO Expr tPF Corps

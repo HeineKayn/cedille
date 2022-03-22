@@ -18,7 +18,7 @@ typedef struct {
     int condition;
 } asmInstruct;
 
-void addAsmInstruct(enum Operation operation,int nombreArgument,...);
+int addAsmInstruct(enum Operation operation,int nombreArgument,...);
 
 void printAsmTable();
 

@@ -5,6 +5,7 @@
 #include "asm_code.h"
 
 int type;
+int depth=0;
 
 ligneSymbole * tableSymbole[TABLESIZE];
 ligneSymbole * tableFunction[TABLESIZE];
@@ -26,7 +27,7 @@ Main : tMAIN tPO Param tPF Corps
 
 //Variable et types
 Var : tVAR {
-	int addr = findSymboleAddr(tableSymbole,$1);
+	int addr = findSymboleAddr(tableSymbole,$1,depth);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
 	}
@@ -45,7 +46,7 @@ Objet : tNB
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF tSTOP {
-	int addr = findSymboleAddr(tableFunction,$1);
+	int addr = findSymboleAddr(tableFunction,$1,depth);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
 	}
@@ -60,10 +61,10 @@ Arg : Elem
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
 FunctionDef : Type tVAR tPO Param tPF Corps{
-	int addr = findSymboleAddr(tableFunction,$2);
+	int addr = findSymboleAddr(tableFunction,$2,depth);
 	if(addr < 0){
 		printf("La fonction n'existait pas on l'a crée dans la table\n", $2);
-		addSymbole(tableFunction,$2,type);
+		addSymbole(tableFunction,$2,type,depth);
 		displayTable(tableFunction);
 	}
 	else{
@@ -74,7 +75,7 @@ ElemParam : Type tVAR
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
-Corps : tCO { addProfondeur(); } Instructions tCF { delProfondeur(tableSymbole); }
+Corps : tCO { depth++; } Instructions tCF { delProfondeur(tableSymbole,depth); depth--; }
 
 //Instructions possibles
 Instructions : Instruction Instructions 
@@ -97,7 +98,7 @@ Expr : Expr tADD Expr {printf("ADD %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tMUL Expr {printf("MUL %d %d %d", $1, $1, $3); $$ = $1;}
 | Expr tDIV Expr {printf("DIV %d %d %d", $1, $1, $3); $$ = $1;}
 | tNB  {printf("MOVE %d %d", TEMPINDEX, $1); $$ = TEMPINDEX;}  // là ça va pas parce que si on a "x = 1+2" on va écraser 1 par 2
-| tVAR {int addr = addSymbole(tableSymbole,$1); $$ = addr;}
+| tVAR {} // check symbole existe
 | tVAR tPO Arg tPF // fonction
 | Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
 						else{$$ = 0;}}
@@ -113,7 +114,7 @@ AddVar : tVAR {
 	int addr = findSymboleAddr(tableSymbole,$1);
 	if(addr < 0){
 		printf("La variable n'existait pas on l'a crée dans la table\n", $1);
-		addSymbole(tableSymbole,$1,type);
+		addSymbole(tableSymbole,$1,type,depth);
 		displayTable(tableSymbole);
 	}
 	else{
@@ -125,12 +126,12 @@ Variables : AddVar
 
 Declaration : Type Variables tSTOP
 Affectation : Var tEGAL Expr tSTOP {
-		int addr = findSymboleAddr(tableSymbole,$1);
+		int addr = findSymboleAddr(tableSymbole,$1,depth);
 		printf("MOV %d XXX\n", addr);
 	}
 DeclareAffect : Type tVAR tEGAL Expr tSTOP{
-	addSymbole(tableSymbole,$2,type);
-	int addr = findSymboleAddr(tableSymbole,$2);
+	addSymbole(tableSymbole,$2,type,depth);
+	int addr = findSymboleAddr(tableSymbole,$2,depth);
 	printf("déclaraffect %d\n", addr);
 }
 

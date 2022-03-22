@@ -3,18 +3,12 @@
 
 #include "ts.h"
 
-int depth = 0;
-
-void addProfondeur(){
-    depth++;
-}
-
 void init_table(ligneSymbole ** tableSymbole){
     for (int i=0;i<TABLESIZE;i++)
         tableSymbole[i] = NULL;
 }
 
-int addSymbole(ligneSymbole ** tableSymbole, char * var,enum Type type){
+int addSymbole(ligneSymbole ** tableSymbole, char * var,enum Type type, int depth){
     printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = var;
@@ -31,7 +25,7 @@ int addSymbole(ligneSymbole ** tableSymbole, char * var,enum Type type){
     return 1;
 }
 
-void delProfondeur(ligneSymbole ** tableSymbole){
+void delProfondeur(ligneSymbole ** tableSymbole, int depth){
     ligneSymbole * ligne;
     if (depth){
         for (int i = 0; i < TABLESIZE; i++){
@@ -45,7 +39,7 @@ void delProfondeur(ligneSymbole ** tableSymbole){
     depth --;
 }
 
-ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var){
+ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var, int depth){
     int i = 0;
     ligneSymbole * ligne;
     while(i<TABLESIZE){
@@ -57,8 +51,8 @@ ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var){
     return NULL;
 }
 
-int findSymboleAddr(ligneSymbole ** tableSymbole,char * var){
-    ligneSymbole * ligne = findSymbole(tableSymbole,var);
+int findSymboleAddr(ligneSymbole ** tableSymbole,char * var, int depth){
+    ligneSymbole * ligne = findSymbole(tableSymbole,var, depth);
     if (ligne) 
         return ligne->address;
     return -1;

@@ -95,7 +95,7 @@ ElemParam : Type tVAR
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
-Corps : tCO { depth++; } Instructions tCF { delProfondeur(tableSymbole,depth); depth--; }
+Corps : tCO { depth++; } Instructions tCF { delProfondeur(depth); depth--; }
 
 //Instructions possibles
 Instructions : Instruction Instructions 

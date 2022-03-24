@@ -45,6 +45,7 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             if(nombreArguments!=3){
                 fprintf(stderr, "Il faut 3 arguments supplémentaires pour cette opération\n");
                 va_end(valist);
+                return -1;
             }
             newInstruct->resultat = va_arg(valist,int );
             newInstruct->operande1 = va_arg(valist,int );
@@ -70,7 +71,7 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
         default:
             fprintf(stderr, "Operation non reconnu\n");
             va_end(valist);
-            return; 
+            return -1; 
     }
     va_end(valist);
     for (int i=0;i<TABLESIZE;i++){
@@ -85,7 +86,7 @@ void printAsmTable(){
     for(int i=0;i<TABLESIZE;i++){
         asmInstruct * asm1 = asmTab[i];
         if(asm1) {
-            printf("Instruction : %c, %d, %d, %d \n",asm1->operation, asm1->operande1, asm1->operande2, asm1->resultat);
+            printf("Instruction : %c, %d, %d, %d \n",asm1->operation, asm1->resultat, asm1->operande1, asm1->operande2);
         }
     }
 }

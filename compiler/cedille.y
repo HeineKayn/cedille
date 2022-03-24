@@ -37,8 +37,9 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char * var; }
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR
 %token <nb> tINT 
+%token <nb> tNB
 %token <var> tVAR
 %type <nb> Expr 
 %type <nb> Var
@@ -86,14 +87,15 @@ Arg : Elem
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
 FunctionDef : Type tVAR tPO Param tPF Corps{
-	int addr = findSymboleAddr($2,depth);
+	int addr = findFonctionAddr($2);
 	if(addr < 0){
-		printf("La fonction n'existait pas on l'a crée dans la table\n", $2);
-		addSymbole($2,type,depth);
+		printf("La fonction n'existait pas on la crée dans la table\n", $2);
+		addFonction($2,type,depth);
 		displayTable();
 	}
 	else{
 		printf("La fonction existait déjà dans la table\n");
+		fprintf(stderr, "Redéfinition de fonction!\n");
 	}
 }
 ElemParam : Type tVAR 
@@ -112,10 +114,10 @@ Instruction : Declaration
 	| While
 	| DeclareAffect
 
-Expr : Expr tADD Expr {printf("ADD %d %d %d", $1, $1, $3); $$ = $1;}
-| Expr tSOU Expr {printf("SOU %d %d %d", $1, $1, $3); $$ = $1;}
-| Expr tMUL Expr {printf("MUL %d %d %d", $1, $1, $3); $$ = $1;}
-| Expr tDIV Expr {printf("DIV %d %d %d", $1, $1, $3); $$ = $1;}
+Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
+| Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
+| Expr tMUL Expr {addAsmInstruct(MUL,3,$1,$1,$3); $$ = $1;}
+| Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
 | tNB  {$$ = varTemp($1);}
 | Var  {$$ = varTemp($1);}
 | tVAR tPO Arg tPF // fonction
@@ -156,11 +158,11 @@ DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 //If
 /* If : tIF tPO Expr tPF Corps  */
 If : tIF tPO {
-		pileIF[currentPileIF] = addAsmInstruct("JMP",0); // est-ce que c'est ça ?
+		pileIF[currentPileIF] = addAsmInstruct(JMP,0); // est-ce que c'est ça ?
 		currentPileIF ++;
 	} 
 	Expr tPF {
-		editAsmInstruct(pileIF[currentPileIF],lastAsmInstruct()); // a l'address de l'instruction du if on met la bonne adresse
+		//editAsmInstruct(pileIF[currentPileIF],lastAsmInstruct()); // a l'address de l'instruction du if on met la bonne adresse
 		currentPileIF --;
 	} Corps 
 
@@ -173,9 +175,7 @@ void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
 	init_table();
 	initTableFonc();
-
-    for (int i=0;i<TABLESIZE;i++)
-        tableCalc[i] = NULL;
+	init_asm_table();
 #ifdef YYDEBUG
   yydebug = 1;
 #endif
@@ -183,5 +183,7 @@ int main(void) {
   yyparse();
   displayTable();
   displayTableFonction();
+  printf("Table ASM\n");
+  printAsmTable();
   return 0;
 }

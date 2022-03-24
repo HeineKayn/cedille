@@ -2,7 +2,7 @@
 
 ligneSymbole * tableSymbole[TABLESIZE];
 
-int depth = 0;
+//int depth = 0;
 
 void init_table(){
     for (int i=0;i<TABLESIZE;i++)
@@ -52,7 +52,7 @@ ligneSymbole* findSymbole(char * var, int depth){
 }
 
 int findSymboleAddr(char * var, int depth){
-    ligneSymbole * ligne = findSymbole(tableSymbole,var, depth);
+    ligneSymbole * ligne = findSymbole(var, depth);
     if (ligne) 
         return ligne->address;
     return -1;

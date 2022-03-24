@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-enum Type {INT,CONST};
+#include "global.h"
 
 typedef struct {
     char * var;

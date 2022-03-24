@@ -38,6 +38,9 @@ Tester :
     - Calcul
 
 - Rajouter prio à calcul
-- Faire le truc pour les if
+- Faire les return
+
+Problème avec les déf fonctions -> ça addsymbol direct et ça add pas profondeur
+On pars de programme de haut en bas mais du coup on
 
 Comment param fonction ?

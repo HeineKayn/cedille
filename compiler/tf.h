@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-enum Type {INT,CONST};
+#include "global.h"
 
 typedef struct {
     char * nomFonction;
@@ -13,9 +13,10 @@ typedef struct {
     int nombreParam;
 } ligneFonction;
 
+void initTableFonc();
 int addFonction(char * var,enum Type type,int nombreParam);
 ligneFonction* findFonction(char * var);
 int findFonctionAddr(char * var);
-void displayTable();
+void displayTableFonction();
 
 #endif

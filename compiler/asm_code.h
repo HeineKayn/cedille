@@ -9,6 +9,8 @@ enum Operation {
     MOV,ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
 };
 
+void init_asm_table();
+
 typedef struct {
     char operation;
     int resultat;

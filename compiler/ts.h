@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-enum Type {INT,CONST};
+#include "global.h"
 
 typedef struct {
     char * var;
@@ -18,10 +18,11 @@ typedef struct {
     int profondeur;
 } ligneSymbole;
 
-int addSymbole(ligneSymbole ** tableSymbole,char * var,enum Type type,int depth);
-void delProfondeur(ligneSymbole ** tableSymbole, int depth);
-ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var, int depth);
-int findSymboleAddr(ligneSymbole ** tableSymbole,char * var, int depth);
+void init_table();
+int addSymbole(char * var,enum Type type,int depth);
+void delProfondeur(int depth);
+ligneSymbole* findSymbole(char * var, int depth);
+int findSymboleAddr(char * var, int depth);
 void addProfondeur();
 void displayTable();
 

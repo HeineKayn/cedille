@@ -41,7 +41,7 @@ int findFonctionAddr(char * nom){
     return -1;
 }
 
-void displayTable(){
+void displayTableFonction(){
     printf("\n");
     printf("Affichage symbole table\n");
     ligneFonction * ligne;

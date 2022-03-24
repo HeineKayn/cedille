@@ -6,7 +6,7 @@ DIRECTORY=exemples
 CC=gcc
 CFLAGS=-Wall -g
 
-OBJ=cedille.tab.o lex.yy.o ts.o asm_code.o
+OBJ=cedille.tab.o lex.yy.o ts.o asm_code.o tf.o
 ASMTESTS=asm_code.o Test_asm.o
 TFTESTS=tf.o tableFonction_test.o
 

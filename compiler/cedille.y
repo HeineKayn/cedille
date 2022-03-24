@@ -89,7 +89,7 @@ Arg : Elem
 FunctionDef : Type tVAR tPO Param tPF Corps{
 	int addr = findFonctionAddr($2);
 	if(addr < 0){
-		printf("La fonction n'existait pas on la crée dans la table\n", $2);
+		printf("La fonction n'existait pas on la crée dans la table\n");
 		addFonction($2,type,depth);
 		displayTable();
 	}
@@ -134,7 +134,7 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 AddVar : tVAR {
 	int addr = findSymboleAddr($1,depth);
 	if(addr < 0){
-		printf("La variable n'existait pas on l'a crée dans la table\n", $1);
+		printf("La variable n'existait pas on l'a crée dans la table\n");
 		addSymbole($1,type,depth);
 		displayTable();
 	}
@@ -148,6 +148,7 @@ Variables : AddVar
 Declaration : Type Variables tSTOP
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
+	addAsmInstruct(COP,$1,$3);
 }
 DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	addSymbole($2,type,depth);

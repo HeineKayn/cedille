@@ -42,6 +42,7 @@ int nextAsmInstruct(){
             return i;
         }
     }
+    return -1;
 }
 
 int addAsmInstruct(enum Operation operation,int nombreArguments,...){
@@ -90,7 +91,9 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             return -1; 
     }
     va_end(valist);
-    asmTab[nextAsmInstruct()] = newInstruct;
+    int nextInstruct = nextAsmInstruct();
+    asmTab[nextInstruct] = newInstruct;
+    return nextInstruct;
 }
 
 void editAsmIf(int adressif,enum Operation operation){

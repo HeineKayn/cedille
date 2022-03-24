@@ -10,7 +10,7 @@ void init_table(){
         tableSymbole[i] = NULL;
 }
 
-int addSymbole(ligneSymbole ** tableSymbole, char * var,enum Type type, int depth){
+int addSymbole(char * var,enum Type type, int depth){
     printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = strdup(var);
@@ -27,7 +27,7 @@ int addSymbole(ligneSymbole ** tableSymbole, char * var,enum Type type, int dept
     return -1;
 }
 
-void delProfondeur(ligneSymbole ** tableSymbole, int depth){
+void delProfondeur(int depth){
     ligneSymbole * ligne;
     if (depth){
         for (int i = 0; i < TABLESIZE; i++){
@@ -38,10 +38,9 @@ void delProfondeur(ligneSymbole ** tableSymbole, int depth){
             }
         }
     }
-    depth --;
 }
 
-ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var, int depth){
+ligneSymbole* findSymbole(char * var, int depth){
     int i = 0;
     ligneSymbole * ligne;
     while(i<TABLESIZE){
@@ -53,14 +52,14 @@ ligneSymbole* findSymbole(ligneSymbole ** tableSymbole,char * var, int depth){
     return NULL;
 }
 
-int findSymboleAddr(ligneSymbole ** tableSymbole,char * var, int depth){
+int findSymboleAddr(char * var, int depth){
     ligneSymbole * ligne = findSymbole(tableSymbole,var, depth);
     if (ligne) 
         return ligne->address;
     return -1;
 }
 
-void displayTable(ligneSymbole ** tableSymbole){
+void displayTable(){
     printf("\n");
     printf("Affichage symbole table\n");
     ligneSymbole * ligne = NULL;

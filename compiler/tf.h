@@ -13,9 +13,10 @@ typedef struct {
     int nombreParam;
 } ligneFonction;
 
+void initTableFonc();
 int addFonction(char * var,enum Type type,int nombreParam);
 ligneFonction* findFonction(char * var);
 int findFonctionAddr(char * var);
-void displayTable();
+void displayTableFonction();
 
 #endif

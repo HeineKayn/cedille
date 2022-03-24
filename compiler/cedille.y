@@ -28,7 +28,7 @@ int varTemp(int var){
 		tableCalc[(depth-1)*2] = 1;}
 	else{
 		notinit = 1;}
-	printf("MOVE %d %d", adresseCalc+((depth-1)*2)+notinit, var);
+	printf("MOV %d %d\n", adresseCalc+((depth-1)*2)+notinit, var);
 	return adresseCalc+((depth-1)*2+notinit);
 }
 
@@ -183,7 +183,6 @@ int main(void) {
   yyparse();
   displayTable();
   displayTableFonction();
-  printf("Table ASM\n");
   printAsmTable();
   return 0;
 }

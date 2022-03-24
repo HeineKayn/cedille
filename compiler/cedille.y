@@ -161,7 +161,7 @@ If : tIF tPO Expr tPF {
 		currentPileIF ++;
 	} 
 	Corps {
-		editAsmIf(pileIF[currentPileIF],JMF); 
+		//editAsmIf(pileIF[currentPileIF],JMF); 
 		currentPileIF --;
 	} Else
 
@@ -171,7 +171,7 @@ Else : tELSE {
 		currentPileIF ++;
 	}
 	Corps{
-		editAsmIf(pileIF[currentPileIF],JMP); 
+		//editAsmIf(pileIF[currentPileIF],JMP); 
 		currentPileIF --;
 	}
 	|
@@ -191,7 +191,8 @@ int main(void) {
 #endif
   printf("Bienvenue dans cedille\n"); // yydebug=1;
   yyparse();
-  displayTable();
+  printf("Fin parse\n");
+  //displayTable();
   displayTableFonction();
   printAsmTable();
   return 0;

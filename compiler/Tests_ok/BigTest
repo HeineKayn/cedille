@@ -1,0 +1,8 @@
+int a(){
+    int b;
+}
+
+main(){
+    int d;
+    d = 2+8;
+}

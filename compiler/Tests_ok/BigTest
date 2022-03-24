@@ -1,8 +1,22 @@
+
 int a(){
     int b;
+    int c;
+    b = c;
+    return d;
+}
+
+h(){
+    
+}
+
+int z(){
+    a();
+    int f = 2;
 }
 
 main(){
     int d;
-    d = 2+8;
+    int b;
+    d = 2+z();
 }

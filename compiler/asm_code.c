@@ -27,7 +27,7 @@ char OpAsm(enum Operation op){
     }
 }
 
-void addAsmInstruct(enum Operation operation,int nombreArguments,...){
+int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     va_list valist;
     va_start(valist,nombreArguments);
     asmInstruct * newInstruct = (asmInstruct *)malloc(sizeof(asmInstruct));
@@ -76,7 +76,7 @@ void addAsmInstruct(enum Operation operation,int nombreArguments,...){
     for (int i=0;i<TABLESIZE;i++){
         if(asmTab[i]==NULL){
             asmTab[i] = newInstruct;
-            return;
+            return i;
         }
     }
 }

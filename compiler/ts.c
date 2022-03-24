@@ -1,7 +1,6 @@
 #include "ts.h"
 
 ligneSymbole * tableSymbole[TABLESIZE];
-ligneSymbole * tableVarTemp[TABLESIZE];
 
 int depth = 0;
 

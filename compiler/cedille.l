@@ -12,7 +12,9 @@
 
 main   { return tMAIN; }
 
-if     { return tIF; }
+if       { return tIF; }
+else     { return tELSE; }
+
 while  { return tWHILE; }
 const  { return tCONST; }
 int    {

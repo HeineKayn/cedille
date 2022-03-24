@@ -27,6 +27,14 @@ char OpAsm(enum Operation op){
     }
 }
 
+int nextAsmInstruct(){
+    for (int i=0;i<TABLESIZE;i++){
+        if(asmTab[i]==NULL){
+            return i;
+        }
+    }
+}
+
 int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     va_list valist;
     va_start(valist,nombreArguments);
@@ -73,12 +81,13 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             return; 
     }
     va_end(valist);
-    for (int i=0;i<TABLESIZE;i++){
-        if(asmTab[i]==NULL){
-            asmTab[i] = newInstruct;
-            return i;
-        }
-    }
+    asmTab[nextAsmInstruct()] = newInstruct;
+}
+
+void editAsmIf(int adressif,enum Operation operation){
+    asmInstruct * ifInstruct = asmTab[adressif] ;
+    ifInstruct->operation = OpAsm(operation);
+    ifInstruct->numeroInstruction = nextAsmInstruct();
 }
 
 void printAsmTable(){

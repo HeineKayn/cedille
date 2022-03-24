@@ -28,3 +28,16 @@ Questions prof :
 - Estce que certaines instructions pas avant 
 - Là c'est chiant FunctionDef execute Corps qui execute add profondeur et rm profondeur
 - peut etre qu'on peut mettre 2x le même nom de var dans functionCall
+
+-------------------
+
+Clean up
+Tester : 
+    - Ajout à la table
+    - Fonctions
+    - Calcul
+
+- Rajouter prio à calcul
+- Faire le truc pour les if
+
+Comment param fonction ?

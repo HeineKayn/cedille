@@ -36,7 +36,7 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char * var; }
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tNB tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tELSE, tRETURN
 %token <nb> tINT 
 %token <var> tVAR
 %type <nb> Expr 
@@ -152,16 +152,26 @@ DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	printf("déclaraffect %d\n", addr);
 }
 
-//If
-/* If : tIF tPO Expr tPF Corps  */
-If : tIF tPO {
+/* IF */
+If : tIF tPO Expr tPF {
 		pileIF[currentPileIF] = addAsmInstruct("JMP",0); // est-ce que c'est ça ?
 		currentPileIF ++;
 	} 
-	Expr tPF {
-		editAsmInstruct(pileIF[currentPileIF],lastAsmInstruct()); // a l'address de l'instruction du if on met la bonne adresse
+	Corps {
+		editAsmIf(pileIF[currentPileIF],JMF); 
 		currentPileIF --;
-	} Corps 
+	} Else
+
+/* ELSE */
+Else : tELSE {
+		pileIF[currentPileIF] = addAsmInstruct("JMP",0); // est-ce que c'est ça ?
+		currentPileIF ++;
+	}
+	Corps{
+		editAsmIf(pileIF[currentPileIF],JMP); 
+		currentPileIF --;
+	}
+	|
 
 //While
 While : tWHILE tPO Expr tPF Corps

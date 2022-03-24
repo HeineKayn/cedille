@@ -1,6 +1,15 @@
 #include "asm_code.h"
 #define TABLESIZE 100
 
+typedef struct {
+    char operation;
+    int resultat;
+    int operande1;
+    int operande2;
+    int numeroInstruction;
+    int condition;
+} asmInstruct;
+
 asmInstruct * asmTab[TABLESIZE];
 
 void init_asm_table(){
@@ -42,8 +51,6 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     asmInstruct * newInstruct = (asmInstruct *)malloc(sizeof(asmInstruct));
     newInstruct->operation = OpAsm(operation);
     switch(operation){
-        case MOV:
-            break;
         case ADD:
         case MUL:
         case SOU:
@@ -66,6 +73,7 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             break;
         case AFC:
             newInstruct->resultat = va_arg(valist,int );
+            newInstruct->operande1 = va_arg(valist,int );
             break;
         case JMP:
             newInstruct->numeroInstruction = va_arg(valist,int );
@@ -95,6 +103,7 @@ void editAsmIf(int adressif,enum Operation operation){
 }
 
 void printAsmTable(){
+    printf("Table ASM\n");
     for(int i=0;i<TABLESIZE;i++){
         asmInstruct * asm1 = asmTab[i];
         if(asm1) {

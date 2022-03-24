@@ -1,6 +1,13 @@
 #include "tf.h"
 #define TABLESIZE 100
 
+typedef struct {
+    char * nomFonction;
+    enum Type typeRetour;
+    int address;
+    int nombreParam;
+} ligneFonction;
+
 ligneFonction * tableFonction[TABLESIZE];
 
 void initTableFonc(){

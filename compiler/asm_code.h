@@ -11,15 +11,6 @@ enum Operation {
 
 void init_asm_table();
 
-typedef struct {
-    char operation;
-    int resultat;
-    int operande1;
-    int operande2;
-    int numeroInstruction;
-    int condition;
-} asmInstruct;
-
 int addAsmInstruct(enum Operation operation,int nombreArgument,...);
 void editAsmIf(int,enum Operation);
 void printAsmTable();

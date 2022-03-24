@@ -1,1 +1,1 @@
-cat Tests_ok/affectation_easy | ./cedille 2> /dev/null
+cat Tests_ok/operation_easy | ./cedille 2> /dev/null

@@ -28,7 +28,8 @@ int varTemp(int var){
 		tableCalc[(depth-1)*2] = 1;}
 	else{
 		notinit = 1;}
-	printf("MOV %d %d\n", adresseCalc+((depth-1)*2)+notinit, var);
+	printf("AFC %d %d\n", adresseCalc+((depth-1)*2)+notinit, var);
+	addAsmInstruct(AFC, 2, adresseCalc+((depth-1)*2)+notinit, var);
 	return adresseCalc+((depth-1)*2+notinit);
 }
 
@@ -148,12 +149,13 @@ Variables : AddVar
 Declaration : Type Variables tSTOP
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
-	addAsmInstruct(COP,$1,$3);
+	addAsmInstruct(COP,2,$1,$3);
 }
 DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	addSymbole($2,type,depth);
 	int addr = findSymboleAddr($2,depth);
-	printf("déclaraffect %d\n", addr);
+	printf("COP %d %d\n", $2, $4);
+	addAsmInstruct(COP,2,$2,$4);
 }
 
 /* IF */

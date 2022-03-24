@@ -1,5 +1,12 @@
 #include "ts.h"
 
+typedef struct {
+    char * var;
+    enum Type type;
+    int address;
+    int profondeur;
+} ligneSymbole;
+
 ligneSymbole * tableSymbole[TABLESIZE];
 
 //int depth = 0;

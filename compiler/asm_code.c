@@ -1,6 +1,15 @@
 #include "asm_code.h"
 #define TABLESIZE 100
 
+typedef struct {
+    char operation;
+    int resultat;
+    int operande1;
+    int operande2;
+    int numeroInstruction;
+    int condition;
+} asmInstruct;
+
 asmInstruct * asmTab[TABLESIZE];
 
 void init_asm_table(){

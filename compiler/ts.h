@@ -11,17 +11,9 @@
 #include <string.h>
 #include "global.h"
 
-typedef struct {
-    char * var;
-    enum Type type;
-    int address;
-    int profondeur;
-} ligneSymbole;
-
 void init_table();
 int addSymbole(char * var,enum Type type,int depth);
 void delProfondeur(int depth);
-ligneSymbole* findSymbole(char * var, int depth);
 int findSymboleAddr(char * var, int depth);
 void addProfondeur();
 void displayTable();

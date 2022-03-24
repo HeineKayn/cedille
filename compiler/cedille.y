@@ -44,6 +44,11 @@ int yylex();
 %token <var> tVAR
 %type <nb> Expr 
 %type <nb> Var
+
+%right tEGAL
+%left tADD tSOU
+%left tMUL tDIV
+
 %start Functions
 %%
 Functions : FunctionDef Functions 
@@ -121,7 +126,8 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 | Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
 | tNB  {$$ = varTemp($1);}
 | Var  {$$ = varTemp($1);}
-| tVAR tPO Arg tPF // fonction
+| tVAR tPO Arg tPF // gérer l'appel de fonction
+| tSOU Expr // inverser le signe
 | Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
 						else{$$ = 0;}}
 | Expr tNOT tEGAL Expr {if ($1 != $4){$$ = 1;} 

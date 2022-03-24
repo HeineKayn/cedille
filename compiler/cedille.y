@@ -37,7 +37,7 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char * var; }
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR tELSE
 %token <nb> tINT 
 %token <nb> tNB
 %token <var> tVAR
@@ -147,24 +147,34 @@ Variables : AddVar
 
 Declaration : Type Variables tSTOP
 Affectation : Var tEGAL Expr tSTOP {
-		printf("MOV %d %d\n", $1, $3);
-	}
+	printf("COP %d %d\n", $1, $3);
+}
 DeclareAffect : Type tVAR tEGAL Expr tSTOP{
 	addSymbole($2,type,depth);
 	int addr = findSymboleAddr($2,depth);
 	printf("déclaraffect %d\n", addr);
 }
 
-//If
-/* If : tIF tPO Expr tPF Corps  */
-If : tIF tPO {
+/* IF */
+If : tIF tPO Expr tPF {
 		pileIF[currentPileIF] = addAsmInstruct(JMP,0); // est-ce que c'est ça ?
 		currentPileIF ++;
 	} 
-	Expr tPF {
-		//editAsmInstruct(pileIF[currentPileIF],lastAsmInstruct()); // a l'address de l'instruction du if on met la bonne adresse
+	Corps {
+		editAsmIf(pileIF[currentPileIF],JMF); 
 		currentPileIF --;
-	} Corps 
+	} Else
+
+/* ELSE */
+Else : tELSE {
+		pileIF[currentPileIF] = addAsmInstruct(JMP,0); // est-ce que c'est ça ?
+		currentPileIF ++;
+	}
+	Corps{
+		editAsmIf(pileIF[currentPileIF],JMP); 
+		currentPileIF --;
+	}
+	|
 
 //While
 While : tWHILE tPO Expr tPF Corps

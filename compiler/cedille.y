@@ -72,7 +72,9 @@ Objet : tNB
 // MEME TRUC MAIS PROFONDEUR OSEF (ON FAIT PAS IMBRIQUE)
 
 //Appel d'une fonction en général
-FunctionCall : tVAR tPO Arg tPF tSTOP {
+FunctionCall : tVAR tPO Arg tPF {
+	addAsmInstruct(JMP,1,)
+} tSTOP {
 	int addr = findSymboleAddr($1,depth);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
@@ -121,7 +123,7 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 | Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
 | tNB  {$$ = varTemp($1);}
 | Var  {$$ = varTemp($1);}
-| tVAR tPO Arg tPF // fonction
+| tVAR tPO Arg tPF {addASmInstruct(JMP,1,findFonctionAddr($1))}// fonction
 | Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
 						else{$$ = 0;}}
 | Expr tNOT tEGAL Expr {if ($1 != $4){$$ = 1;} 
@@ -138,6 +140,7 @@ AddVar : tVAR {
 		printf("La variable n'existait pas on l'a crée dans la table\n");
 		addSymbole($1,type,depth);
 		displayTable();
+		
 	}
 	else{
 		printf("La variable existait déjà dans la table\n");
@@ -146,7 +149,7 @@ AddVar : tVAR {
 Variables : AddVar 
 	| AddVar tVIR Variables 
 
-Declaration : Type Variables tSTOP
+Declaration : Type Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);

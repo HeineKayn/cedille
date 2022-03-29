@@ -38,7 +38,7 @@ char OpAsm(enum Operation op){
 
 int nextAsmInstruct(){
     for (int i=0;i<TABLESIZE;i++){
-        if(asmTab[i]==NULL){
+        if(!asmTab[i]){
             return i;
         }
     }

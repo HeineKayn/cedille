@@ -67,6 +67,22 @@ int findSymboleAddr(char * var, char * scope){
     return -1;
 }
 
+enum Type varType(char * var, char * scope){
+    ligneSymbole *ligne = findSymbole(var,scope);
+    if(ligne)
+        return ligne->type;
+    fprintf(stderr,"%s\n","Pas de variable défini!");
+    return VOID;
+}
+
+int varProfondeur(char * var,char * scope){
+    ligneSymbole *ligne = findSymbole(var,scope);
+    if(ligne)
+        return ligne->profondeur;
+    fprintf(stderr,"%s\n","Pas de variable défini!");
+    return -1;
+}
+
 void displayTable(){
     printf("\n");
     printf("Affichage symbole table\n");

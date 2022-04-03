@@ -18,5 +18,7 @@ int findSymboleAddr(char * var, char * scope);
 void addProfondeur();
 void displayTable();
 void addProfondeurScope(char * scope);
+enum Type varType(char * var,char * scope);
+int varProfondeur(char * var,char * scope);
 
 #endif

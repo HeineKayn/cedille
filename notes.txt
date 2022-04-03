@@ -41,6 +41,8 @@ Tester :
 - Faire les return
 
 Problème avec les déf fonctions -> ça addsymbol direct et ça add pas profondeur
-On pars de programme de haut en bas mais du coup on
+On part de programme de haut en bas et on add la profondeur à chaque fonction qu'on rencontre
+Quand on voit un appel de fonction on change une var global (currnentFunc) pour avoir la profondeur de la fonction appelée
+et là quand on va findSymbol ça sera par rapport à cette profondeur de currnentFunc
 
 Comment param fonction ?

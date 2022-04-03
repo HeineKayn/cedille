@@ -22,17 +22,23 @@ int pileIF[TABLESIZE];
 int currentPileIF = 0;
 
 
-// 2 var temp par profondeur
+// 3 var temp par profondeur
 // quand premiere (accu) utilisée on met dans 2eme
+// si 2eme utilisé on fait mul ou div -> 3eme
+int current_accu = 0;
+
 int varTemp(int var){
 	notinit = 0;
-	if(!tableCalc[(depth-1)*2]){
-		tableCalc[(depth-1)*2] = 1;}
+	if(!tableCalc[(depth-1)*3]){
+		tableCalc[(depth-1)*3] = 1;
+		current_accu = 0;}
 	else{
-		notinit = 1;}
-	printf("AFC %d %d\n", adresseCalc+((depth-1)*2)+notinit, var);
-	addAsmInstruct(AFC, 2, adresseCalc+((depth-1)*2)+notinit, var);
-	return adresseCalc+((depth-1)*2+notinit);
+		notinit = 1;
+		current_accu = !current_accu;
+	}
+	int adress_ret = adresseCalc+((depth-1)*3)+notinit+current_accu;
+	addAsmInstruct(AFC, 2, adress_ret, var);
+	return adress_ret;
 }
 
 
@@ -79,8 +85,6 @@ Type : tINT
 	| {$$ = VOID;}
 Objet : tNB 
 
-// FAUT FAIRE TABLE SYMBOLE POUR FONCTION
-// MEME TRUC MAIS PROFONDEUR OSEF (ON FAIT PAS IMBRIQUE)
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF {
@@ -137,18 +141,34 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 | Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
 | Expr tMUL Expr {addAsmInstruct(MUL,3,$1,$1,$3); $$ = $1;}
 | Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
+| Expr tEGAL tEGAL Expr {
+	int res = 0;
+	if ($1 == $4){res = 1;}
+	addAsmInstruct(AFC,2,$1,res);
+	$$ = res;
+}
+| Expr tNOT tEGAL Expr {
+	int res = 0;
+	if ($1 != $4){res = 1;}
+	addAsmInstruct(AFC,2,$1,res);
+	$$ = res;
+}
+| Expr tSUPA Expr {
+	int res = 0;
+	if ($1 > $3){res = 1;}
+	addAsmInstruct(AFC,2,$1,res);
+	$$ = res;
+}
+| Expr tINFA Expr {
+	int res = 0;
+	if ($1 < $3){res = 1;}
+	addAsmInstruct(AFC,2,$1,res);
+	$$ = res;
+}
 | tNB  {$$ = varTemp($1);}
 | Var  {$$ = varTemp($1);}
 | tVAR tPO Arg tPF // gérer l'appel de fonction
-| tSOU Expr // inverser le signe
-| Expr tEGAL tEGAL Expr{if ($1 == $4){$$ = 1;} 
-						else{$$ = 0;}}
-| Expr tNOT tEGAL Expr {if ($1 != $4){$$ = 1;} 
-						else{$$ = 0;}}
-| Expr tSUPA Expr {if ($1 > $3){$$ = 1;} 
-						else{$$ = 0;}}
-| Expr tINFA Expr {if ($1 < $3){$$ = 1;} 
-						else{$$ = 0;}}
+// | tSOU Expr // gérer les chiffres négatifs ?
 
 //Actions sur variables
 AddVar : tVAR {
@@ -166,12 +186,12 @@ AddVar : tVAR {
 Variables : AddVar
 	| AddVar tVIR Variables 
 
-Declaration : Type {type=$1} Variables tSTOP 
+Declaration : Type {type=$1;} Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
-DeclareAffect : Type {type=$1} tVAR tEGAL Expr tSTOP{
+DeclareAffect : Type {type=$1;} tVAR tEGAL Expr tSTOP{
 	addSymbole($3,$1,depth,scope);
 	int addr = findSymboleAddr($3,scope);
 	printf("COP %d %d\n", $3, $5);
@@ -180,24 +200,24 @@ DeclareAffect : Type {type=$1} tVAR tEGAL Expr tSTOP{
 
 /* IF */
 If : tIF tPO Expr tPF {
-		pileIF[currentPileIF] = addAsmInstruct(JMP,0); // est-ce que c'est ça ?
+		pileIF[currentPileIF] = addAsmInstruct(JMP,0);
 		currentPileIF ++;
 	} 
 	Corps {
-		//editAsmIf(pileIF[currentPileIF],JMF); 
+		editAsmIf(pileIF[currentPileIF-1],JMF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
 	} Else
 
 /* ELSE */
 Else : tELSE {
-		pileIF[currentPileIF] = addAsmInstruct(JMP,0); // est-ce que c'est ça ?
+		pileIF[currentPileIF] = addAsmInstruct(JMP,0); 
 		currentPileIF ++;
 	}
 	Corps{
-		//editAsmIf(pileIF[currentPileIF],JMP); 
+		editAsmIf(pileIF[currentPileIF-1],JMP); 
 		currentPileIF --;
 	}
-	|
+	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
 //While
 While : tWHILE tPO Expr tPF Corps

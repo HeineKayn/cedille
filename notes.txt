@@ -40,9 +40,31 @@ Tester :
 - Rajouter prio à calcul
 - Faire les return
 
-Problème avec les déf fonctions -> ça addsymbol direct et ça add pas profondeur
-On part de programme de haut en bas et on add la profondeur à chaque fonction qu'on rencontre
-Quand on voit un appel de fonction on change une var global (currnentFunc) pour avoir la profondeur de la fonction appelée
-et là quand on va findSymbol ça sera par rapport à cette profondeur de currnentFunc
+-------------------
 
-Comment param fonction ?
+2 type d'appel de Fonction :
+    - normal (avec ;)
+    - dans expr
+Parametre fonction ? voir bxlr aussi
+
+On fait pas attention au type dans un calcul -> vérifier qu'on met pas un string
+
+Conflict au retour d'une fonction :
+    | Expr
+    | tVar 
+-> Expr contient tVar donc ambiguité
+On utilise tVar pour avoir le type
+
+Le if a pas de "CMP" pour vérifier que la valeur est ok
+
+--
+
+déclaration var se fait à l'analyse lexical
+-> première fonc va ajouter dans ASM à une adresse mémoire donnée
+chaque fonction mettra var à une @ différente
+sauf que du coup ça va prendre plein de place mémoire
+
+on voudrait que quand on va dans une fonction on "oublie" les var en la quittant
+mais lexer se fait de haut en bas donc on peut pas "simuler le fait de passer dans une fonction"
+
+declaraffect soucis avec declar -> conflict

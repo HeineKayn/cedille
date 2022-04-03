@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "type_traits": "cpp"
+        "*.pl": "prolog",
+        "type_traits": "cpp",
+        "if_easy": "c"
     }
 }

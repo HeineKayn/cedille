@@ -135,7 +135,7 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
 void editAsmIf(int adressif,enum Operation operation){
     asmInstruct * ifInstruct = asmTab[adressif] ;
     ifInstruct->operation = OpAsm(operation);
-    ifInstruct->operandes->operande = nextAsmInstruct();
+    ifInstruct->operandes->operande = nextAsmInstruct()+1;
 }
 
 void printAsmTable(){

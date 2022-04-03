@@ -1,5 +1,6 @@
 main(){
-    if(a){
-        
+    if(3){
+        int a;
     }
+    int c;
 }

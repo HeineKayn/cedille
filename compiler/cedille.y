@@ -13,6 +13,8 @@
 int depth=0;
 char * scope = NULL;
 enum Type type;
+enum Type type_fonc;
+int hasReturnValue;
 
 int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
 int adresseCalc = TABLESIZE;
@@ -46,7 +48,9 @@ int yylex();
 %token <var> tVAR
 %type <nb> Expr 
 %type <nb> Var
+%type <nb> AddVar
 %type <type> Type
+%type <type> Elem
 
 %right tEGAL
 %left tADD tSOU
@@ -71,9 +75,9 @@ Var : tVAR {
 		$$ = addr;
 	}
 }
-Elem : tNB 
-	|  Var
-	| Expr
+Elem : tNB {$$=INT;}
+	| Expr {$$=INT;}
+	| {$$=VOID;}
 Type : tINT
 	| tCONST 
 	| {$$ = VOID;}
@@ -83,9 +87,8 @@ Objet : tNB
 // MEME TRUC MAIS PROFONDEUR OSEF (ON FAIT PAS IMBRIQUE)
 
 //Appel d'une fonction en général
+//Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO Arg tPF {
-	//addAsmInstruct(JMP,1,)
-} tSTOP {
 	int addr = findFonctionAddr($1);
 	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
@@ -102,6 +105,10 @@ Arg : Elem
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
 FunctionDef : Type tVAR tPO Param tPF {
+	type_fonc = $1;
+	hasReturnValue=0;
+	if(type == VOID)
+		hasReturnValue=1;
 	scope = strdup($2);
 	int asmAdress = addAsmInstruct(NOP,0);
 	int addr = findFonctionAddr($2);
@@ -114,7 +121,13 @@ FunctionDef : Type tVAR tPO Param tPF {
 		printf("La fonction existait déjà dans la table\n");
 		fprintf(stderr, "Redéfinition de fonction!\n");
 	}
-} Corps { scope = NULL;}
+} Corps { 
+	scope = NULL;
+	if(!hasReturnValue){
+		fprintf(stderr, "%s\n", "Function has no return statement!");
+		exit(1);
+	}	
+}
 
 ElemParam : Type tVAR 
 Param : ElemParam 
@@ -127,11 +140,30 @@ Instructions : Instruction Instructions
 	|
 Instruction : Declaration 
 	| Affectation 
-	| FunctionCall
+	| FunctionCall tSTOP
 	| If 
 	| While
 	| DeclareAffect
-	| tRETURN Elem tSTOP
+	| ReturnStatement
+
+ReturnStatement : tRETURN Elem tSTOP {
+		if($2!=type_fonc){
+			printf("Pas meme type de retour!\n");
+			fprintf(stderr,"%s\n","Type de valeur retourné incorrect!");
+			exit(1);			
+		}
+		hasReturnValue = 1;
+	} 
+	| tRETURN tVAR tSTOP {
+		if(varProfondeur($2,scope)!=1){
+			printf("Variable pas dans meme profondeur!\n");
+			exit(1);
+		}
+		if(varType($2,scope)!=type_fonc){
+			printf("Type variable ne correspond pas à type fonction!\n");
+			exit(1);
+		}
+	}
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 | Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
@@ -162,6 +194,7 @@ AddVar : tVAR {
 	else{
 		printf("La variable existait déjà dans la table\n");
 	}
+	$$ = addr;
 }
 Variables : AddVar
 	| AddVar tVIR Variables 
@@ -171,9 +204,7 @@ Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
-DeclareAffect : Type {type=$1} tVAR tEGAL Expr tSTOP{
-	addSymbole($3,$1,depth,scope);
-	int addr = findSymboleAddr($3,scope);
+DeclareAffect : Type {type=$1} AddVar tEGAL Expr tSTOP{
 	printf("COP %d %d\n", $3, $5);
 	addAsmInstruct(COP,2,$3,$5);
 }

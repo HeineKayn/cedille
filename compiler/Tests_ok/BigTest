@@ -1,11 +1,15 @@
-
 int azyr(){
     int a;
     a = 3+5;
+    if(1==1){
+        int b;
+    }
+    const c;
     return a;
 }
 
 main(){
     int a;
-    azyr();
+    int b = a;
+    int c;
 }

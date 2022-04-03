@@ -16,15 +16,15 @@ void initTableFonc(){
     }
 }
 
-int addFonction(char * nom,enum Type type,int nombreParam){
+int addFonction(char * nom,enum Type type,int nombreParam,int asmAdress){
     printf("Adding function\n");
     ligneFonction * newFonc = (ligneFonction *)malloc(sizeof(ligneFonction));
     newFonc->nomFonction = strdup(nom);
     newFonc->typeRetour = type;
     newFonc->nombreParam = nombreParam;
+    newFonc->address = asmAdress;
     for (int i=0;i<TABLESIZE;i++){
         if(!tableFonction[i]){
-            newFonc->address = i+TABLESIZE*2;
             tableFonction[i] = newFonc;
             return i;
         }
@@ -50,7 +50,7 @@ int findFonctionAddr(char * nom){
 
 void displayTableFonction(){
     printf("\n");
-    printf("Affichage symbole table\n");
+    printf("Affichage fonction table\n");
     ligneFonction * ligne;
     for (int i=0;i<TABLESIZE;i++){
         ligne = tableFonction[i];

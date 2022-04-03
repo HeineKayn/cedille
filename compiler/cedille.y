@@ -4,13 +4,15 @@
 #include "ts.h"
 #include "asm_code.h"
 #include "tf.h"
+#include "global.h"
 
 #ifndef TABLESIZE
 #define TABLESIZE 100
 #endif
 
-int type;
 int depth=0;
+char * scope = NULL;
+enum Type type;
 
 int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
 int adresseCalc = TABLESIZE;
@@ -37,13 +39,14 @@ int varTemp(int var){
 void yyerror(char *s);
 int yylex();
 %}
-%union { int nb; char * var; }
+%union { int nb; char * var; enum Type type;}
 %token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR tELSE
 %token <nb> tINT 
 %token <nb> tNB
 %token <var> tVAR
 %type <nb> Expr 
 %type <nb> Var
+%type <type> Type
 
 %right tEGAL
 %left tADD tSOU
@@ -54,11 +57,12 @@ int yylex();
 Functions : FunctionDef Functions 
 	| Main
 
-Main : tMAIN tPO Param tPF Corps
+Main : tMAIN {scope = strdup("main");}tPO Param tPF Corps
+{scope = NULL; addAsmInstruct(NOP,0);}
 
 //Variable et types
 Var : tVAR {
-	int addr = findSymboleAddr($1,depth);
+	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
 	}
@@ -69,8 +73,10 @@ Var : tVAR {
 }
 Elem : tNB 
 	|  Var
-Type : tINT { type = 0; }
-	| tCONST { type = 1; }
+	| Expr
+Type : tINT
+	| tCONST 
+	| {$$ = VOID;}
 Objet : tNB 
 
 // FAUT FAIRE TABLE SYMBOLE POUR FONCTION
@@ -78,9 +84,10 @@ Objet : tNB
 
 //Appel d'une fonction en général
 FunctionCall : tVAR tPO Arg tPF {
-	addAsmInstruct(JMP,1,)
+	//addAsmInstruct(JMP,1,)
 } tSTOP {
-	int addr = findSymboleAddr($1,depth);
+	int addr = findFonctionAddr($1);
+	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
 	}
@@ -94,23 +101,26 @@ Arg : Elem
 
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
-FunctionDef : Type tVAR tPO Param tPF Corps{
+FunctionDef : Type tVAR tPO Param tPF {
+	scope = strdup($2);
+	int asmAdress = addAsmInstruct(NOP,0);
 	int addr = findFonctionAddr($2);
 	if(addr < 0){
 		printf("La fonction n'existait pas on la crée dans la table\n");
-		addFonction($2,type,depth);
-		displayTable();
+		addFonction($2,$1,depth,asmAdress);
+		displayTableFonction();
 	}
 	else{
 		printf("La fonction existait déjà dans la table\n");
 		fprintf(stderr, "Redéfinition de fonction!\n");
 	}
-}
+} Corps { scope = NULL;}
+
 ElemParam : Type tVAR 
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
-Corps : tCO { depth++; } Instructions tCF { delProfondeur(depth); depth--; }
+Corps : tCO { depth++; } Instructions tCF { depth--; }
 
 //Instructions possibles
 Instructions : Instruction Instructions 
@@ -121,6 +131,7 @@ Instruction : Declaration
 	| If 
 	| While
 	| DeclareAffect
+	| tRETURN Elem tSTOP
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 | Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
@@ -141,30 +152,30 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 
 //Actions sur variables
 AddVar : tVAR {
-	int addr = findSymboleAddr($1,depth);
+	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("La variable n'existait pas on l'a crée dans la table\n");
-		addSymbole($1,type,depth);
+		int adressSymb = addSymbole($1,type,depth,scope);
+		addAsmInstruct(AFC,2,adressSymb,0);
 		displayTable();
-		
 	}
 	else{
 		printf("La variable existait déjà dans la table\n");
 	}
 }
-Variables : AddVar 
+Variables : AddVar
 	| AddVar tVIR Variables 
 
-Declaration : Type Variables tSTOP 
+Declaration : Type {type=$1} Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
-DeclareAffect : Type tVAR tEGAL Expr tSTOP{
-	addSymbole($2,type,depth);
-	int addr = findSymboleAddr($2,depth);
-	printf("COP %d %d\n", $2, $4);
-	addAsmInstruct(COP,2,$2,$4);
+DeclareAffect : Type {type=$1} tVAR tEGAL Expr tSTOP{
+	addSymbole($3,$1,depth,scope);
+	int addr = findSymboleAddr($3,scope);
+	printf("COP %d %d\n", $3, $5);
+	addAsmInstruct(COP,2,$3,$5);
 }
 
 /* IF */

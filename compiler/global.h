@@ -1,4 +1,4 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
-enum Type {INT,CONST};
+enum Type {VOID,INT,CONST};
 #endif

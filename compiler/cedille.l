@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "global.h"
 #include "cedille.tab.h"
 
 %}
@@ -16,8 +17,11 @@ if       { return tIF; }
 else     { return tELSE; }
 
 while  { return tWHILE; }
-const  { return tCONST; }
+const  { 
+	yylval.type = CONST;
+	return tCONST; }
 int    {
+	yylval.type = INT;
 	return tINT; 
 }
 return {return tRETURN; }

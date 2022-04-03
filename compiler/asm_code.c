@@ -1,16 +1,32 @@
 #include "asm_code.h"
 #define TABLESIZE 100
 
+typedef struct nextOperande nextOperande;
+struct nextOperande{
+    int operande;
+    nextOperande * next;
+};
+
 typedef struct {
     char operation;
-    int resultat;
-    int operande1;
-    int operande2;
-    int numeroInstruction;
-    int condition;
+    nextOperande * operandes;
 } asmInstruct;
 
 asmInstruct * asmTab[TABLESIZE];
+
+void addOperande(asmInstruct * asminstruct,int operande){
+    nextOperande * newOp = (nextOperande *)malloc(sizeof(nextOperande));
+    newOp->operande = operande;
+    newOp->next = NULL;
+    if(asminstruct->operandes == NULL){
+        asminstruct->operandes = newOp;
+        return;
+    }
+    nextOperande * listOperande = asminstruct->operandes;
+    while(listOperande->next != NULL)
+        listOperande = listOperande->next;
+    listOperande->next = newOp;
+}
 
 void init_asm_table(){
     for (int i=0;i<TABLESIZE;i++)
@@ -19,7 +35,7 @@ void init_asm_table(){
 
 char OpAsm(enum Operation op){
     switch(op){
-        case MOV:return '0';
+        case NOP:return '0';
         case ADD:return '1';
         case MUL:return '2';
         case SOU:return '3';
@@ -36,11 +52,29 @@ char OpAsm(enum Operation op){
     }
 }
 
+char * stringAsm(char op){
+    switch(op){
+        case '0':return "NOP";
+        case '1':return "ADD";
+        case '2':return "MUL";
+        case '3':return "SOU";
+        case '4':return "DIV";
+        case '5':return "COP";
+        case '6':return "AFC";
+        case '7':return "JMP";
+        case '8':return "JMF";
+        case '9':return "INF";
+        case 'A':return "SUP";
+        case 'B':return "EQU";
+        case 'C':return "PRI";
+        default:return "Not recognized";
+    }
+}
+
 int nextAsmInstruct(){
     for (int i=0;i<TABLESIZE;i++){
-        if(!asmTab[i]){
+        if(!asmTab[i])
             return i;
-        }
     }
     return -1;
 }
@@ -50,7 +84,9 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     va_start(valist,nombreArguments);
     asmInstruct * newInstruct = (asmInstruct *)malloc(sizeof(asmInstruct));
     newInstruct->operation = OpAsm(operation);
+    newInstruct->operandes = NULL;
     switch(operation){
+        case NOP:break;
         case ADD:
         case MUL:
         case SOU:
@@ -63,27 +99,27 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
                 va_end(valist);
                 return -1;
             }
-            newInstruct->resultat = va_arg(valist,int );
-            newInstruct->operande1 = va_arg(valist,int );
-            newInstruct->operande2 = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
+            addOperande(newInstruct,va_arg(valist,int ));
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         case COP:
-            newInstruct->resultat = va_arg(valist,int );
-            newInstruct->operande1 = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         case AFC:
-            newInstruct->resultat = va_arg(valist,int );
-            newInstruct->operande1 = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         case JMP:
-            newInstruct->numeroInstruction = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         case JMF:
-            newInstruct->condition = va_arg(valist,int );
-            newInstruct->numeroInstruction = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         case PRI:
-            newInstruct->resultat = va_arg(valist,int );
+            addOperande(newInstruct,va_arg(valist,int ));
             break;
         default:
             fprintf(stderr, "Operation non reconnu\n");
@@ -99,15 +135,26 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
 void editAsmIf(int adressif,enum Operation operation){
     asmInstruct * ifInstruct = asmTab[adressif] ;
     ifInstruct->operation = OpAsm(operation);
-    ifInstruct->numeroInstruction = nextAsmInstruct();
+    ifInstruct->operandes->operande = nextAsmInstruct();
 }
 
 void printAsmTable(){
     printf("Table ASM\n");
+    asmInstruct * asm1;
     for(int i=0;i<TABLESIZE;i++){
-        asmInstruct * asm1 = asmTab[i];
-        if(asm1) {
-            printf("Instruction : %c, %d, %d, %d \n",asm1->operation, asm1->resultat, asm1->operande1, asm1->operande2);
+        asm1 = asmTab[i];
+        if(asm1){
+            printf("Instruction :");
+            fflush(stdout);
+            printf(" %s",stringAsm(asm1->operation));
+            fflush(stdout);
+            nextOperande * operandes = asm1->operandes;
+            while(operandes != NULL){
+                printf(" %d",operandes->operande);
+                fflush(stdout);
+                operandes = operandes->next;  
+            }
+            printf("\n");
         }
     }
 }

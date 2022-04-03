@@ -1,22 +1,11 @@
 
-int a(){
-    int b;
-    int c;
-    b = c;
-    return d;
-}
-
-h(){
-
-}
-
-int z(){
-    a();
-    int f = 2;
+int azyr(){
+    int a;
+    a = 3+5;
+    return a;
 }
 
 main(){
-    int d;
-    int b;
-    d = 2+z();
+    int a;
+    azyr();
 }

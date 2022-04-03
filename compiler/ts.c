@@ -5,6 +5,7 @@ typedef struct {
     enum Type type;
     int address;
     int profondeur;
+    char * scopeFonction;
 } ligneSymbole;
 
 ligneSymbole * tableSymbole[TABLESIZE];
@@ -16,13 +17,14 @@ void init_table(){
         tableSymbole[i] = NULL;
 }
 
-int addSymbole(char * var,enum Type type, int depth){
+int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope){
     printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = strdup(var);
     newSymb->type = type;
     newSymb->profondeur = depth;
-    printf("Var = %s, type = %d, profondeur = %d.\n",newSymb->var,newSymb->type,newSymb->profondeur);
+    newSymb->scopeFonction = strdup(nomFonctionScope);
+    printf("Var = %s, type = %d, profondeur = %d, scope = %s.\n",newSymb->var,newSymb->type,newSymb->profondeur,newSymb->scopeFonction);
     for (int i=0;i<TABLESIZE;i++){
         if(!tableSymbole[i]){
             newSymb->address = i;
@@ -46,20 +48,20 @@ void delProfondeur(int depth){
     }
 }
 
-ligneSymbole* findSymbole(char * var, int depth){
+ligneSymbole* findSymbole(char * var, char * scope){
     int i = 0;
     ligneSymbole * ligne;
     while(i<TABLESIZE){
         ligne = tableSymbole[i];
-        if (ligne && ligne->profondeur == depth && !strcmp(ligne->var,var))
+        if (ligne && !strcmp(ligne->scopeFonction,scope) && !strcmp(ligne->var,var))
             return ligne;
         i++;
     }
     return NULL;
 }
 
-int findSymboleAddr(char * var, int depth){
-    ligneSymbole * ligne = findSymbole(var, depth);
+int findSymboleAddr(char * var, char * scope){
+    ligneSymbole * ligne = findSymbole(var, scope);
     if (ligne) 
         return ligne->address;
     return -1;
@@ -72,7 +74,7 @@ void displayTable(){
     for (int i=0;i<TABLESIZE;i++){
         ligne = tableSymbole[i];
         if (ligne){
-            printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d\n",ligne->type,ligne->var,ligne->address,ligne->profondeur);
+            printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d, scope fonction = %s\n",ligne->type,ligne->var,ligne->address,ligne->profondeur, ligne->scopeFonction);
         }   
     }
     printf("\n");

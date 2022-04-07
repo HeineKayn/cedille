@@ -5,40 +5,16 @@ gcc lex.yy.c calc.tab.c -o an-lex.exe -lfl
 
 -------------------
 
-a faire :
-- cnst/variables seulement def dans main
-- opérations
-- if/else
-- while
+faire while
+finir func 
 
-optionnel :
-- pointeur 
-- erreurs
+comment marche JMF pour les 
+problèmes de conflict
 
--------------------
+faut inverser la condition du if (il fait jump dans le else)
 
-Questions prof :
-
-- Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc, à définition ou à l'appel ?
-- Est-ce que param dans une table spécifique et relié à sa Fonction
-
-- Opérations marche pas, quand est-ce qu'on met la csnt dans l'espace temporaire
-
-(nous)
-- Estce que certaines instructions pas avant 
-- Là c'est chiant FunctionDef execute Corps qui execute add profondeur et rm profondeur
-- peut etre qu'on peut mettre 2x le même nom de var dans functionCall
-
--------------------
-
-Clean up
-Tester : 
-    - Ajout à la table
-    - Fonctions
-    - Calcul
-
-- Rajouter prio à calcul
-- Faire les return
+faut voir si instruct commencent à 0 ou 1 -> test if_easy et while_easy
+(le while saute un cran trop loin pour le JMF du haut)
 
 -------------------
 
@@ -55,9 +31,7 @@ Conflict au retour d'une fonction :
 -> Expr contient tVar donc ambiguité
 On utilise tVar pour avoir le type
 
-Le if a pas de "CMP" pour vérifier que la valeur est ok
-
---
+----
 
 déclaration var se fait à l'analyse lexical
 -> première fonc va ajouter dans ASM à une adresse mémoire donnée

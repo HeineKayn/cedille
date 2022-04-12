@@ -232,11 +232,11 @@ DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
 	addAsmInstruct(COP,2,$2,$4);
 }
 
-TypeDecl : Type {type=$1}
+TypeDecl : Type {type=$1;}
 
 /* IF */
 If : tIF tPO Expr tPF {
-		pileIF[currentPileIF] = addAsmInstruct(JMP,0);
+		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
 		currentPileIF ++;
 	} 
 	Corps {
@@ -257,7 +257,7 @@ Else : tELSE {
 
 //While
 While : tWHILE tPO Expr tPF {
-		pileIF[currentPileIF] = addAsmInstruct(JMF,0);
+		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
 		currentPileIF ++;
 	} 
 	Corps {

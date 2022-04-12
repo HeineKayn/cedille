@@ -183,20 +183,17 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 	$$ = res;
 }
 | Expr tNOT tEGAL Expr {
-	int res = 0;
-	if ($1 != $4){res = 1;}
+	int res = ($1 != $4);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
 | Expr tSUPA Expr {
-	int res = 0;
-	if ($1 > $3){res = 1;}
+	int res = ($1 > $3);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
 | Expr tINFA Expr {
-	int res = 0;
-	if ($1 < $3){res = 1;}
+	int res = ($1 < $3);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
@@ -232,7 +229,7 @@ DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
 	addAsmInstruct(COP,2,$2,$4);
 }
 
-TypeDecl : Type {type=$1}
+TypeDecl : Type {type=$1;}
 
 /* IF */
 If : tIF tPO Expr tPF {

@@ -1,15 +1,6 @@
-int azyr(){
-    int a;
-    a = 3+5;
-    if(1==1){
-        int b;
-    }
-    const c;
-    return a;
-}
-
 main(){
-    int a;
-    int b = a;
+    int a = 1;
+    if()
+    int b = a*5;
     int c;
 }

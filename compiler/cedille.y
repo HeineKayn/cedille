@@ -256,7 +256,19 @@ Else : tELSE {
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
 //While
-While : tWHILE tPO Expr tPF Corps
+While : tWHILE tPO Expr tPF {
+		pileIF[currentPileIF] = addAsmInstruct(JMF,0);
+		currentPileIF ++;
+	} 
+	Corps {
+		printf("%d,",currentPileIF);
+		printf("%d,",pileIF[currentPileIF-1]);
+		printf("%d\n",pileIF[currentPileIF]);
+
+		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
+		editAsmIf(pileIF[currentPileIF-1],JMF);
+		currentPileIF --;
+	}
 
 %%
 

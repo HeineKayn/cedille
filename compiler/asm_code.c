@@ -144,6 +144,9 @@ void printAsmTable(){
     for(int i=0;i<TABLESIZE;i++){
         asm1 = asmTab[i];
         if(asm1){
+
+            printf("[%d] ",i);
+
             printf("Instruction :");
             fflush(stdout);
             printf(" %s",stringAsm(asm1->operation));

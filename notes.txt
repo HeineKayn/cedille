@@ -5,12 +5,17 @@ gcc lex.yy.c calc.tab.c -o an-lex.exe -lfl
 
 -------------------
 
-faire while
 finir func 
 
 ranger le projet
 
+les > < marchent pas
+
 JMF VAR puis @JUMP
+JMF @ ou val ?
+
+Utiliser INF et SUP en ASM au lieu d'en C
+
 problèmes de conflict
 
 faut inverser la condition du if (il fait jump dans le else)

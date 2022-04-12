@@ -8,7 +8,9 @@ gcc lex.yy.c calc.tab.c -o an-lex.exe -lfl
 faire while
 finir func 
 
-comment marche JMF pour les 
+ranger le projet
+
+JMF VAR puis @JUMP
 problèmes de conflict
 
 faut inverser la condition du if (il fait jump dans le else)

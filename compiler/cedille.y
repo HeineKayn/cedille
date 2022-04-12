@@ -219,15 +219,17 @@ AddVar : tVAR {
 Variables : AddVar
 	| AddVar tVIR Variables 
 
-Declaration : Type {type=$1;} Variables tSTOP 
+Declaration : TypeDecl Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
-DeclareAffect : Type {type=$1;} AddVar tEGAL Expr tSTOP{
+DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
 	printf("COP %d %d\n", $3, $5);
 	addAsmInstruct(COP,2,$3,$5);
 }
+
+TypeDecl : Type {type=$1}
 
 /* IF */
 If : tIF tPO Expr tPF {

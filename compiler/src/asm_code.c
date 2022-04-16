@@ -132,22 +132,20 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     return nextInstruct;
 }
 
-void editAsmIf(int adressif,enum Operation operation){
+void editAsmCond(int adressif,enum Operation operation,enum Cond cond){
+    int supplement = 0; 
+    if (cond==IF){supplement = 1;} // Si on fait un if on saute un cran plus loin pour éviter enjamber le JMP du else
     asmInstruct * instruct = asmTab[adressif] ;
     instruct->operation = OpAsm(operation);
-    instruct->operandes->next->operande = nextAsmInstruct()+1;
-}
 
-void editAsmWhile(int adresswhile,enum Operation operation){
-    asmInstruct * instruct = asmTab[adresswhile] ;
-    instruct->operation = OpAsm(operation);
-    instruct->operandes->next->operande = nextAsmInstruct();
-}
-
-void editAsmElse(int adresselse,enum Operation operation){
-    asmInstruct * instruct = asmTab[adresselse] ;
-    instruct->operation = OpAsm(operation);
-    instruct->operandes->operande = nextAsmInstruct();
+    // On est un JMP donc on a un seul opperande
+    if (cond==ELSE){
+        instruct->operandes->operande = nextAsmInstruct();
+    }
+    // On a 2 opperandes avec JMF
+    else{
+        instruct->operandes->next->operande = nextAsmInstruct()+supplement;
+    }
 }
 
 void printAsmTable(){

@@ -237,7 +237,7 @@ If : tIF tPO Expr tPF {
 		currentPileIF ++;
 	} 
 	Corps {
-		editAsmIf(pileIF[currentPileIF-1],JMF); // on saute un cran plus loin pour éviter le potentiel JMP du else
+		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
 	} Else
 
@@ -247,7 +247,7 @@ Else : tELSE {
 		currentPileIF ++;
 	}
 	Corps{
-		editAsmElse(pileIF[currentPileIF-1],JMP); 
+		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
@@ -259,7 +259,7 @@ While : tWHILE tPO Expr tPF {
 	} 
 	Corps {
 		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
-		editAsmWhile(pileIF[currentPileIF-1],JMF);
+		editAsmCond(pileIF[currentPileIF-1],JMF,WHILE);
 		currentPileIF --;
 	}
 

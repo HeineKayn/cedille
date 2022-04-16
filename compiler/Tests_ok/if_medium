@@ -1,9 +1,9 @@
 main(){
-    if(3 == 3){
+    if(1){
         int a;
     }
     else{
-        int b;
+        int b=1;
     }
     int c;
 }

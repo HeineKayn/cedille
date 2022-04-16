@@ -133,9 +133,21 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
 }
 
 void editAsmIf(int adressif,enum Operation operation){
-    asmInstruct * ifInstruct = asmTab[adressif] ;
-    ifInstruct->operation = OpAsm(operation);
-    ifInstruct->operandes->next->operande = nextAsmInstruct()+1;
+    asmInstruct * instruct = asmTab[adressif] ;
+    instruct->operation = OpAsm(operation);
+    instruct->operandes->next->operande = nextAsmInstruct()+1;
+}
+
+void editAsmWhile(int adresswhile,enum Operation operation){
+    asmInstruct * instruct = asmTab[adresswhile] ;
+    instruct->operation = OpAsm(operation);
+    instruct->operandes->next->operande = nextAsmInstruct();
+}
+
+void editAsmElse(int adresselse,enum Operation operation){
+    asmInstruct * instruct = asmTab[adresselse] ;
+    instruct->operation = OpAsm(operation);
+    instruct->operandes->operande = nextAsmInstruct();
 }
 
 void printAsmTable(){

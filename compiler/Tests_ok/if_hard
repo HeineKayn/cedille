@@ -1,8 +1,12 @@
 main(){
     if(1){
-        if(3){}
-        else{
-            int a;
+        if(3){
+            int d;
         }
+        else{
+            int a = 3;
+        }
+        int b;
     }
+    int c;
 }

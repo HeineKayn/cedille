@@ -1,4 +1,4 @@
-#include "ts.h"
+#include "../header/ts.h"
 
 typedef struct {
     char * var;

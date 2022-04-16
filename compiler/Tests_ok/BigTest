@@ -1,17 +1,6 @@
 main(){
     int a = 2;
-    a = a>5;
+    if(a>5){
+        int c = 1;
+    }
 }
-
-
-
-
-Table ASM
-[0] Instruction : AFC 0 0
-[1] Instruction : AFC 100 1
-[2] Instruction : COP 0 100
-[3] Instruction : COP 102 0
-[4] Instruction : AFC 101 0
-[5] Instruction : AFC 102 1
-[6] Instruction : COP 0 1
-[7] Instruction : NOP

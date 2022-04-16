@@ -1,4 +1,4 @@
-#include "tf.h"
+#include "../header/tf.h"
 
 int main(void){
     char * nom = "ViktorFunc";

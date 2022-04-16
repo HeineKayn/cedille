@@ -1,4 +1,4 @@
-#include "asm_code.h"
+#include "../header/asm_code.h"
 #define TABLESIZE 100
 
 typedef struct nextOperande nextOperande;

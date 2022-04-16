@@ -1,10 +1,10 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-#include "ts.h"
-#include "asm_code.h"
-#include "tf.h"
-#include "global.h"
+#include "header/ts.h"
+#include "header/asm_code.h"
+#include "header/tf.h"
+#include "header/global.h"
 
 #ifndef TABLESIZE
 #define TABLESIZE 100

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "global.h"
+#include "header/global.h"
 #include "cedille.tab.h"
 
 %}

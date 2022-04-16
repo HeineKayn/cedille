@@ -1,4 +1,4 @@
-#include "tf.h"
+#include "../header/tf.h"
 #define TABLESIZE 100
 
 typedef struct {

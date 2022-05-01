@@ -142,12 +142,12 @@ Corps : tCO { depth++; } Instructions tCF { depth--; }
 //Instructions possibles
 Instructions : Instruction Instructions 
 	|
-Instruction : Declaration 
+Instruction : DeclareAffect
+	| Declaration 
 	| Affectation 
 	| FunctionCall tSTOP
 	| If 
 	| While
-	| DeclareAffect
 	| ReturnStatement
 
 ReturnStatement : tRETURN Elem tSTOP {
@@ -206,7 +206,7 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 AddVar : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
-		printf("La variable n'existait pas on l'a crée dans la table\n");
+		printf("La variable n'existait pas on la créée dans la table\n");
 		int adressSymb = addSymbole($1,type,depth,scope);
 		addAsmInstruct(AFC,2,adressSymb,0);
 		displayTable();
@@ -237,6 +237,7 @@ If : tIF tPO Expr tPF {
 	Corps {
 		editAsmIf(pileIF[currentPileIF-1],JMF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
+		delProfondeur(depth-1);
 	} Else
 
 /* ELSE */
@@ -247,6 +248,7 @@ Else : tELSE {
 	Corps{
 		editAsmIf(pileIF[currentPileIF-1],JMP); 
 		currentPileIF --;
+		delProfondeur(depth-1);
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 

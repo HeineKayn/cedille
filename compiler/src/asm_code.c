@@ -1,4 +1,4 @@
-#include "asm_code.h"
+#include "../header/asm_code.h"
 #define TABLESIZE 100
 
 typedef struct nextOperande nextOperande;
@@ -132,10 +132,20 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
     return nextInstruct;
 }
 
-void editAsmIf(int adressif,enum Operation operation){
-    asmInstruct * ifInstruct = asmTab[adressif] ;
-    ifInstruct->operation = OpAsm(operation);
-    ifInstruct->operandes->operande = nextAsmInstruct()+1;
+void editAsmCond(int adressif,enum Operation operation,enum Cond cond){
+    int supplement = 0; 
+    if (cond==IF){supplement = 1;} // Si on fait un if on saute un cran plus loin pour éviter enjamber le JMP du else
+    asmInstruct * instruct = asmTab[adressif] ;
+    instruct->operation = OpAsm(operation);
+
+    // On est un JMP donc on a un seul opperande
+    if (cond==ELSE){
+        instruct->operandes->operande = nextAsmInstruct();
+    }
+    // On a 2 opperandes avec JMF
+    else{
+        instruct->operandes->next->operande = nextAsmInstruct()+supplement;
+    }
 }
 
 void printAsmTable(){
@@ -144,6 +154,9 @@ void printAsmTable(){
     for(int i=0;i<TABLESIZE;i++){
         asm1 = asmTab[i];
         if(asm1){
+
+            printf("[%d] ",i);
+
             printf("Instruction :");
             fflush(stdout);
             printf(" %s",stringAsm(asm1->operation));

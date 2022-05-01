@@ -1,10 +1,10 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-#include "ts.h"
-#include "asm_code.h"
-#include "tf.h"
-#include "global.h"
+#include "header/ts.h"
+#include "header/asm_code.h"
+#include "header/tf.h"
+#include "header/global.h"
 
 #ifndef TABLESIZE
 #define TABLESIZE 100
@@ -29,7 +29,7 @@ int currentPileIF = 0;
 // si 2eme utilisé on fait mul ou div -> 3eme
 int current_accu = 0;
 
-int varTemp(int var){
+int varTemp(int var,int isVariable){
 	notinit = 0;
 	if(!tableCalc[(depth-1)*3]){
 		tableCalc[(depth-1)*3] = 1;
@@ -39,7 +39,10 @@ int varTemp(int var){
 		current_accu = !current_accu;
 	}
 	int adress_ret = adresseCalc+((depth-1)*3)+notinit+current_accu;
-	addAsmInstruct(AFC, 2, adress_ret, var);
+	if(isVariable)
+		addAsmInstruct(COP, 2, adress_ret, var);
+	else
+		addAsmInstruct(AFC, 2, adress_ret, var);
 	return adress_ret;
 }
 
@@ -75,6 +78,7 @@ Var : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -97,6 +101,7 @@ FunctionCall : tVAR tPO Arg tPF {
 	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -124,6 +129,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 	else{
 		printf("La fonction existait déjà dans la table\n");
 		fprintf(stderr, "Redéfinition de fonction!\n");
+		exit(1);
 	}
 } Corps { 
 	scope = NULL;
@@ -180,25 +186,22 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 	$$ = res;
 }
 | Expr tNOT tEGAL Expr {
-	int res = 0;
-	if ($1 != $4){res = 1;}
+	int res = ($1 != $4);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
 | Expr tSUPA Expr {
-	int res = 0;
-	if ($1 > $3){res = 1;}
+	int res = ($1 > $3);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
 | Expr tINFA Expr {
-	int res = 0;
-	if ($1 < $3){res = 1;}
+	int res = ($1 < $3);
 	addAsmInstruct(AFC,2,$1,res);
 	$$ = res;
 }
-| tNB  {$$ = varTemp($1);}
-| Var  {$$ = varTemp($1);}
+| tNB  {$$ = varTemp($1,0);}
+| Var  {$$ = varTemp($1,1);}
 | tVAR tPO Arg tPF // gérer l'appel de fonction
 // | tSOU Expr // gérer les chiffres négatifs ?
 
@@ -206,9 +209,9 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 AddVar : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
-		printf("La variable n'existait pas on la créée dans la table\n");
-		int adressSymb = addSymbole($1,type,depth,scope);
-		addAsmInstruct(AFC,2,adressSymb,0);
+		printf("La variable n'existait pas on l'a crée dans la table\n");
+		addr = addSymbole($1,type,depth,scope);
+		addAsmInstruct(AFC,2,addr,0);
 		displayTable();
 	}
 	else{
@@ -219,25 +222,27 @@ AddVar : tVAR {
 Variables : AddVar
 	| AddVar tVIR Variables 
 
-Declaration : Type {type=$1;} Variables tSTOP 
+Declaration : TypeDecl Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
-DeclareAffect : Type {type=$1;} AddVar tEGAL Expr tSTOP{
-	printf("COP %d %d\n", $3, $5);
-	addAsmInstruct(COP,2,$3,$5);
+DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
+	printf("COP %d %d\n", $2, $4);
+	addAsmInstruct(COP,2,$2,$4);
 }
+
+TypeDecl : Type {type=$1;}
 
 /* IF */
 If : tIF tPO Expr tPF {
-		pileIF[currentPileIF] = addAsmInstruct(JMP,0);
+		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
 		currentPileIF ++;
 	} 
 	Corps {
-		editAsmIf(pileIF[currentPileIF-1],JMF); // on saute un cran plus loin pour éviter le potentiel JMP du else
+		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
-		delProfondeur(depth-1);
+		delProfondeur(depth+1);
 	} Else
 
 /* ELSE */
@@ -246,14 +251,23 @@ Else : tELSE {
 		currentPileIF ++;
 	}
 	Corps{
-		editAsmIf(pileIF[currentPileIF-1],JMP); 
+		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
-		delProfondeur(depth-1);
+		delProfondeur(depth+1);
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
 //While
-While : tWHILE tPO Expr tPF Corps
+While : tWHILE tPO Expr tPF {
+		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
+		currentPileIF ++;
+	} 
+	Corps {
+		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
+		editAsmCond(pileIF[currentPileIF-1],JMF,WHILE);
+		currentPileIF --;
+		delProfondeur(depth+1);
+	}
 
 %%
 

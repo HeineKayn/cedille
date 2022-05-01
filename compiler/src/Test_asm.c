@@ -1,4 +1,4 @@
-#include "asm_code.h"
+#include "../header/asm_code.h"
 
 int main(void){
     addAsmInstruct(ADD,3,250,2,3);

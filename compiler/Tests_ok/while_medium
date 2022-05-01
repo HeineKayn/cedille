@@ -1,0 +1,10 @@
+main(){
+    int a;
+    while(1){
+        while(2){
+            a=3;
+        }
+        a = 2;
+    }
+    a=4;
+}

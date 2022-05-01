@@ -1,4 +1,4 @@
-#include "ts.h"
+#include "../header/ts.h"
 
 typedef struct {
     char * var;
@@ -32,6 +32,7 @@ int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope){
             return i;
         }
     }
+    fprintf(stderr,"Error adding symbole!\n");
     return -1;
 }
 
@@ -64,6 +65,7 @@ int findSymboleAddr(char * var, char * scope){
     ligneSymbole * ligne = findSymbole(var, scope);
     if (ligne) 
         return ligne->address;
+    fprintf(stderr,"Error finding symbole!\n");
     return -1;
 }
 

@@ -78,6 +78,7 @@ Var : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -100,6 +101,7 @@ FunctionCall : tVAR tPO Arg tPF {
 	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -127,6 +129,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 	else{
 		printf("La fonction existait déjà dans la table\n");
 		fprintf(stderr, "Redéfinition de fonction!\n");
+		exit(1);
 	}
 } Corps { 
 	scope = NULL;
@@ -145,12 +148,12 @@ Corps : tCO { depth++; } Instructions tCF { depth--; }
 //Instructions possibles
 Instructions : Instruction Instructions 
 	|
-Instruction : Declaration 
+Instruction : DeclareAffect
+	| Declaration 
 	| Affectation 
 	| FunctionCall tSTOP
 	| If 
 	| While
-	| DeclareAffect
 	| ReturnStatement
 
 ReturnStatement : tRETURN Elem tSTOP {
@@ -234,6 +237,7 @@ If : tIF tPO Expr tPF {
 	Corps {
 		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
+		delProfondeur(depth+1);
 	} Else
 
 /* ELSE */
@@ -244,6 +248,7 @@ Else : tELSE {
 	Corps{
 		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
+		delProfondeur(depth+1);
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
@@ -256,6 +261,7 @@ While : tWHILE tPO Expr tPF {
 		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
 		editAsmCond(pileIF[currentPileIF-1],JMF,WHILE);
 		currentPileIF --;
+		delProfondeur(depth+1);
 	}
 
 %%

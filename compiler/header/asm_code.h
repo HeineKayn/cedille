@@ -6,7 +6,7 @@
 #include <stdarg.h>
 
 enum Operation {
-    NOP,ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI
+    NOP,ADD,MUL,SOU,DIV,COP,AFC,JMP,JMF,INF,SUP,EQU,PRI,BX
 };
 
 enum Cond {

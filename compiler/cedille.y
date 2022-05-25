@@ -10,6 +10,9 @@
 #define TABLESIZE 100
 #endif
 
+#define RETURNADDRESS 69
+#define RETURNVALUEADDRESS 72
+
 int depth=0;
 char * scope = NULL;
 enum Type type;
@@ -98,6 +101,8 @@ Objet : tNB
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO Arg tPF {
 	int addr = findFonctionAddr($1);
+	int padding = addAsmInstruct(NOP,0);
+	addAsmInstruct(AFC,2,RETURNADDRESS,padding+3);
 	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
@@ -116,10 +121,13 @@ Arg : Elem
 FunctionDef : Type tVAR tPO Param tPF {
 	type_fonc = $1;
 	hasReturnValue=0;
-	if(type == VOID)
+	if(type_fonc == VOID)
 		hasReturnValue=1;
 	scope = strdup($2);
 	int asmAdress = addAsmInstruct(NOP,0);
+	
+	//Liaison nom de fonction avec adresse assembleur
+
 	int addr = findFonctionAddr($2);
 	if(addr < 0){
 		printf("La fonction n'existait pas on la crée dans la table\n");
@@ -137,6 +145,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 		fprintf(stderr, "%s\n", "Function has no return statement!");
 		exit(1);
 	}	
+	addAsmInstruct(BX,1,RETURNADDRESS);
 }
 
 ElemParam : Type tVAR 
@@ -173,6 +182,9 @@ ReturnStatement : tRETURN Elem tSTOP {
 			printf("Type variable ne correspond pas à type fonction!\n");
 			exit(1);
 		}
+		hasReturnValue = 1;
+		int varaddr = findSymboleAddr($2,scope);
+		addAsmInstruct(COP,2,RETURNVALUEADDRESS,varaddr);
 	}
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
@@ -197,7 +209,9 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 }
 | tNB  {$$ = varTemp($1,0);}
 | Var  {$$ = varTemp($1,1);}
-| tVAR tPO Arg tPF // gérer l'appel de fonction
+| FunctionCall {
+	$$ = RETURNVALUEADDRESS;
+	}// gérer l'appel de fonction
 // | tSOU Expr // gérer les chiffres négatifs ?
 
 //Actions sur variables

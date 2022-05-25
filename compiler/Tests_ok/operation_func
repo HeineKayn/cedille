@@ -1,0 +1,8 @@
+int func(){
+    return 1;
+}
+
+main(){
+    int a = func();
+    int b = 3*5+a;
+}

@@ -10,6 +10,9 @@
 #define TABLESIZE 100
 #endif
 
+#define RETURNADDRESS 69
+#define RETURNVALUEADDRESS 72
+
 int depth=0;
 char * scope = NULL;
 enum Type type;
@@ -78,6 +81,7 @@ Var : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -97,9 +101,12 @@ Objet : tNB
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO Arg tPF {
 	int addr = findFonctionAddr($1);
+	int padding = addAsmInstruct(NOP,0);
+	addAsmInstruct(AFC,2,RETURNADDRESS,padding+3);
 	addAsmInstruct(JMP,1,findFonctionAddr($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+		exit(1);
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -114,10 +121,13 @@ Arg : Elem
 FunctionDef : Type tVAR tPO Param tPF {
 	type_fonc = $1;
 	hasReturnValue=0;
-	if(type == VOID)
+	if(type_fonc == VOID)
 		hasReturnValue=1;
 	scope = strdup($2);
 	int asmAdress = addAsmInstruct(NOP,0);
+	
+	//Liaison nom de fonction avec adresse assembleur
+
 	int addr = findFonctionAddr($2);
 	if(addr < 0){
 		printf("La fonction n'existait pas on la crée dans la table\n");
@@ -127,6 +137,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 	else{
 		printf("La fonction existait déjà dans la table\n");
 		fprintf(stderr, "Redéfinition de fonction!\n");
+		exit(1);
 	}
 } Corps { 
 	scope = NULL;
@@ -134,6 +145,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 		fprintf(stderr, "%s\n", "Function has no return statement!");
 		exit(1);
 	}	
+	addAsmInstruct(BX,1,RETURNADDRESS);
 }
 
 ElemParam : Type tVAR 
@@ -145,12 +157,12 @@ Corps : tCO { depth++; } Instructions tCF { depth--; }
 //Instructions possibles
 Instructions : Instruction Instructions 
 	|
-Instruction : Declaration 
+Instruction : DeclareAffect
+	| Declaration 
 	| Affectation 
 	| FunctionCall tSTOP
 	| If 
 	| While
-	| DeclareAffect
 	| ReturnStatement
 
 ReturnStatement : tRETURN Elem tSTOP {
@@ -170,6 +182,9 @@ ReturnStatement : tRETURN Elem tSTOP {
 			printf("Type variable ne correspond pas à type fonction!\n");
 			exit(1);
 		}
+		hasReturnValue = 1;
+		int varaddr = findSymboleAddr($2,scope);
+		addAsmInstruct(COP,2,RETURNVALUEADDRESS,varaddr);
 	}
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
@@ -199,7 +214,9 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 }
 | tNB  {$$ = varTemp($1,0);}
 | Var  {$$ = varTemp($1,1);}
-| tVAR tPO Arg tPF // gérer l'appel de fonction
+| FunctionCall {
+	$$ = RETURNVALUEADDRESS;
+	}// gérer l'appel de fonction
 // | tSOU Expr // gérer les chiffres négatifs ?
 
 //Actions sur variables
@@ -239,6 +256,7 @@ If : tIF tPO Expr tPF {
 	Corps {
 		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
+		delProfondeur(depth+1);
 	} Else
 
 /* ELSE */
@@ -249,6 +267,7 @@ Else : tELSE {
 	Corps{
 		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
+		delProfondeur(depth+1);
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
@@ -261,6 +280,7 @@ While : tWHILE tPO Expr tPF {
 		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
 		editAsmCond(pileIF[currentPileIF-1],JMF,WHILE);
 		currentPileIF --;
+		delProfondeur(depth+1);
 	}
 
 %%

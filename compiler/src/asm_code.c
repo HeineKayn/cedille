@@ -1,5 +1,6 @@
 #include "../header/asm_code.h"
 #define TABLESIZE 100
+#define NUMFUNC 5
 
 typedef struct nextOperande nextOperande;
 struct nextOperande{
@@ -30,7 +31,7 @@ void addOperande(asmInstruct * asminstruct,int operande){
 
 void init_asm_table(){
     for (int i=0;i<TABLESIZE;i++)
-        asmTab[i]= NULL;    
+        asmTab[i]= NULL;  
 }
 
 char OpAsm(enum Operation op){
@@ -48,6 +49,7 @@ char OpAsm(enum Operation op){
         case SUP:return 'A';
         case EQU:return 'B';
         case PRI:return 'C';
+        case BX:return 'D';
         default:return '&';
     }
 }
@@ -67,6 +69,7 @@ char * stringAsm(char op){
         case 'A':return "SUP";
         case 'B':return "EQU";
         case 'C':return "PRI";
+        case 'D':return "BX";
         default:return "Not recognized";
     }
 }
@@ -119,6 +122,9 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             addOperande(newInstruct,va_arg(valist,int ));
             break;
         case PRI:
+            addOperande(newInstruct,va_arg(valist,int ));
+            break;
+        case BX:
             addOperande(newInstruct,va_arg(valist,int ));
             break;
         default:

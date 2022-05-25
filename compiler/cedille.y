@@ -13,7 +13,9 @@
 #define RETURNADDRESS 69
 #define RETURNVALUEADDRESS 72
 
+//Depth pour les ifs
 int depth=0;
+
 char * scope = NULL;
 enum Type type;
 enum Type type_fonc;
@@ -100,10 +102,10 @@ Objet : tNB
 //Appel d'une fonction en général
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO Arg tPF {
-	int addr = findFonctionAddr($1);
+	int addr = findFonctionAddrAsm($1);
 	int padding = addAsmInstruct(NOP,0);
 	addAsmInstruct(AFC,2,RETURNADDRESS,padding+3);
-	addAsmInstruct(JMP,1,findFonctionAddr($1));
+	addAsmInstruct(JMP,1,findFonctionAddrAsm($1));
 	if(addr < 0){
 		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
 		exit(1);
@@ -128,7 +130,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 	
 	//Liaison nom de fonction avec adresse assembleur
 
-	int addr = findFonctionAddr($2);
+	int addr = findFonctionAddrAsm($2);
 	if(addr < 0){
 		printf("La fonction n'existait pas on la crée dans la table\n");
 		addFonction($2,$1,depth,asmAdress);
@@ -165,26 +167,35 @@ Instruction : DeclareAffect
 	| While
 	| ReturnStatement
 
-ReturnStatement : tRETURN Elem tSTOP {
-		if($2!=type_fonc){
-			printf("Pas meme type de retour!\n");
-			fprintf(stderr,"%s\n","Type de valeur retourné incorrect!");
-			exit(1);			
-		}
-		hasReturnValue = 1;
-	} 
+ReturnStatement :
 	| tRETURN tVAR tSTOP {
 		if(varProfondeur($2,scope)!=1){
-			printf("Variable pas dans meme profondeur!\n");
+			fprintf(stderr,"%s\n","Variable pas dans meme profondeur!\n");
 			exit(1);
 		}
 		if(varType($2,scope)!=type_fonc){
-			printf("Type variable ne correspond pas à type fonction!\n");
+			fprintf(stderr,"%s\n","Type variable ne correspond pas au type de la fonction!\n");
 			exit(1);
 		}
 		hasReturnValue = 1;
 		int varaddr = findSymboleAddr($2,scope);
 		addAsmInstruct(COP,2,RETURNVALUEADDRESS,varaddr);
+	}
+	| tRETURN tNB tSTOP {
+		if(type_fonc!=INT){
+			fprintf(stderr,"%s\n","Type de variable retourné incorrect!");
+			exit(1);
+		}
+		hasReturnValue = 1;
+		addAsmInstruct(AFC,2,RETURNVALUEADDRESS,$2);
+	}
+	| tRETURN Expr tSTOP {
+		if(type_fonc!=INT){
+			fprintf(stderr,"%s\n","Type de variable retourné incorrect!");
+			exit(1);
+		}
+		hasReturnValue = 1;
+		addAsmInstruct(COP,2,RETURNVALUEADDRESS,$2);
 	}
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
@@ -197,20 +208,21 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 }
 | Expr tNOT tEGAL Expr {
 	addAsmInstruct(SOU,3,$1,$1,$4);
+	addAsmInstruct(NOT,2,$1,$1);
 	$$ = $1;
 }
 | Expr tSUPA Expr {
-	addAsmInstruct(SOU,3,$1,$1,$3);
+	addAsmInstruct(CMP,3,$1,$1,$3);
 	$$ = $1;
 }
 | Expr tINFA Expr {
-	addAsmInstruct(SOU,3,$1,$1,$3);
+	addAsmInstruct(CMP,3,$1,$3,$1);
 	$$ = $1;
 }
 | tNB  {$$ = varTemp($1,0);}
 | Var  {$$ = varTemp($1,1);}
 | FunctionCall {
-	$$ = RETURNVALUEADDRESS;
+		$$ = RETURNVALUEADDRESS;
 	}// gérer l'appel de fonction
 // | tSOU Expr // gérer les chiffres négatifs ?
 

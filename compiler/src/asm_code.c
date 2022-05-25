@@ -45,11 +45,10 @@ char OpAsm(enum Operation op){
         case AFC:return '6';
         case JMP:return '7';
         case JMF:return '8';
-        case INF:return '9';
-        case SUP:return 'A';
-        case EQU:return 'B';
-        case PRI:return 'C';
-        case BX:return 'D';
+        case CMP:return '9';
+        case NOT:return 'A';
+        case PRI:return 'B';
+        case BX:return 'C';
         default:return '&';
     }
 }
@@ -65,11 +64,10 @@ char * stringAsm(char op){
         case '6':return "AFC";
         case '7':return "JMP";
         case '8':return "JMF";
-        case '9':return "INF";
-        case 'A':return "SUP";
-        case 'B':return "EQU";
-        case 'C':return "PRI";
-        case 'D':return "BX";
+        case '9':return "CMP";
+        case 'A':return "NOT";
+        case 'B':return "PRI";
+        case 'C':return "BX";
         default:return "Not recognized";
     }
 }
@@ -94,9 +92,7 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
         case MUL:
         case SOU:
         case DIV:
-        case INF:
-        case SUP:
-        case EQU:
+        case CMP:
             if(nombreArguments!=3){
                 fprintf(stderr, "Il faut 3 arguments supplémentaires pour cette opération\n");
                 va_end(valist);
@@ -107,23 +103,14 @@ int addAsmInstruct(enum Operation operation,int nombreArguments,...){
             addOperande(newInstruct,va_arg(valist,int ));
             break;
         case COP:
-            addOperande(newInstruct,va_arg(valist,int ));
-            addOperande(newInstruct,va_arg(valist,int ));
-            break;
         case AFC:
+        case JMF:
+        case NOT:
             addOperande(newInstruct,va_arg(valist,int ));
             addOperande(newInstruct,va_arg(valist,int ));
             break;
         case JMP:
-            addOperande(newInstruct,va_arg(valist,int ));
-            break;
-        case JMF:
-            addOperande(newInstruct,va_arg(valist,int ));
-            addOperande(newInstruct,va_arg(valist,int ));
-            break;
         case PRI:
-            addOperande(newInstruct,va_arg(valist,int ));
-            break;
         case BX:
             addOperande(newInstruct,va_arg(valist,int ));
             break;

@@ -4,3 +4,7 @@ CMP R4 R3 R2 -> 1 if R3>R2 else 0
 ADD R1 R1 R4 -> 1 if R1!=R4 else 0
 
 CMP dans l'ALU!!
+
+EQ R1 R2 R3 -> 1 if R2==R3 else 0
+
+NOT R1 R2 -> 1 if R2==0 else 0

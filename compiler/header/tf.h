@@ -7,8 +7,9 @@
 #include "global.h"
 
 void initTableFonc();
-int addFonction(char * var,enum Type type,int nombreParam,int funcAdress);
-int findFonctionAddr(char * var);
+void addFonction(char * var,enum Type type,int nombreParam,int funcAdress);
+int findFonctionAddrAsm(char * var);
 void displayTableFonction();
+int currentIndice = 0;
 
 #endif

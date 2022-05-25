@@ -13,7 +13,6 @@ gcc lex.yy.c calc.tab.c -o an-lex.exe -lfl
 ### prof 
 - les > < marchent pas (on fait "addr1 > addr2", faut arriver à choper les valeurs à la place)
 - Utiliser INF et SUP en ASM au lieu d'en C
-- problèmes de conflict
 - faut voir si instruct commencent à 0 ou 1 -> test if_easy et while_easy
 (le while saute un cran trop loin pour le JMF du haut)
 

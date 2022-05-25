@@ -36,6 +36,7 @@ int current_accu = 0;
 
 int varTemp(int var,int isVariable){
 	notinit = 0;
+	printf("Var %d, Depth : %d\n", var, depth);
 	if(!tableCalc[(depth-1)*3]){
 		tableCalc[(depth-1)*3] = 1;
 		current_accu = 0;}

@@ -30,7 +30,7 @@ $(BIN): $(OBJ) $(OBJSRC)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
 clean:
-	rm $(OBJ) cedille.tab.c cedille.tab.h lex.yy.c
+	rm $(OBJ) cedille.tab.c cedille.tab.h lex.yy.c cedille cedille.output
 
 test: all
 	./test.sh

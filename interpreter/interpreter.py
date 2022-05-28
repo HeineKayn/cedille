@@ -15,7 +15,7 @@ class Interpreter:
     # Si on veut écrire dans les paramètres, variables ou variables temporaires
     # Alors on utilise le décalage (adresses relatives)
     # Sinon c'est qu'on visait les adresses absolues donc pas de décalage
-    def toRelative(self,line):
+    def toRelativeAddress(self,line):
         decalage = self.memory[0]
 
         operation = line[0]
@@ -47,7 +47,7 @@ class Interpreter:
     # ADD SOU DIV MUL | NOT AFC COP
     def modify(self,line):
 
-        operation, operandes = self.toRelative(line)
+        operation, operandes = self.toRelativeAddress(line)
             
         # Si on modifie le décalage c'est qu'on rentre dans une fonction
         # Il faut donc potentiellement allouer de la place au tableau python
@@ -89,17 +89,17 @@ class Interpreter:
                     case "JMP": self.execPointer = int(line[1])
 
                     case "JMF": 
-                        _, operandes = self.toRelative(line)
+                        _, operandes = self.toRelativeAddress(line)
                         bool, dest = operandes
                         if not self.memory[bool] : 
                             self.execPointer = dest
                     
                     case "BX" : 
-                        _, dest = self.toRelative(line)
+                        _, dest = self.toRelativeAddress(line)
                         self.execPointer = self.memory[dest[0]]
 
                     case "PRI": 
-                        _, dest = self.toRelative(line)
+                        _, dest = self.toRelativeAddress(line)
                         print(self.memory[dest[0]])
 
                     case _: 

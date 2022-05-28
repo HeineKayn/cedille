@@ -1,4 +1,5 @@
 #include "../header/ts.h"
+#define VARIABLEDECAY 20
 
 typedef struct {
     char * var;
@@ -17,7 +18,7 @@ void init_table(){
         tableSymbole[i] = NULL;
 }
 
-int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope){
+int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope,int addrInFunction){
     printf("Adding symbole\n");
     ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
     newSymb->var = strdup(var);
@@ -27,7 +28,7 @@ int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope){
     printf("Var = %s, type = %d, profondeur = %d, scope = %s.\n",newSymb->var,newSymb->type,newSymb->profondeur,newSymb->scopeFonction);
     for (int i=0;i<TABLESIZE;i++){
         if(!tableSymbole[i]){
-            newSymb->address = i;
+            newSymb->address = VARIABLEDECAY + addrInFunction;
             tableSymbole[i] = newSymb;
             return i;
         }

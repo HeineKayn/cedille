@@ -1,13 +1,8 @@
-int azyr(){
-    int a = 1;
-    return a;
+int azyr(int c){
+    return c+1;
 }
 
 main(){
-    int a = azyr();
-    if(1==1){
-        int d;
-    }
-    int b = 3/5+1;
-    int c = a;
+    int a = 2;
+    int b = azyr(a);
 }

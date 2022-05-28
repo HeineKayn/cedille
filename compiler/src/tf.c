@@ -1,14 +1,28 @@
 #include "../header/tf.h"
 #define TABLESIZE 100
+#define RETURNADDRESS 0
+#define TEMPVARIABLEDECAY 1
+#define PARAMDECAY 4
+#define TOTALPARAMNUMBER 16
+#define FUNCTIONMEMORYSIZE 100
+
+typedef struct {
+    char * var;
+    enum Type type;
+    int address;
+} paramSymbole;
 
 typedef struct {
     char * nomFonction;
     enum Type typeRetour;
     int address;
-    int nombreParam;
+    int paramNumber;
+    int varNumber;
+    paramSymbole * parameters[TOTALPARAMNUMBER];
 } ligneFonction;
 
 ligneFonction * tableFonction[TABLESIZE];
+int currentFuncIndice = 0;
 
 void initTableFonc(){
     for (int i=0;i<TABLESIZE;i++){
@@ -21,10 +35,12 @@ void addFonction(char * nom,enum Type type,int nombreParam,int asmAdress){
     ligneFonction * newFonc = (ligneFonction *)malloc(sizeof(ligneFonction));
     newFonc->nomFonction = strdup(nom);
     newFonc->typeRetour = type;
-    newFonc->nombreParam = nombreParam;
+    newFonc->paramNumber = nombreParam;
     newFonc->address = asmAdress;
-    tableFonction[currentIndice] = newFonc;
-    currentIndice++;
+    newFonc->varNumber = 0;
+    newFonc->paramNumber = 0;
+    tableFonction[currentFuncIndice] = newFonc;
+    currentFuncIndice++;
 }
 
 ligneFonction * findFonction(char * nom){
@@ -36,10 +52,49 @@ ligneFonction * findFonction(char * nom){
     }
     return NULL;
 }
+
 int findFonctionAddrAsm(char * nom){
     ligneFonction * ligne = findFonction(nom);
     if(ligne)
         return ligne->address;
+    return -1;
+}
+
+int AddVariableNumberFonction(char * nom){
+    ligneFonction * ligne = findFonction(nom);
+    if(ligne){
+        int currentVarNumber = ligne->varNumber;
+        ligne->varNumber = ligne->varNumber+1;
+        return currentVarNumber;
+    }
+    return -1;
+}
+
+void addParameterToFonction(char * nomFonction,char * var,enum Type type){
+    ligneFonction * ligne = findFonction(nomFonction);
+    if(!ligne) {
+        printf("Tu ne devrais pas t'afficher!");
+        return;
+    }
+    int currentParamNumber = ligne->paramNumber;
+    paramSymbole * newParam = (paramSymbole *)malloc(sizeof(paramSymbole));
+    newParam->type = type;
+    newParam->var = strdup(var);
+    newParam->address = PARAMDECAY + currentParamNumber;
+    ligne->paramNumber++;
+    ligne->parameters[currentParamNumber] = newParam;
+}
+
+int getParamAddress(char * nomFonction,char * param){
+    ligneFonction * ligne = findFonction(nomFonction);
+    int i=0;
+    while(i<TOTALPARAMNUMBER){
+        paramSymbole * ligneParam = ligne->parameters[i];
+        if(ligneParam){
+            return ligneParam->address;
+        }
+        i++;
+    }
     return -1;
 }
 

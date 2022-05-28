@@ -10,13 +10,15 @@
 #define TABLESIZE 100
 #endif
 
-#define RETURNADDRESS 69
-#define RETURNVALUEADDRESS 72
+#define STARTADDRESS 0
+#define DECALAGEADDRESS 1
+#define RETURNVALUEADDRESS 2
+#define RETURNADDRESS 0 
 
 //Depth pour les ifs
 int depth=0;
+char * scope;
 
-char * scope = NULL;
 enum Type type;
 enum Type type_fonc;
 int hasReturnValue;
@@ -83,8 +85,13 @@ Main : tMAIN {scope = strdup("main");}tPO Param tPF Corps
 Var : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
-		printf("ERREUR !!!! %s n'a pas été défini\n", $1);
-		exit(1);
+		int paramAddr = getParamAddress(scope,$1);
+		if(paramAddr<0){
+			printf("ERREUR !!!! %s n'a pas été défini\n", $1);
+			exit(1);
+		}
+		printf("%s est un parametre\n", $1);
+		$$ = paramAddr;
 	}
 	else{
 		printf("%s est bien définie\n", $1);
@@ -121,7 +128,7 @@ Arg : Elem
 
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
-FunctionDef : Type tVAR tPO Param tPF {
+FunctionDef : Type tVAR tPO {
 	type_fonc = $1;
 	hasReturnValue=0;
 	if(type_fonc == VOID)
@@ -142,7 +149,7 @@ FunctionDef : Type tVAR tPO Param tPF {
 		fprintf(stderr, "Redéfinition de fonction!\n");
 		exit(1);
 	}
-} Corps { 
+} Param tPF Corps { 
 	scope = NULL;
 	if(!hasReturnValue){
 		fprintf(stderr, "%s\n", "Function has no return statement!");
@@ -151,7 +158,9 @@ FunctionDef : Type tVAR tPO Param tPF {
 	addAsmInstruct(BX,1,RETURNADDRESS);
 }
 
-ElemParam : Type tVAR 
+ElemParam : Type tVAR {
+	addParameterToFonction(scope,$2,$1);
+}
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
@@ -232,7 +241,7 @@ AddVar : tVAR {
 	int addr = findSymboleAddr($1,scope);
 	if(addr < 0){
 		printf("La variable n'existait pas on l'a crée dans la table\n");
-		addr = addSymbole($1,type,depth,scope);
+		addr = addSymbole($1,type,depth,scope,AddVariableNumberFonction(scope));
 		addAsmInstruct(AFC,2,addr,0);
 		displayTable();
 	}
@@ -298,6 +307,7 @@ int main(void) {
 	init_table();
 	initTableFonc();
 	init_asm_table();
+	//1ere instruction : JMP vers adresse du main!
 #ifdef YYDEBUG
   yydebug = 1;
 #endif

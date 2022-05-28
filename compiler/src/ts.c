@@ -30,7 +30,7 @@ int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope,int 
         if(!tableSymbole[i]){
             newSymb->address = VARIABLEDECAY + addrInFunction;
             tableSymbole[i] = newSymb;
-            return i;
+            return newSymb->address;
         }
     }
     fprintf(stderr,"Error adding symbole!\n");

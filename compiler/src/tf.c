@@ -30,12 +30,11 @@ void initTableFonc(){
     }
 }
 
-void addFonction(char * nom,enum Type type,int nombreParam,int asmAdress){
+void addFonction(char * nom,enum Type type,int asmAdress){
     printf("Adding function\n");
     ligneFonction * newFonc = (ligneFonction *)malloc(sizeof(ligneFonction));
     newFonc->nomFonction = strdup(nom);
     newFonc->typeRetour = type;
-    newFonc->paramNumber = nombreParam;
     newFonc->address = asmAdress;
     newFonc->varNumber = 0;
     newFonc->paramNumber = 0;
@@ -70,7 +69,7 @@ int AddVariableNumberFonction(char * nom){
     return -1;
 }
 
-void addParameterToFonction(char * nomFonction,char * var,enum Type type){
+void addParamDefToFonction(char * nomFonction,char * var,enum Type type){
     ligneFonction * ligne = findFonction(nomFonction);
     if(!ligne) {
         printf("Tu ne devrais pas t'afficher!");
@@ -85,16 +84,35 @@ void addParameterToFonction(char * nomFonction,char * var,enum Type type){
     ligne->parameters[currentParamNumber] = newParam;
 }
 
+int getParamAddressByIndex(char * nomFonction, int index){
+    ligneFonction * ligne = findFonction(nomFonction);
+    paramSymbole * ligneParam = ligne->parameters[index];
+    if(ligneParam){
+        return ligneParam->address;
+    }
+    printf("Il n'y a pas de paramètre définit\n");
+    return -1;
+}
+
 int getParamAddress(char * nomFonction,char * param){
     ligneFonction * ligne = findFonction(nomFonction);
     int i=0;
     while(i<TOTALPARAMNUMBER){
         paramSymbole * ligneParam = ligne->parameters[i];
-        if(ligneParam){
+        if(!strcmp(ligneParam->var,param)){
             return ligneParam->address;
         }
         i++;
     }
+    return -1;
+}
+
+int getParamNumber(char * nomFonction){
+    ligneFonction * ligne = findFonction(nomFonction);
+    if(ligne){
+        return ligne->paramNumber;
+    }
+    printf("Cette fonction n'existe pas\n");
     return -1;
 }
 

@@ -55,7 +55,7 @@ class Interpreter:
             self.memory += [0]*100
             self.decalageMax += 100
 
-        print(operation,operandes)
+        # print(operation,operandes)
         # print(self.memory)
 
         match operation:

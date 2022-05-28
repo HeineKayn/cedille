@@ -1,0 +1,9 @@
+int a(int c){
+    if (c<0)
+        return c; 
+    else 
+        int b = a(c-1);
+        return c+b;
+}
+
+int b = a(4);

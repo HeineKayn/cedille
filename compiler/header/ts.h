@@ -12,7 +12,7 @@
 #include "global.h"
 
 void init_table();
-int addSymbole(char * var,enum Type type,int depth,char * scope);
+int addSymbole(char * var,enum Type type,int depth,char * scope,int addrInFunction);
 void delProfondeur(int depth);
 int findSymboleAddr(char * var, char * scope);
 void addProfondeur();

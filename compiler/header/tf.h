@@ -10,6 +10,9 @@ void initTableFonc();
 void addFonction(char * var,enum Type type,int nombreParam,int funcAdress);
 int findFonctionAddrAsm(char * var);
 void displayTableFonction();
-int currentIndice = 0;
+
+int AddVariableNumberFonction(char * nom);
+void addParameterToFonction(char * nomFonction,char * var,enum Type type);
+int getParamAddress(char * nomFonction,char * param);
 
 #endif

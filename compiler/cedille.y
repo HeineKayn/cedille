@@ -43,13 +43,12 @@ int varTemp(int var,int isVariable){
 	int adress_ret = adresseCalc + tableCalc[depthFunc*2] + tableCalc[(depthFunc*2)+1]
 
 	# Si l'accu était pas utilisé alors on l'init pour le prochain
-	if(!tableCalc[depthFunc*2]){
+	if(!tableCalc[depthFunc*2])
 		tableCalc[depthFunc*2] = 1;
 
 	# On modifie la bascule 
-	else{
+	else
 		tableCalc[(depthFunc*2)+1] = ! tableCalc[(depthFunc*2)+1]
-	}
 
 	if(isVariable)
 		addAsmInstruct(COP, 2, adress_ret, var);

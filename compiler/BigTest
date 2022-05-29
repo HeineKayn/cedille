@@ -6,4 +6,5 @@ main(){
     int a;
     int b = 9;
     int c = truc(a,b);
+    print(2+3);
 }

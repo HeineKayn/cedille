@@ -46,11 +46,18 @@ class Interpreter:
             
         # Si on modifie le décalage c'est qu'on rentre dans une fonction
         # Il faut donc potentiellement allouer de la place au tableau python
-        if operandes[0] == 0 and operation == "ADD" and self.memory[operandes[0]] > self.decalageMax:
+        # if operandes[0] == 0 and operation == "ADD" and self.memory[operandes[0]] > self.decalageMax:
+        #     self.memory += [0]*100
+        #     self.decalageMax += 100
+
+        # Si on essaie de faire une modif à une adresse après nous 
+        # C'est qu'on veut changer les paramètres / adresse de retour
+        # Donc on va aller dans une nouvelle fonction -> on va avoir besoin d'espace mémoire 
+        if operandes[0] >= 100 :
             self.memory += [0]*100
             self.decalageMax += 100
 
-        # print(operation,operandes)
+        print("   -> ",operation,operandes)
         # print(self.memory)
 
         match operation:
@@ -75,23 +82,25 @@ class Interpreter:
             line = lines[self.execPointer]
             line = line.split()
 
+            print(line)
+
             if line[0] in ["ADD","MUL","DIV","SOU","COP","AFC","CMP","NOT"]:
                 self.modify(line)
 
             else :
                 match line[0]:
                     case "NOP": pass
-                    case "JMP": self.execPointer = int(line[1])
+                    case "JMP": self.execPointer = int(line[1]) - 2
 
                     case "JMF": 
                         _, operandes = self.relativeToAbsolute(line)
                         bool, dest = operandes
                         if not self.memory[bool] : 
-                            self.execPointer = dest
+                            self.execPointer = dest - 2
                     
                     case "BX" : 
                         _, dest = self.relativeToAbsolute(line)
-                        self.execPointer = self.memory[dest[0]]
+                        self.execPointer = self.memory[dest[0]] - 2
 
                     case "PRI": 
                         _, dest = self.relativeToAbsolute(line)

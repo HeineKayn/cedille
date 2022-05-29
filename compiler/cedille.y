@@ -26,30 +26,31 @@ enum Type type_fonc;
 int hasReturnValue;
 int paramNumber;
 
-int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
-int adresseCalc = TABLESIZE;
-int notinit;
-
 int pileIF[TABLESIZE];
 int currentPileIF = 0;
 
+int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
+int adresseCalc = 7;
+int depthFunc=0;
 
 // 3 var temp par profondeur
 // quand premiere (accu) utilisée on met dans 2eme
 // si 2eme utilisé on fait mul ou div -> 3eme
-int current_accu = 0;
-
+// pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
 int varTemp(int var,int isVariable){
-	notinit = 0;
-	printf("Var %d, Depth : %d\n", var, depth);
-	if(!tableCalc[(depth-1)*3]){
-		tableCalc[(depth-1)*3] = 1;
-		current_accu = 0;}
+
+	// printf("Var %d, Depth : %d\n", var, depthFunc);
+	int adress_ret = adresseCalc + tableCalc[depthFunc*2] + tableCalc[(depthFunc*2)+1]
+
+	# Si l'accu était pas utilisé alors on l'init pour le prochain
+	if(!tableCalc[depthFunc*2]){
+		tableCalc[depthFunc*2] = 1;
+
+	# On modifie la bascule 
 	else{
-		notinit = 1;
-		current_accu = !current_accu;
+		tableCalc[(depthFunc*2)+1] = ! tableCalc[(depthFunc*2)+1]
 	}
-	int adress_ret = adresseCalc+((depth-1)*3)+notinit+current_accu;
+
 	if(isVariable)
 		addAsmInstruct(COP, 2, adress_ret, var);
 	else
@@ -117,9 +118,14 @@ Objet : tNB
 //Appel d'une fonction en général
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO {
-		paramNumber=0;
-		functionCalling = strdup($1);
-	} Arg {paramNumber=0;} tPF {
+	depthFunc ++;
+	tableCalc[depthFunc*2] = 0;
+	tableCalc[depthFunc*2+1] = 0;
+	paramNumber=0;
+	functionCalling = strdup($1);
+	} 
+	Arg {paramNumber=0;} tPF {
+
 	int addr = findFonctionAddrAsm($1);
 	int padding = addAsmInstruct(NOP,0);
 	addAsmInstruct(AFC,2,RETURNADDRESS+FUNCTIONSIZE,padding+4);
@@ -133,6 +139,7 @@ FunctionCall : tVAR tPO {
 	else{
 		printf("%s est bien définie\n", $1);
 	}
+	depthFunc --;
 }
 Arg : Expr {
 		int addrToStock = getParamAddressByIndex(functionCalling,paramNumber);

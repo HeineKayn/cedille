@@ -39,16 +39,20 @@ int depthFunc=0;
 // pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
 int varTemp(int var,int isVariable){
 
+	for(int i=0;i<9;i++){
+		printf("%d ",tableCalc[i]);
+	}
+	printf("\n");
 	// printf("Var %d, Depth : %d\n", var, depthFunc);
-	int adress_ret = adresseCalc + tableCalc[depthFunc*2] + tableCalc[(depthFunc*2)+1]
+	int adress_ret = adresseCalc + tableCalc[depthFunc*2] + tableCalc[(depthFunc*2)+1];
 
-	# Si l'accu était pas utilisé alors on l'init pour le prochain
+	// Si l'accu était pas utilisé alors on l'init pour le prochain
 	if(!tableCalc[depthFunc*2])
 		tableCalc[depthFunc*2] = 1;
 
-	# On modifie la bascule 
-	else
-		tableCalc[(depthFunc*2)+1] = ! tableCalc[(depthFunc*2)+1]
+	// On modifie la bascule 
+	else 
+		tableCalc[(depthFunc*2)+1] = !tableCalc[(depthFunc*2)+1];
 
 	if(isVariable)
 		addAsmInstruct(COP, 2, adress_ret, var);

@@ -40,15 +40,16 @@ int bascule_temp = 0;
 // pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
 int varTemp(int var,int isVariable){
 
-	int adress_ret = adresseCalc + init_temp + bascule_temp
-
+	int adress_ret = adresseCalc + init_temp + bascule_temp;
+	printf("Init_temp : %d\n",init_temp);
+	printf("Bascule : %d\n",bascule_temp);
 	// On sauvegarde l'init
 	if(!init_temp)
 		init_temp = 1;
 
 	// On modifie la bascule 
 	else
-		bascule_temp = ! bascule_temp
+		bascule_temp = ! bascule_temp;
 
 	if(isVariable)
 		addAsmInstruct(COP, 2, adress_ret, var);
@@ -82,6 +83,8 @@ Functions : FunctionDef Functions
 	| Main
 
 Main : tMAIN {
+		init_temp = 0;
+		bascule_temp = 0;		
 		scope = strdup("main");
 		addFonction("main",VOID,69);
 		editAsmJMP(1,addAsmInstruct(NOP,0));
@@ -116,8 +119,6 @@ Objet : tNB
 //Appel d'une fonction en général
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO {
-	init_temp = 0;
-	bascule_temp = 0;
 	paramNumber=0;
 	functionCalling = strdup($1);
 	} 
@@ -161,6 +162,8 @@ FunctionCall : tVAR tPO {
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
 FunctionDef : Type tVAR tPO {
+	init_temp = 0;
+	bascule_temp = 0;
 	type_fonc = $1;
 	hasReturnValue=0;
 	if(type_fonc == VOID) hasReturnValue=1;

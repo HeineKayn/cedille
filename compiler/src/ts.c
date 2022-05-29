@@ -1,5 +1,5 @@
 #include "../header/ts.h"
-#define VARIABLEDECAY 20
+#define VARIABLEDECAY 25
 
 typedef struct {
     char * var;

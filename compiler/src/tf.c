@@ -1,9 +1,9 @@
 #include "../header/tf.h"
 #define TABLESIZE 100
 #define RETURNADDRESS 0
-#define TEMPVARIABLEDECAY 1
-#define PARAMDECAY 4
-#define TOTALPARAMNUMBER 16
+#define TEMPVARIABLEDECAY 7
+#define PARAMDECAY 10
+#define TOTALPARAMNUMBER 15
 #define FUNCTIONMEMORYSIZE 100
 
 typedef struct {

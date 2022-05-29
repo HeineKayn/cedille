@@ -5,4 +5,5 @@ int truc(int a,int b){
 main(){
     int a;
     int b = 9;
+    int c = truc(a,b);
 }

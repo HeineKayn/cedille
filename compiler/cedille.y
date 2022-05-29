@@ -27,7 +27,7 @@ int hasReturnValue;
 int paramNumber;
 
 int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
-int adresseCalc = TABLESIZE;
+int adresseCalc = 7;
 int notinit;
 
 int pileIF[TABLESIZE];

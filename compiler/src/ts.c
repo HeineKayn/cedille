@@ -1,5 +1,5 @@
 #include "../header/ts.h"
-#define VARIABLEDECAY 20
+#define VARIABLEDECAY 25
 
 typedef struct {
     char * var;
@@ -30,7 +30,7 @@ int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope,int 
         if(!tableSymbole[i]){
             newSymb->address = VARIABLEDECAY + addrInFunction;
             tableSymbole[i] = newSymb;
-            return i;
+            return newSymb->address;
         }
     }
     fprintf(stderr,"Error adding symbole!\n");

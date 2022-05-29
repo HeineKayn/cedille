@@ -337,7 +337,9 @@ int main(void) {
 	init_table();
 	initTableFonc();
 	init_asm_table();
+	// Ajout de taille de jump
 	addAsmInstruct(AFC,2,FUNCTIONJUMP,FUNCTIONSIZE);
+	//JMP vers l'adresse du main
 	addAsmInstruct(JMP,1,69);
 	//1ere instruction : JMP vers adresse du main!
 #ifdef YYDEBUG

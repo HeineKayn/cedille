@@ -141,6 +141,13 @@ void editAsmCond(int adressif,enum Operation operation,enum Cond cond){
     }
 }
 
+void editAsmJMP(int adresseTabAsm,int newAdress){
+    asmInstruct * instruct = asmTab[adresseTabAsm] ;
+    printf("Changing operande : %d\n",instruct->operandes->operande);
+    instruct->operandes->operande = newAdress;
+    printf("With new operande : %d\n",instruct->operandes->operande);
+}
+
 void printAsmTable(){
     printf("Table ASM\n");
     asmInstruct * asm1;

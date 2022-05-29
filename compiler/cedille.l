@@ -24,6 +24,11 @@ int    {
 	yylval.type = INT;
 	return tINT; 
 }
+
+print {
+	return tPRINT;
+}
+
 return {return tRETURN; }
 
 [a-zA-Z][a-zA-Z0-9_]* {

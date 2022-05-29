@@ -62,7 +62,7 @@ void yyerror(char *s);
 int yylex();
 %}
 %union { int nb; char * var; enum Type type;}
-%token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR tELSE
+%token tEGAL tPO tPF tSOU tADD tDIV tMUL tCONST tSTOP tVIR tCO tCF tMAIN tIF tWHILE tNOT tSUPA tINFA tRETURN tERROR tELSE tPRINT
 %token <nb> tINT 
 %token <nb> tNB
 %token <var> tVAR
@@ -84,9 +84,8 @@ Functions : FunctionDef Functions
 Main : tMAIN {
 		scope = strdup("main");
 		addFonction("main",VOID,69);
-	} tPO Param tPF Corps{
-		scope = NULL; addAsmInstruct(NOP,0);
-	}
+		editAsmJMP(1,addAsmInstruct(NOP,0));
+	} tPO Param tPF Corps
 
 //Variable et types
 Var : tVAR {
@@ -134,7 +133,7 @@ FunctionCall : tVAR tPO {
 		printf("%s est bien définie\n", $1);
 	}
 }
-Arg : Expr {
+	Arg : Expr {
 		int addrToStock = getParamAddressByIndex(functionCalling,paramNumber);
 		addAsmInstruct(COP,2,addrToStock+FUNCTIONSIZE,$1);
 		paramNumber++;
@@ -150,6 +149,10 @@ Arg : Expr {
 		paramNumber++;
 	} tVIR Arg 
 	|
+
+	Print : tPRINT tPO Expr tPF {
+		addAsmInstruct(PRI,1,$3);
+	}
 
 //Definition d'une fonction en général
 //Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
@@ -200,6 +203,7 @@ Instruction : DeclareAffect
 	| If 
 	| While
 	| ReturnStatement
+	| Print
 
 ReturnStatement :
 	| tRETURN tVAR tSTOP {
@@ -236,30 +240,30 @@ ReturnStatement :
 	}
 
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
-| Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
-| Expr tMUL Expr {addAsmInstruct(MUL,3,$1,$1,$3); $$ = $1;}
-| Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
-| Expr tEGAL tEGAL Expr {
-	addAsmInstruct(SOU,3,$1,$1,$4);
-	$$ = $1;
-}
-| Expr tNOT tEGAL Expr {
-	addAsmInstruct(SOU,3,$1,$1,$4);
-	addAsmInstruct(NOT,2,$1,$1);
-	$$ = $1;
-}
-| Expr tSUPA Expr {
-	addAsmInstruct(CMP,3,$1,$1,$3);
-	$$ = $1;
-}
-| Expr tINFA Expr {
-	addAsmInstruct(CMP,3,$1,$3,$1);
-	$$ = $1;
-}
-| tNB  {$$ = varTemp($1,0);}
-| Var  {$$ = varTemp($1,1);}
-| FunctionCall { $$ = RETURNVALUEADDRESS; }// gérer l'appel de fonction
-// | tSOU Expr // gérer les chiffres négatifs ?
+	| Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
+	| Expr tMUL Expr {addAsmInstruct(MUL,3,$1,$1,$3); $$ = $1;}
+	| Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
+	| Expr tEGAL tEGAL Expr {
+		addAsmInstruct(SOU,3,$1,$1,$4);
+		$$ = $1;
+	}
+	| Expr tNOT tEGAL Expr {
+		addAsmInstruct(SOU,3,$1,$1,$4);
+		addAsmInstruct(NOT,2,$1,$1);
+		$$ = $1;
+	}
+	| Expr tSUPA Expr {
+		addAsmInstruct(CMP,3,$1,$1,$3);
+		$$ = $1;
+	}
+	| Expr tINFA Expr {
+		addAsmInstruct(CMP,3,$1,$3,$1);
+		$$ = $1;
+	}
+	| tNB  {$$ = varTemp($1,0);}
+	| Var  {$$ = varTemp($1,1);}
+	| FunctionCall { $$ = RETURNVALUEADDRESS; }// gérer l'appel de fonction
+	// | tSOU Expr // gérer les chiffres négatifs ?
 
 //Actions sur variables
 AddVar : tVAR {
@@ -334,6 +338,7 @@ int main(void) {
 	initTableFonc();
 	init_asm_table();
 	addAsmInstruct(AFC,2,FUNCTIONJUMP,FUNCTIONSIZE);
+	addAsmInstruct(JMP,1,69);
 	//1ere instruction : JMP vers adresse du main!
 #ifdef YYDEBUG
   yydebug = 1;

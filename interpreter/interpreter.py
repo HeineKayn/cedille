@@ -15,17 +15,12 @@ class Interpreter:
     # Si on veut écrire dans les paramètres, variables ou variables temporaires
     # Alors on utilise le décalage (adresses relatives)
     # Sinon c'est qu'on visait les adresses absolues donc pas de décalage
-    def toRelativeAddress(self,line):
+    def relativeToAbsolute(self,line):
         decalage = self.memory[0]
 
         operation = line[0]
         operandes = line[1:]
         operandes = [int(x) for x in operandes]
-
-        # Peut être qu'il faut aussi check pour les autres operandes
-        if operandes[0] > 100 : 
-            print("ERREUR : Tentative d'overflow -> Ligne {}".format(self.execPointer))
-            exit()
 
         # Pour chaque instruction le premier operande est toujours relatif
         if operandes[0] > self.accesAddresseRelative :
@@ -47,7 +42,7 @@ class Interpreter:
     # ADD SOU DIV MUL | NOT AFC COP
     def modify(self,line):
 
-        operation, operandes = self.toRelativeAddress(line)
+        operation, operandes = self.relativeToAbsolute(line)
             
         # Si on modifie le décalage c'est qu'on rentre dans une fonction
         # Il faut donc potentiellement allouer de la place au tableau python
@@ -89,17 +84,17 @@ class Interpreter:
                     case "JMP": self.execPointer = int(line[1])
 
                     case "JMF": 
-                        _, operandes = self.toRelativeAddress(line)
+                        _, operandes = self.relativeToAbsolute(line)
                         bool, dest = operandes
                         if not self.memory[bool] : 
                             self.execPointer = dest
                     
                     case "BX" : 
-                        _, dest = self.toRelativeAddress(line)
+                        _, dest = self.relativeToAbsolute(line)
                         self.execPointer = self.memory[dest[0]]
 
                     case "PRI": 
-                        _, dest = self.toRelativeAddress(line)
+                        _, dest = self.relativeToAbsolute(line)
                         print(self.memory[dest[0]])
 
                     case _: 

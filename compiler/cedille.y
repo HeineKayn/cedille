@@ -31,7 +31,8 @@ int currentPileIF = 0;
 
 int tableCalc[TABLESIZE]; // permet de savoir si l'adresse à été init
 int adresseCalc = 7;
-int depthFunc=0;
+int init_temp = 0;
+int bascule_temp = 0;
 
 // 3 var temp par profondeur
 // quand premiere (accu) utilisée on met dans 2eme
@@ -39,16 +40,15 @@ int depthFunc=0;
 // pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
 int varTemp(int var,int isVariable){
 
-	// printf("Var %d, Depth : %d\n", var, depthFunc);
-	int adress_ret = adresseCalc + tableCalc[depthFunc*2] + tableCalc[(depthFunc*2)+1]
+	int adress_ret = adresseCalc + init_temp + bascule_temp
 
-	# Si l'accu était pas utilisé alors on l'init pour le prochain
-	if(!tableCalc[depthFunc*2])
-		tableCalc[depthFunc*2] = 1;
+	# On sauvegarde l'init
+	if(!init_temp)
+		init_temp = 1;
 
 	# On modifie la bascule 
 	else
-		tableCalc[(depthFunc*2)+1] = ! tableCalc[(depthFunc*2)+1]
+		bascule_temp = ! bascule_temp
 
 	if(isVariable)
 		addAsmInstruct(COP, 2, adress_ret, var);
@@ -116,9 +116,8 @@ Objet : tNB
 //Appel d'une fonction en général
 //Peut etre appelé dans affectation de variable
 FunctionCall : tVAR tPO {
-	depthFunc ++;
-	tableCalc[depthFunc*2] = 0;
-	tableCalc[depthFunc*2+1] = 0;
+	init_temp = 0;
+	bascule_temp = 0;
 	paramNumber=0;
 	functionCalling = strdup($1);
 	} 
@@ -137,7 +136,6 @@ FunctionCall : tVAR tPO {
 	else{
 		printf("%s est bien définie\n", $1);
 	}
-	depthFunc --;
 }
 	Arg : Expr {
 		int addrToStock = getParamAddressByIndex(functionCalling,paramNumber);

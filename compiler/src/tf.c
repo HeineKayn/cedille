@@ -10,120 +10,128 @@ typedef struct {
     char * var;
     enum Type type;
     int address;
-} paramSymbole;
+} paramSymbol;
 
 typedef struct {
-    char * nomFonction;
-    enum Type typeRetour;
+    char * functionName;
+    enum Type returnType;
     int address;
     int paramNumber;
     int varNumber;
-    paramSymbole * parameters[TOTALPARAMNUMBER];
-} ligneFonction;
+    paramSymbol * parameters[TOTALPARAMNUMBER];
+} functionLine;
 
-ligneFonction * tableFonction[TABLESIZE];
-int currentFuncIndice = 0;
+functionLine * functionTable[TABLESIZE];
+int currentFunctionIndice = 0;
 
-void initTableFonc(){
+void initFunctionTable(){
     for (int i=0;i<TABLESIZE;i++){
-        tableFonction[i] = NULL;
+        functionTable[i] = NULL;
     }
 }
 
-void addFonction(char * nom,enum Type type,int asmAdress){
+void addFunction(char * nom,enum Type type,int asmAdress){
     printf("Adding function\n");
-    ligneFonction * newFonc = (ligneFonction *)malloc(sizeof(ligneFonction));
-    newFonc->nomFonction = strdup(nom);
-    newFonc->typeRetour = type;
+    functionLine * newFonc = (functionLine *)malloc(sizeof(functionLine));
+    newFonc->functionName = strdup(nom);
+    newFonc->returnType = type;
     newFonc->address = asmAdress;
     newFonc->varNumber = 0;
     newFonc->paramNumber = 0;
-    tableFonction[currentFuncIndice] = newFonc;
-    currentFuncIndice++;
+    functionTable[currentFunctionIndice] = newFonc;
+    currentFunctionIndice++;
 }
 
-ligneFonction * findFonction(char * nom){
-    ligneFonction * ligne;
+functionLine * findFunction(char * nom){
+    functionLine * line;
     for(int i=0;i<TABLESIZE;i++){
-        ligne = tableFonction[i];
-        if(ligne && !strcmp(ligne->nomFonction,nom)) 
-            return ligne;
+        line = functionTable[i];
+        if(line && !strcmp(line->functionName,nom)) 
+            return line;
     }
     return NULL;
 }
 
-int findFonctionAddrAsm(char * nom){
-    ligneFonction * ligne = findFonction(nom);
-    if(ligne)
-        return ligne->address;
+int findFunctionAddrAsm(char * nom){
+    functionLine * line = findFunction(nom);
+    if(line)
+        return line->address;
     return -1;
 }
 
-int AddVariableNumberFonction(char * nom){
-    ligneFonction * ligne = findFonction(nom);
-    if(ligne){
-        int currentVarNumber = ligne->varNumber;
-        ligne->varNumber = ligne->varNumber+1;
+int incrementVariableNumber(char * nom){
+    functionLine * line = findFunction(nom);
+    if(line){
+        int currentVarNumber = line->varNumber;
+        line->varNumber = line->varNumber+1;
         return currentVarNumber;
     }
     return -1;
 }
 
-void addParamDefToFonction(char * nomFonction,char * var,enum Type type){
-    ligneFonction * ligne = findFonction(nomFonction);
-    if(!ligne) {
+void addParamDefToFunction(char * functionName,char * var,enum Type type){
+    functionLine * line = findFunction(functionName);
+    if(!line) {
         printf("Tu ne devrais pas t'afficher!");
         return;
     }
-    int currentParamNumber = ligne->paramNumber;
-    paramSymbole * newParam = (paramSymbole *)malloc(sizeof(paramSymbole));
+    int currentParamNumber = line->paramNumber;
+    paramSymbol * newParam = (paramSymbol *)malloc(sizeof(paramSymbol));
     newParam->type = type;
     newParam->var = strdup(var);
     newParam->address = PARAMDECAY + currentParamNumber;
-    ligne->paramNumber++;
-    ligne->parameters[currentParamNumber] = newParam;
+    line->paramNumber++;
+    line->parameters[currentParamNumber] = newParam;
 }
 
-int getParamAddressByIndex(char * nomFonction, int index){
-    ligneFonction * ligne = findFonction(nomFonction);
-    paramSymbole * ligneParam = ligne->parameters[index];
-    if(ligneParam){
-        return ligneParam->address;
+int getParamAddressByIndex(char * functionName, int index){
+    functionLine * line = findFunction(functionName);
+    paramSymbol * paramLine = line->parameters[index];
+    if(paramLine){
+        return paramLine->address;
     }
     printf("Il n'y a pas de paramètre définit\n");
     return -1;
 }
 
-int getParamAddress(char * nomFonction,char * param){
-    ligneFonction * ligne = findFonction(nomFonction);
+int getParamAddress(char * functionName,char * param){
+    functionLine * line = findFunction(functionName);
+    if(!line){
+        printf("Fonction %s non trouvé!\n",functionName);
+        return -1;
+    }
     int i=0;
     while(i<TOTALPARAMNUMBER){
-        paramSymbole * ligneParam = ligne->parameters[i];
-        if(!strcmp(ligneParam->var,param)){
-            return ligneParam->address;
+        paramSymbol * paramLine = line->parameters[i];
+        if (!paramLine)
+        {
+            printf("Parameter %s not found in function %s!\n",param,functionName);
+            return -1;
+        }
+        if(!strcmp(paramLine->var,param)){
+            return paramLine->address;
         }
         i++;
     }
     return -1;
 }
 
-int getParamNumber(char * nomFonction){
-    ligneFonction * ligne = findFonction(nomFonction);
-    if(ligne){
-        return ligne->paramNumber;
+int getParamNumber(char * functionName){
+    functionLine * line = findFunction(functionName);
+    if(line){
+        return line->paramNumber;
     }
     printf("Cette fonction n'existe pas\n");
     return -1;
 }
-
-void displayTableFonction(){
+void displayFunctionTable(){
     printf("\n");
     printf("Affichage fonction table\n");
-    ligneFonction * ligne;
+    functionLine * line;
     for (int i=0;i<TABLESIZE;i++){
-        ligne = tableFonction[i];
-        if (ligne){
-            printf("Fonction : nom=%s, typeRetour=%d, adress=%d\n",ligne->nomFonction,ligne->typeRetour,ligne->address);
+        line = functionTable[i];
+        if (line){
+            printf("Fonction : nom=%s, type de retour=%d, adresse=%d\n",line->functionName,line->returnType,line->address);
         }   
     }
     printf("\n");

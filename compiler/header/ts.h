@@ -11,14 +11,22 @@
 #include <string.h>
 #include "global.h"
 
-void init_table();
+void initTSTable();
+
 int addSymbole(char * var,enum Type type,int depth,char * scope,int addrInFunction);
-void delProfondeur(int depth);
-int findSymboleAddr(char * var, char * scope);
-void addProfondeur();
-void displayTable();
-void addProfondeurScope(char * scope);
+
+void deleteDepth(int depth);
+
+int findSymbolAddr(char * var, char * scope);
+
+void addDepth();
+
+void addDepthScope(char * scope);
+
 enum Type varType(char * var,char * scope);
-int varProfondeur(char * var,char * scope);
+
+int varDepth(char * var,char * scope);
+
+void displayTSTable();
 
 #endif

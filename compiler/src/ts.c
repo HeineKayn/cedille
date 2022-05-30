@@ -5,95 +5,93 @@ typedef struct {
     char * var;
     enum Type type;
     int address;
-    int profondeur;
-    char * scopeFonction;
-} ligneSymbole;
+    int depth;
+    char * functionScope;
+} symbolLine;
 
-ligneSymbole * tableSymbole[TABLESIZE];
+symbolLine * symbolTable[TABLESIZE];
 
-//int depth = 0;
-
-void init_table(){
+void initTSTable(){
     for (int i=0;i<TABLESIZE;i++)
-        tableSymbole[i] = NULL;
+        symbolTable[i] = NULL;
 }
 
-int addSymbole(char * var,enum Type type, int depth,char * nomFonctionScope,int addrInFunction){
+int addSymbole(char * var,enum Type type, int depth,char * functionScope,int addrInFunction){
     printf("Adding symbole\n");
-    ligneSymbole * newSymb = (ligneSymbole *)malloc(sizeof(ligneSymbole));
+    symbolLine * newSymb = (symbolLine *)malloc(sizeof(symbolLine));
     newSymb->var = strdup(var);
     newSymb->type = type;
-    newSymb->profondeur = depth;
-    newSymb->scopeFonction = strdup(nomFonctionScope);
-    printf("Var = %s, type = %d, profondeur = %d, scope = %s.\n",newSymb->var,newSymb->type,newSymb->profondeur,newSymb->scopeFonction);
+    newSymb->depth = depth;
+    newSymb->functionScope = strdup(functionScope);
+    printf("Var = %s, type = %d, profondeur = %d, scope = %s.\n",newSymb->var,newSymb->type,newSymb->depth,newSymb->functionScope);
     for (int i=0;i<TABLESIZE;i++){
-        if(!tableSymbole[i]){
+        if(!symbolTable[i]){
             newSymb->address = VARIABLEDECAY + addrInFunction;
-            tableSymbole[i] = newSymb;
+            symbolTable[i] = newSymb;
             return newSymb->address;
         }
     }
-    fprintf(stderr,"Error adding symbole!\n");
+    fprintf(stderr,"Variable %s n'a pas pu être ajouté dans la table des symboles pour la fonction %s!\n",var,functionScope);
     return -1;
 }
 
-void delProfondeur(int depth){
-    ligneSymbole * ligne;
+void deleteDepth(int depth){
+    symbolLine * line;
     if (depth){
         for (int i = 0; i < TABLESIZE; i++){
-            ligne = tableSymbole[i];
-            if (ligne && ligne->profondeur == depth){
-                free(tableSymbole[i]);
-                tableSymbole[i] = NULL;  
+            line = symbolTable[i];
+            if (line && line->depth == depth){
+                free(symbolTable[i]);
+                symbolTable[i] = NULL;  
             }
         }
     }
 }
 
-ligneSymbole* findSymbole(char * var, char * scope){
+symbolLine * findSymbol(char * var, char * scope){
     int i = 0;
-    ligneSymbole * ligne;
+    symbolLine * line;
     while(i<TABLESIZE){
-        ligne = tableSymbole[i];
-        if (ligne && !strcmp(ligne->scopeFonction,scope) && !strcmp(ligne->var,var))
-            return ligne;
+        line = symbolTable[i];
+        if (line && !strcmp(line->functionScope,scope) && !strcmp(line->var,var))
+            return line;
         i++;
     }
     return NULL;
 }
 
-int findSymboleAddr(char * var, char * scope){
-    ligneSymbole * ligne = findSymbole(var, scope);
-    if (ligne) 
-        return ligne->address;
-    fprintf(stderr,"Error finding symbole!\n");
+int findSymbolAddr(char * var, char * scope){
+    symbolLine * line = findSymbol(var, scope);
+    if (line) 
+        return line->address;
+    fprintf(stderr,"Variable %s pas trouvé dans la fonction %s!\n",var,scope);
     return -1;
 }
 
 enum Type varType(char * var, char * scope){
-    ligneSymbole *ligne = findSymbole(var,scope);
-    if(ligne)
-        return ligne->type;
-    fprintf(stderr,"%s\n","Pas de variable défini!");
+    symbolLine *line = findSymbol(var,scope);
+    if(line)
+        return line->type;
+    fprintf(stderr,"Variable %s pas trouvé dans la fonction %s incorrecte!\n",var,scope);
     return VOID;
 }
 
-int varProfondeur(char * var,char * scope){
-    ligneSymbole *ligne = findSymbole(var,scope);
-    if(ligne)
-        return ligne->profondeur;
-    fprintf(stderr,"%s\n","Pas de variable défini!");
+int varDepth(char * var,char * scope){
+    symbolLine *line = findSymbol(var,scope);
+    if(line)
+        return line->depth;
+    fprintf(stderr,"Variable %s pas trouvé dans la fonction %s incorrecte!\n",var,scope);
     return -1;
 }
 
-void displayTable(){
+void displayTSTable(){
     printf("\n");
-    printf("Affichage symbole table\n");
-    ligneSymbole * ligne = NULL;
+    printf("Affichage table des symboles\n");
+    symbolLine * line = NULL;
     for (int i=0;i<TABLESIZE;i++){
-        ligne = tableSymbole[i];
-        if (ligne){
-            printf("Symbole : type=%d, var=%s, adress=%d, profondeur=%d, scope fonction = %s\n",ligne->type,ligne->var,ligne->address,ligne->profondeur, ligne->scopeFonction);
+        line = symbolTable[i];
+        if (line){
+            printf("Symbole : type=%d, var=%s, adresse=%d, profondeur=%d dans fonction = %s\n",line->type,line->var,line->address,line->depth, line->functionScope);
         }   
     }
     printf("\n");

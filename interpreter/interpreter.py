@@ -42,22 +42,17 @@ class Interpreter:
     # ADD SOU DIV MUL | NOT AFC COP
     def modify(self,line):
 
-        operation, operandes = self.relativeToAbsolute(line)
-            
-        # Si on modifie le décalage c'est qu'on rentre dans une fonction
-        # Il faut donc potentiellement allouer de la place au tableau python
-        # if operandes[0] == 0 and operation == "ADD" and self.memory[operandes[0]] > self.decalageMax:
-        #     self.memory += [0]*100
-        #     self.decalageMax += 100
-
         # Si on essaie de faire une modif à une adresse après nous 
         # C'est qu'on veut changer les paramètres / adresse de retour
         # Donc on va aller dans une nouvelle fonction -> on va avoir besoin d'espace mémoire 
+        operandes = line[1:]
+        operandes = [int(x) for x in operandes]
         if operandes[0] >= 100 :
             self.memory += [0]*100
             self.decalageMax += 100
 
-        print("   -> ",operation,operandes)
+        operation, operandes = self.relativeToAbsolute(line)
+        # print("   -> ",operation,operandes)
         # print(self.memory)
 
         match operation:
@@ -82,7 +77,7 @@ class Interpreter:
             line = lines[self.execPointer]
             line = line.split()
 
-            print(line)
+            # print("[{1}] : Instruction : {0}".format(line, self.execPointer, len(lines)))
 
             if line[0] in ["ADD","MUL","DIV","SOU","COP","AFC","CMP","NOT"]:
                 self.modify(line)
@@ -90,17 +85,24 @@ class Interpreter:
             else :
                 match line[0]:
                     case "NOP": pass
-                    case "JMP": self.execPointer = int(line[1]) - 2
+                    case "JMP": 
+                        self.execPointer = int(line[1])
+                        self.execPointer -= 1 # Pour annuler l'incrémentation de fin de boucle
 
                     case "JMF": 
                         _, operandes = self.relativeToAbsolute(line)
                         bool, dest = operandes
                         if not self.memory[bool] : 
-                            self.execPointer = dest - 2
+                            self.execPointer = dest
+                            self.execPointer -= 1 # Pour annuler l'incrémentation de fin de boucle
                     
                     case "BX" : 
-                        _, dest = self.relativeToAbsolute(line)
-                        self.execPointer = self.memory[dest[0]] - 2
+                        decalage = self.memory[0]
+                        dest = int(line[1])
+                        self.execPointer = self.memory[dest + decalage + self.debutZoneMemoireFonc]
+                        self.execPointer -= 1 # Pour annuler l'incrémentation de fin de boucle
+                        # print("On va a l'adresse",self.execPointer)
+                        # print(lines[self.execPointer])
 
                     case "PRI": 
                         _, dest = self.relativeToAbsolute(line)

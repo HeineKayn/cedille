@@ -169,7 +169,7 @@ void printAsmTable(){
         asm1 = asmTable[i];
         if(asm1){
 
-            printf("[%d] ",i);
+            printf("[%3d] ",i);
 
             printf("Instruction :");
             fflush(stdout);

@@ -7,6 +7,7 @@
 
 %}
 
+%option yylineno
 %option noyywrap
 
 %%
@@ -45,7 +46,7 @@ return {return tRETURN; }
 , { return tVIR; }
 
 "="	{ return tEGAL; }
-"-"	{ return tSOU; }
+"-"	{ return tSOU; } 
 "+"	{ return tADD; }
 "*"	{ return tMUL; }
 "/"	{ return tDIV; }
@@ -58,6 +59,7 @@ return {return tRETURN; }
 "<" { return tINFA; }
 ">" { return tSUPA; }
 
-[ \n\t]+	{}
+[ \t]+	{}
+[\n] {}
 
 .	{ return tERROR; }

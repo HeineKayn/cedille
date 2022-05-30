@@ -342,7 +342,10 @@ While : tWHILE tPO Expr tPF {
 
 %%
 
-void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
+void yyerror(char *s) { 
+	extern int yylineno;
+	fprintf(stderr, "%s in line %d\n", s,yylineno); 
+}
 int main(void) {
 
 #ifdef YYDEBUG

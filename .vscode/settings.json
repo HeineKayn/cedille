@@ -3,5 +3,6 @@
         "*.pl": "prolog",
         "type_traits": "cpp",
         "if_easy": "c"
-    }
+    },
+    "python.pythonPath": "/usr/local/bin/python3"
 }

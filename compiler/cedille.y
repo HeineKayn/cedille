@@ -94,7 +94,6 @@ Main : tMAIN {
 
 //Variable et types
 Var : tVAR {
-	printf("ICI\n");
 	int addr = findSymbolAddr($1,scope);
 	if(addr < 0){
 		int paramAddr = getParamAddress(scope,$1);
@@ -143,7 +142,7 @@ FunctionCall : tVAR tPO {
 			printf("%s est bien définie.\n", $1);
 		}
 	}
-	Arg : Expr {
+Arg : Expr {
 		int addrToStock = getParamAddressByIndex(functionCalling,paramNumber);
 		addAsmInstruct(COP,2,addrToStock+FUNCTIONSIZE,$1);
 		paramNumber++;
@@ -160,7 +159,7 @@ FunctionCall : tVAR tPO {
 	} tVIR Arg 
 	|
 
-	Print : tPRINT tPO Expr tPF {
+Print : tPRINT tPO Expr tPF tSTOP{
 		addAsmInstruct(PRI,1,$3);
 	}
 
@@ -349,6 +348,7 @@ int main(void) {
 #ifdef YYDEBUG
   yydebug = 1;
 #endif
+	fprintf(stderr,"Error\n");
 
 	//Initialisation des différentes tableaux de memoires
 	initTSTable();

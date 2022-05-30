@@ -72,7 +72,7 @@ enum Type varType(char * var, char * scope){
     symbolLine *line = findSymbol(var,scope);
     if(line)
         return line->type;
-    fprintf(stderr,"Variable %s pas trouvé dans la fonction %s incorrecte!\n",var,scope);
+    fprintf(stderr,"Variable %s pas trouvé dans la fonction %s!\n",var,scope);
     return VOID;
 }
 

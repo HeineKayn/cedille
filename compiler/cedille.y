@@ -351,7 +351,6 @@ int main(void) {
 #ifdef YYDEBUG
   yydebug = 1;
 #endif
-	fprintf(stderr,"Error\n");
 
 	//Initialisation des différentes tableaux de memoires
 	initTSTable();

@@ -163,25 +163,30 @@ void editAsmJMP(int adresseTableAsm,int newAdress){
 }
 
 void printAsmTable(){
+    FILE * fp;
+    fp = fopen("AsmTranslated","w");
     printf("Table ASM\n");
     asmInstruct * asm1;
     for(int i=0;i<TABLESIZE;i++){
         asm1 = asmTable[i];
-        if(asm1){
-
-            printf("[%3d] ",i);
-
-            printf("Instruction :");
+        if(!asm1) break;
+        printf("[%3d] ",i);
+        printf("Instruction :");
+        fflush(stdout);
+        fprintf(fp,"%s",stringAsm(asm1->operation));
+        printf(" %s",stringAsm(asm1->operation));
+        fflush(stdout);
+        nextOperande * operandes = asm1->operandes;
+        while(operandes != NULL){
+            char intStr[4];
+            sprintf(intStr,"%d",operandes->operande);
+            fprintf(fp," %s",intStr);
+            printf(" %d",operandes->operande);
             fflush(stdout);
-            printf(" %s",stringAsm(asm1->operation));
-            fflush(stdout);
-            nextOperande * operandes = asm1->operandes;
-            while(operandes != NULL){
-                printf(" %d",operandes->operande);
-                fflush(stdout);
-                operandes = operandes->next;  
-            }
-            printf("\n");
+            operandes = operandes->next;  
         }
+        fprintf(fp,"\n");
+        printf("\n");
     }
+    fclose(fp);
 }

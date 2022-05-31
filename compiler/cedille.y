@@ -218,7 +218,11 @@ Param : ElemParam
 	| ElemParam tVIR Param 
 	|
 
-Corps : tCO { depth++; } Instructions tCF { 
+Corps : tCO { 
+		tempInit = 0;
+		tempBascule = 0;
+		depth++; 
+		} Instructions tCF { 
 		deleteVarInDepth(depth);
 		depth--; 
 	}

@@ -57,7 +57,6 @@ int yylex();
 %type <nb> AddVar
 %type <type> TypeVar
 %type <type> TypeFunc
-%type <type> Elem
 
 %right tEGAL
 %left tADD tSOU tINFA tSUPA
@@ -65,8 +64,9 @@ int yylex();
 
 %start Units
 %%
+
 //On définit d'abords les variables globales, puis on définit les fonctions
-//AMBIGU SI ON DECLARE UNE VARIABLE INT GLOBALE
+//AMBIGU SI ON DECLARE UNE VARIABLE INT GLOBALE!
 Units : {addAsmInstruct(JMP,1,-1);} Functions
 	| {} GlobalVariable Units
 
@@ -103,7 +103,7 @@ Main : tMAIN {
 	editAsmJMP(globalVariableNumber+1,addAsmInstruct(NOP,0));
 	} tPO Param tPF Corps
 
-//Identification d'une variable déjà définit
+//Identification d'une variable déjà définit. Renvoit comme étiquette l'adresse de la variable
 Var : tVAR {
 	int paramAddr = getParamAddress(scope,$1);
 	if(paramAddr < 0){
@@ -122,18 +122,11 @@ Var : tVAR {
 	}
 }
 
-Elem : tNB {$$=INT;}
-	| Expr {$$=INT;}
-	| {$$=VOID;}
-
 TypeFunc : tINT
 	| {$$ = VOID;}
 
 TypeVar  : tINT
 	| tCONST
-
-Objet : tNB 
-
 
 //Appel d'une fonction en général
 //Peut etre appelé dans une affectation de variable
@@ -185,14 +178,15 @@ Print : tPRINT tPO Expr tPF tSTOP{
 
 //Definition d'une fonction en général
 FunctionDef : TypeFunc tVAR tPO {
+	//Initialisation des variables temporaires et des propriétés de la fonction
 	tempInit = 0;
 	tempBascule = 0;
 	functionType = $1;
-	hasReturnValue=0;
+	hasReturnValue = 0;
 	if(functionType == VOID) hasReturnValue=1;
 	scope = strdup($2);	
+	
 	//Liaison nom de fonction avec adresse assembleur
-
 	int addr = findFunctionAddrAsm($2);
 	if(addr < 0){
 		printf("La fonction %s n'existait pas on la crée dans la table\n",$2);
@@ -208,7 +202,7 @@ FunctionDef : TypeFunc tVAR tPO {
 } Param tPF Corps { 
 	if(!hasReturnValue){
 		printf("Erreur à la ligne %d.\n",yylineno); 
-		printf("La fonction %s doit retourner une valeur!\n",scope);
+		printf("La fonction %s doit tout le temps retourner une valeur!\n",scope);
 		exit(1);
 	}	
 	if($1==VOID)
@@ -219,6 +213,7 @@ FunctionDef : TypeFunc tVAR tPO {
 ElemParam : TypeVar tVAR {
 	addParamDefToFunction(scope,$2,$1);
 }
+
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
@@ -227,7 +222,6 @@ Corps : tCO { depth++; } Instructions tCF {
 		deleteVarInDepth(depth);
 		depth--; 
 	}
-
 
 Instructions : Instruction {
 		//Réinitialisation des variables temporaires	
@@ -243,7 +237,7 @@ Instruction : DeclareAffect
 	| FunctionCall tSTOP
 	| If 
 	| While
-	| ReturnStatement
+	| ReturnStatement {hasReturnValue=1;}
 	| Print
 
 ReturnStatement :
@@ -266,7 +260,6 @@ ReturnStatement :
 			printf("La variable %s n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
-		hasReturnValue = 1;
 		addAsmInstruct(COP,2,RETURNVALUEADDRESS,addr);
 		addAsmInstruct(BX,1,RETURNADDRESS);
 	}
@@ -276,32 +269,39 @@ ReturnStatement :
 			printf("%d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
-		hasReturnValue = 1;
 		addAsmInstruct(AFC,2,RETURNVALUEADDRESS,$2);
 		addAsmInstruct(BX,1,RETURNADDRESS);
 	}
 	| tRETURN Expr tSTOP {
 		if(functionType!=INT){
 			printf("Erreur à la ligne %d.\n",yylineno); 
-			printf("%d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
+			printf("L'expression n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
-		hasReturnValue = 1;
 		addAsmInstruct(COP,2,RETURNVALUEADDRESS,$2);
 		addAsmInstruct(BX,1,RETURNADDRESS);
 	}
+	| tRETURN tSTOP {
+		if(functionType!=VOID){
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("La fonction %s doit retourner une valeur!\n",scope);
+			exit(1);
+		}
+		addAsmInstruct(BX,1,RETURNADDRESS);
+	}
 
+//Permet de faire des opérations arithmétiques en utilisat des variables temporaires
 Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 	| Expr tSOU Expr {addAsmInstruct(SOU,3,$1,$1,$3); $$ = $1;}
 	| Expr tMUL Expr {addAsmInstruct(MUL,3,$1,$1,$3); $$ = $1;}
 	| Expr tDIV Expr {addAsmInstruct(DIV,3,$1,$1,$3); $$ = $1;}
 	| Expr tEGAL tEGAL Expr {
 		addAsmInstruct(SOU,3,$1,$1,$4);
+		addAsmInstruct(NOT,2,$1,$1);
 		$$ = $1;
 	}
 	| Expr tNOT tEGAL Expr {
 		addAsmInstruct(SOU,3,$1,$1,$4);
-		addAsmInstruct(NOT,2,$1,$1);
 		$$ = $1;
 	}
 	| Expr tSUPA Expr {
@@ -314,10 +314,9 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 	}
 	| tNB  {$$ = varTemp($1,0);}
 	| Var  {$$ = varTemp($1,1);}
-	| FunctionCall { $$ = RETURNVALUEADDRESS; }// gérer l'appel de fonction
-	// | tSOU Expr // gérer les chiffres négatifs ?
+	| FunctionCall { $$ = RETURNVALUEADDRESS; }
 
-//Ajout de variables dans la table des symboles
+//Ajout de variables dans la table des symboles. Renvoit comme étiquette l'adresse de la variable
 AddVar : tVAR {
 	int addr = getParamAddress(scope,$1);
 	if(addr < 0){
@@ -341,10 +340,13 @@ AddVar : tVAR {
 		exit(1);
 	}
 }
+
+//Déclaration unique ou multiple de variables
 Variables : AddVar
 	| AddVar tVIR Variables 
 
 Declaration : TypeDecl Variables tSTOP 
+
 Affectation : Var tEGAL Expr tSTOP {
 	if(varTypeVar($1)==CONST){
 		printf("Erreur à la ligne %d.\n",yylineno); 
@@ -354,30 +356,34 @@ Affectation : Var tEGAL Expr tSTOP {
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }
+
 DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
 	printf("COP %d %d\n", $2, $4);
 	addAsmInstruct(COP,2,$2,$4);
 }
 
-TypeDecl : TypeVar {type=$1;}
+TypeDecl : TypeVar {type=$1;} //Cette règle évite une erreur de conflit
 
-/* IF */
+//IF
 If : tIF tPO Expr tPF {
 		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
 		currentPileIF ++;
 	} 
 	Corps {
+		if(functionType!=VOID) //S'il y a un return dans un if, cela peut poser problème s'il n'y en a pas en dehors
+			hasReturnValue = 0;
 		currentPileIF --;
 		editAsmCond(pileIF[currentPileIF],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 	} Else
 
-/* ELSE */
+//Else
 Else : tELSE {
 		pileIF[currentPileIF] = addAsmInstruct(JMP,0); 
 		currentPileIF ++;
 	}
 	Corps{
-		currentPileIF --;
+		if(functionType!=VOID)
+			hasReturnValue = 0;
 		editAsmCond(pileIF[currentPileIF],JMP,ELSE); 
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
@@ -392,6 +398,9 @@ While : tWHILE tPO {
 		currentPileIF ++;
 	} 
 	Corps {
+		if(functionType!=VOID)
+			hasReturnValue = 0;
+
 		currentPileIF --;
 		int adressWhile = pileIF[currentPileIF];
 
@@ -417,11 +426,11 @@ int varTemp(int var,int isVariable){
 	int adressRet = adresseCalc + tempInit + tempBascule;
 	printf("tempInit : %d\n",tempInit);
 	printf("Bascule : %d\n",tempBascule);
-	// On sauvegarde l'init
+	//On sauvegarde l'init
 	if(!tempInit)
 		tempInit = 1;
 
-	// On modifie la bascule 
+	//On modifie la bascule 
 	else
 		tempBascule = ! tempBascule;
 
@@ -446,10 +455,12 @@ int main(void) {
 	// Ajout de taille de jump
 	addAsmInstruct(AFC,2,FUNCTIONJUMP,FUNCTIONSIZE);
 
+	//Parsing
 	printf("Bienvenue dans cedille\n");
 	yyparse();
 	printf("Fin parse\n");
 
+	//Ecriture dans un fichier des instructions ASM
 	printAsmTable();
 	return 0;
 }

@@ -1,9 +1,12 @@
-int foo(int a,int b){
-    return a+b;
+int foo(int a){
+    print(a);
+    if(a>1){
+        return a * foo(a - 1);
+    }
+    return a;
 }
 
 main(){
-    int a = foo(6,9);
+    int a = foo(4);
     print(a);
 }
-

@@ -1,1 +1,1 @@
-cat BigTest | ./cedille  #/dev/null
+cat BigTest | ./cedille  #2> /dev/null

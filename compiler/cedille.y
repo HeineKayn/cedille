@@ -16,21 +16,24 @@
 #define FUNCTIONJUMP 2
 #define FUNCTIONSIZE 100
 
-//Depth pour les ifs
+//Profondeur globale
 int depth=0;
 
 //Gestion des fonctions courantes et appelés
 char * scope;
 char * functionCalling;
 
+//Variables globales pour la gestion des types
 enum Type type;
 enum Type functionType;
 int hasReturnValue;
 int paramNumber;
 
+//Variables globales pour la gestion des IFs
 int pileIF[TABLESIZE];
 int currentPileIF = 0;
 
+//Gestion des variables temporaires
 int calcTable[TABLESIZE]; // permet de savoir si l'adresse à été init
 int adresseCalc = 7;
 int tempInit = 0;
@@ -88,7 +91,7 @@ Main : tMAIN {
 	tempInit = 0;
 	tempBascule = 0;		
 	scope = strdup("main");
-	addFunction("main",VOID,69);
+	addFunction(scope,VOID,-1);
 	editAsmJMP(1,addAsmInstruct(NOP,0));
 	} tPO Param tPF Corps
 
@@ -142,6 +145,7 @@ FunctionCall : tVAR tPO {
 			printf("%s est bien définie.\n", $1);
 		}
 	}
+
 Arg : Expr {
 		int addrToStock = getParamAddressByIndex(functionCalling,paramNumber);
 		addAsmInstruct(COP,2,addrToStock+FUNCTIONSIZE,$1);
@@ -201,11 +205,19 @@ ElemParam : Type tVAR {
 Param : ElemParam 
 	| ElemParam tVIR Param 
 	|
-Corps : tCO { depth++; } Instructions tCF { depth--; }
+
+Corps : tCO { depth++; } Instructions tCF { 
+		deleteDepth(depth);
+		depth--; 
+	}
 
 //Instructions possibles
-Instructions : Instruction Instructions 
+Instructions : Instruction {	
+		tempInit = 0;
+		tempBascule = 0;
+	} Instructions 
 	|
+
 Instruction : DeclareAffect
 	| Declaration 
 	| Affectation 
@@ -275,7 +287,7 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 	| FunctionCall { $$ = RETURNVALUEADDRESS; }// gérer l'appel de fonction
 	// | tSOU Expr // gérer les chiffres négatifs ?
 
-//Actions sur variables
+//Ajout de variables dans la table des symboles
 AddVar : tVAR {
 	int addr = findSymbolAddr($1,scope);
 	if(addr < 0){
@@ -317,7 +329,6 @@ If : tIF tPO Expr tPF {
 	Corps {
 		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
-		deleteDepth(depth+1);
 	} Else
 
 /* ELSE */
@@ -328,7 +339,6 @@ Else : tELSE {
 	Corps{
 		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
-		deleteDepth(depth+1);
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
@@ -338,10 +348,9 @@ While : tWHILE tPO Expr tPF {
 		currentPileIF ++;
 	} 
 	Corps {
-		addAsmInstruct(JMP,1,pileIF[currentPileIF-1]);
-		editAsmCond(pileIF[currentPileIF-1],JMF,WHILE);
 		currentPileIF --;
-		deleteDepth(depth+1);
+		addAsmInstruct(JMP,1,pileIF[currentPileIF]);
+		editAsmCond(pileIF[currentPileIF],JMF,WHILE);
 	}
 
 %%

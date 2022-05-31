@@ -45,3 +45,6 @@ asmTest: $(ASMTESTS)
 tableFonctionTest: $(TFTESTS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 	./$@
+
+run: generalTest
+	python3 ../interpreter/interpreter.py ../CompiledCode

@@ -1,0 +1,9 @@
+int foo(int a,int b){
+    return a+b;
+}
+
+main(){
+    int a = foo(6,9);
+    print(a);
+}
+

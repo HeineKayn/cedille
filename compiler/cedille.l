@@ -7,6 +7,7 @@
 
 %}
 
+%option yylineno
 %option noyywrap
 
 %%
@@ -24,6 +25,11 @@ int    {
 	yylval.type = INT;
 	return tINT; 
 }
+
+print {
+	return tPRINT;
+}
+
 return {return tRETURN; }
 
 [a-zA-Z][a-zA-Z0-9_]* {
@@ -40,7 +46,7 @@ return {return tRETURN; }
 , { return tVIR; }
 
 "="	{ return tEGAL; }
-"-"	{ return tSOU; }
+"-"	{ return tSOU; } 
 "+"	{ return tADD; }
 "*"	{ return tMUL; }
 "/"	{ return tDIV; }
@@ -53,6 +59,7 @@ return {return tRETURN; }
 "<" { return tINFA; }
 ">" { return tSUPA; }
 
-[ \n\t]+	{}
+[ \t]+	{}
+[\n] {}
 
 .	{ return tERROR; }

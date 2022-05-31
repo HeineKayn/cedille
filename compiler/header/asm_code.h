@@ -13,11 +13,16 @@ enum Cond {
     IF,ELSE,WHILE
 };
 
-void init_asm_table();
+void initAsmTable();
 
-int addAsmInstruct(enum Operation operation,int nombreArgument,...);
+int addAsmInstruct(enum Operation operation,int argumentNumber,...);
+
 void editAsmIf(int,enum Operation, enum Cond);
-void printAsmTable();
+
 void editAsmCond(int adressif,enum Operation operation,enum Cond cond);
+
+void editAsmJMP(int tableAdressAsm,int newAdress);
+
+void printAsmTable();
 
 #endif

@@ -327,8 +327,8 @@ If : tIF tPO Expr tPF {
 		currentPileIF ++;
 	} 
 	Corps {
-		editAsmCond(pileIF[currentPileIF-1],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 		currentPileIF --;
+		editAsmCond(pileIF[currentPileIF],JMF,IF); // on saute un cran plus loin pour éviter le potentiel JMP du else
 	} Else
 
 /* ELSE */
@@ -337,8 +337,8 @@ Else : tELSE {
 		currentPileIF ++;
 	}
 	Corps{
-		editAsmCond(pileIF[currentPileIF-1],JMP,ELSE); 
 		currentPileIF --;
+		editAsmCond(pileIF[currentPileIF],JMP,ELSE); 
 	}
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
@@ -383,9 +383,9 @@ int main(void) {
 	addAsmInstruct(AFC,2,FUNCTIONJUMP,FUNCTIONSIZE);
 	
 	//JMP vers l'adresse du main
-	addAsmInstruct(JMP,1,69);
+	addAsmInstruct(JMP,1,-1);
 
-	printf("Bienvenue dans cedille\n"); // yydebug=1;
+	printf("Bienvenue dans cedille\n");
 	yyparse();
 	printf("Fin parse\n");
 

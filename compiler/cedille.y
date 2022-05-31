@@ -15,6 +15,10 @@
 #define RETURNADDRESS 0 
 #define FUNCTIONJUMP 2
 #define FUNCTIONSIZE 100
+extern int yylineno;
+
+//
+int globalVariableNumber = 0;
 
 //Profondeur globale
 int depth=0;
@@ -82,34 +86,65 @@ int yylex();
 %left tADD tSOU tINFA tSUPA
 %left tMUL tDIV
 
-%start Functions
+%start Units
 %%
-Functions : FunctionDef Functions 
+//On définit d'abords les variables globales, puis on définit les fonctions
+Units : GlobalVariables Units
+	| {addAsmInstruct(JMP,1,-1);} Functions
+
+Functions : FunctionDef Functions
 	| Main
+
+GlobalVariables : GlobalVariable GlobalVariables
+	| GlobalVariable
+	|
+
+GlobalVariable : Type tVAR tSTOP {
+	if(globalVariableNumber>3){
+		printf("Erreur à la ligne %d.\n",yylineno); 
+		printf("Stop avec les variables globales!\n");
+		exit(1);
+	}
+	int addr = addSymbole($2,type,depth);
+	addAsmInstruct(AFC,2,addr,0);
+	globalVariableNumber++;
+	}
+	| Type tVAR tEGAL tNB tSTOP {
+		if(globalVariableNumber>3){
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("Stop avec les variables globales!\n");
+			exit(1);
+		}
+		int addr = addSymbole($2,type,depth);
+		addAsmInstruct(AFC,2,addr,$4);
+		globalVariableNumber++;
+	}
 
 Main : tMAIN {
 	tempInit = 0;
 	tempBascule = 0;		
 	scope = strdup("main");
 	addFunction(scope,VOID,-1);
-	editAsmJMP(1,addAsmInstruct(NOP,0));
+	printf("Nombre variable globale : %d\n",globalVariableNumber);
+	editAsmJMP(globalVariableNumber+1,addAsmInstruct(NOP,0));
 	} tPO Param tPF Corps
 
 //Variable ou paramètre
 Var : tVAR {
-	int addr = findSymbolAddr($1,scope);
-	if(addr < 0){
-		int paramAddr = getParamAddress(scope,$1);
-		if(paramAddr<0){
-			printf("ERREUR !!!! %s n'a pas été défini!\n", $1);
+	int paramAddr = getParamAddress(scope,$1);
+	if(paramAddr < 0){
+		int addr = findSymbolAddr($1);
+		if(addr<0){
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("%s n'a pas été défini!\n", $1);
 			exit(1);
 		}
-		printf("%s est un parametre.\n", $1);
-		$$ = paramAddr;
-	}
-	else{
 		printf("%s est une variable.\n", $1);
 		$$ = addr;
+	}
+	else{
+		printf("%s est un paramètre.\n", $1);
+		$$ = paramAddr;
 	}
 }
 
@@ -138,7 +173,8 @@ FunctionCall : tVAR tPO {
 		addAsmInstruct(SOU,3,DECAYADDRESS,DECAYADDRESS,FUNCTIONJUMP);
 
 		if(addr < 0){
-			printf("ERREUR !!!! %s n'a pas été défini!\n", $1);
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("%s n'a pas été défini!\n", $1);
 			exit(1);
 		}
 		else{
@@ -152,7 +188,8 @@ Arg : Expr {
 		paramNumber++;
 		int paramDefNumber = getParamNumber(functionCalling);
 		if (paramNumber != paramDefNumber){
-			printf("ERREUR !!!! Il faut %d argument(s) pour la fonction %s!\n",paramDefNumber,functionCalling);
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("Il faut %d argument(s) pour la fonction %s!\n",paramDefNumber,functionCalling);
 			exit(1);
 		}
 	}
@@ -187,12 +224,14 @@ FunctionDef : Type tVAR tPO {
 		displayFunctionTable();
 	}
 	else{
-		printf("ERREUR !!!! La fonction %s existe déjà et ne peut pas être redéfinit!\n",$2);
+		printf("Erreur à la ligne %d.\n",yylineno); 
+		printf("La fonction %s existe déjà et ne peut pas être redéfinit!\n",$2);
 		exit(1);
 	}
 } Param tPF Corps { 
 	if(!hasReturnValue){
-		printf("ERREUR !!!! La fonction %s doit retourner une valeur!\n",scope);
+		printf("Erreur à la ligne %d.\n",yylineno); 
+		printf("La fonction %s doit retourner une valeur!\n",scope);
 		exit(1);
 	}	
 	addAsmInstruct(BX,1,RETURNADDRESS);
@@ -207,7 +246,7 @@ Param : ElemParam
 	|
 
 Corps : tCO { depth++; } Instructions tCF { 
-		deleteDepth(depth);
+		deleteVarInDepth(depth);
 		depth--; 
 	}
 
@@ -229,22 +268,32 @@ Instruction : DeclareAffect
 
 ReturnStatement :
 	| tRETURN tVAR tSTOP {
-		if(varDepth($2,scope)!=1){
-			printf("ERREUR !!!! La variable %s ne peut pas être retourner dans la fonciton %s!\n",$2,scope);
+		int addr = getParamAddress(scope,$2);
+		if(addr < 1){
+			addr = findSymbolAddr($2);
+			if(addr < 1){
+				printf("Erreur à la ligne %d.\n",yylineno); 
+				printf("La variable %s n'a pas été définit!\n",$2);
+				exit(1);
+			}
+		} else {
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("Vous retourner %s qui est un paramètre... Vous créer une fonction qui renvoit son propre paramètre...\n",$2);
 			exit(1);
 		}
-		if(varType($2,scope)!=functionType){
-			printf("ERREUR !!!! La variable %s n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
+		if(varType($2)!=functionType){
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("La variable %s n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
 		hasReturnValue = 1;
-		int varaddr = findSymbolAddr($2,scope);
-		addAsmInstruct(COP,2,RETURNVALUEADDRESS,varaddr);
+		addAsmInstruct(COP,2,RETURNVALUEADDRESS,addr);
 		addAsmInstruct(BX,1,RETURNADDRESS);
 	}
 	| tRETURN tNB tSTOP {
 		if(functionType!=INT){
-			printf("ERREUR !!!! %d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("%d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
 		hasReturnValue = 1;
@@ -253,7 +302,8 @@ ReturnStatement :
 	}
 	| tRETURN Expr tSTOP {
 		if(functionType!=INT){
-			printf("ERREUR !!!! %d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("%d n'a pas le même type que le type de retour de la fonction %s!\n",$2,scope);
 			exit(1);
 		}
 		hasReturnValue = 1;
@@ -289,26 +339,36 @@ Expr : Expr tADD Expr {addAsmInstruct(ADD,3,$1,$1,$3); $$ = $1;}
 
 //Ajout de variables dans la table des symboles
 AddVar : tVAR {
-	int addr = findSymbolAddr($1,scope);
+	int addr = getParamAddress(scope,$1);
 	if(addr < 0){
-		printf("La variable %s n'existait pas on l'a crée dans la table\n",$1);
-		addr = addSymbole($1,type,depth,scope,incrementVariableNumber(scope));
-		printf("Adresse de %s : %d\n",$1,addr);
-		addAsmInstruct(AFC,2,addr,0);
-		displayTSTable();
+		addr = findSymbolAddr($1);
+		if(addr < 0){
+			printf("La variable %s n'existait pas, on l'a crée dans la table\n",$1);
+			addr = addSymbole($1,type,depth);
+			printf("Adresse de %s : %d\n",$1,addr);
+			addAsmInstruct(AFC,2,addr,0);
+			displayTSTable();
+			$$ = addr;
+		} else {
+			printf("Erreur à la ligne %d.\n",yylineno); 
+			printf("La variable %s a déjà été définit et ne peut pas être redéfinit!\n",$1);
+			exit(1);
+		}
 	}
 	else{
-		printf("La variable existait déjà dans la table\n");
+		printf("Erreur à la ligne %d.\n",yylineno); 
+		printf("La variable %s est un paramètre et ne peut pas être redéfinit!\n",$1);
+		exit(1);
 	}
-	$$ = addr;
 }
 Variables : AddVar
 	| AddVar tVIR Variables 
 
 Declaration : TypeDecl Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
-	if(varTypeVar($1,scope)==CONST){
-		printf("ERREUR !!!! On ne peut pas affecter une nouvelle valeur à une constante!\n");
+	if(varTypeVar($1)==CONST){
+		printf("Erreur à la ligne %d.\n",yylineno); 
+		printf("On ne peut pas affecter une nouvelle valeur à une constante!\n");
 		exit(1);
 	}
 	printf("COP %d %d\n", $1, $3);
@@ -365,7 +425,6 @@ While : tWHILE tPO {
 %%
 
 void yyerror(char *s) { 
-	extern int yylineno;
 	fprintf(stderr, "%s in line %d\n", s,yylineno); 
 }
 int main(void) {
@@ -381,9 +440,6 @@ int main(void) {
 	
 	// Ajout de taille de jump
 	addAsmInstruct(AFC,2,FUNCTIONJUMP,FUNCTIONSIZE);
-	
-	//JMP vers l'adresse du main
-	addAsmInstruct(JMP,1,-1);
 
 	printf("Bienvenue dans cedille\n");
 	yyparse();

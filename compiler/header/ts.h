@@ -13,21 +13,17 @@
 
 void initTSTable();
 
-int addSymbole(char * var,enum Type type,int depth,char * scope,int addrInFunction);
+int addSymbole(char *var, enum Type type, int depth);
 
-void deleteDepth(int depth);
+void deleteVarInDepth(int depth);
 
-int findSymbolAddr(char * var, char * scope);
+int findSymbolAddr(char *var);
 
 void addDepth();
 
-void addDepthScope(char * scope);
+enum Type varType(char *var);
 
-enum Type varType(char * var,char * scope);
-
-enum Type varTypeVar(int asmAddr,char * scope);
-
-int varDepth(char * var,char * scope);
+enum Type varTypeVar(int asmAddr);
 
 void displayTSTable();
 

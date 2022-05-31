@@ -1,8 +1,8 @@
-int floppa(int a){
-    return a+1;
-}
-
 main(){
-    int a = floppa(2);
-    print(a);
+    int b = 8;
+    while(b>0){
+        print(b);
+        b = b - 1;
+    }
+    print(b);
 }

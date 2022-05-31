@@ -1,8 +1,9 @@
-main(){
-    int b = 8;
-    while(b>0){
-        print(b);
-        b = b - 1;
-    }
-    print(b);
+int foo(int a,int b){
+    return a+b;
 }
+
+main(){
+    int a = foo(6,9);
+    print(a);
+}
+

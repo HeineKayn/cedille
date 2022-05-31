@@ -17,7 +17,7 @@
 #define FUNCTIONSIZE 100
 extern int yylineno;
 
-//
+//Variable qui permet d'affecter une adresse spécifique 
 int globalVariableNumber = 0;
 
 //Profondeur globale
@@ -43,31 +43,7 @@ int adresseCalc = 7;
 int tempInit = 0;
 int tempBascule = 0;
 
-// 3 var temp par profondeur
-// quand premiere (accu) utilisée on met dans 2eme
-// si 2eme utilisé on fait mul ou div -> 3eme
-// pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
-int varTemp(int var,int isVariable){
-
-	int adressRet = adresseCalc + tempInit + tempBascule;
-	printf("tempInit : %d\n",tempInit);
-	printf("Bascule : %d\n",tempBascule);
-	// On sauvegarde l'init
-	if(!tempInit)
-		tempInit = 1;
-
-	// On modifie la bascule 
-	else
-		tempBascule = ! tempBascule;
-
-	if(isVariable)
-		addAsmInstruct(COP, 2, adressRet, var);
-	else
-		addAsmInstruct(AFC, 2, adressRet, var);
-	return adressRet;
-}
-
-
+int varTemp(int var,int isVariable);
 void yyerror(char *s);
 int yylex();
 %}
@@ -79,7 +55,8 @@ int yylex();
 %type <nb> Expr 
 %type <nb> Var
 %type <nb> AddVar
-%type <type> Type
+%type <type> TypeVar
+%type <type> TypeFunc
 %type <type> Elem
 
 %right tEGAL
@@ -89,17 +66,14 @@ int yylex();
 %start Units
 %%
 //On définit d'abords les variables globales, puis on définit les fonctions
-Units : GlobalVariables Units
-	| {addAsmInstruct(JMP,1,-1);} Functions
+//AMBIGU SI ON DECLARE UNE VARIABLE INT GLOBALE
+Units : {addAsmInstruct(JMP,1,-1);} Functions
+	| {} GlobalVariable Units
 
 Functions : FunctionDef Functions
 	| Main
 
-GlobalVariables : GlobalVariable GlobalVariables
-	| GlobalVariable
-	|
-
-GlobalVariable : Type tVAR tSTOP {
+GlobalVariable : TypeVar tVAR tSTOP {
 	if(globalVariableNumber>3){
 		printf("Erreur à la ligne %d.\n",yylineno); 
 		printf("Stop avec les variables globales!\n");
@@ -109,7 +83,7 @@ GlobalVariable : Type tVAR tSTOP {
 	addAsmInstruct(AFC,2,addr,0);
 	globalVariableNumber++;
 	}
-	| Type tVAR tEGAL tNB tSTOP {
+	| TypeVar tVAR tEGAL tNB tSTOP {
 		if(globalVariableNumber>3){
 			printf("Erreur à la ligne %d.\n",yylineno); 
 			printf("Stop avec les variables globales!\n");
@@ -129,7 +103,7 @@ Main : tMAIN {
 	editAsmJMP(globalVariableNumber+1,addAsmInstruct(NOP,0));
 	} tPO Param tPF Corps
 
-//Variable ou paramètre
+//Identification d'une variable déjà définit
 Var : tVAR {
 	int paramAddr = getParamAddress(scope,$1);
 	if(paramAddr < 0){
@@ -151,15 +125,20 @@ Var : tVAR {
 Elem : tNB {$$=INT;}
 	| Expr {$$=INT;}
 	| {$$=VOID;}
-Type : tINT
-	| tCONST 
+
+TypeFunc : tINT
 	| {$$ = VOID;}
+
+TypeVar  : tINT
+	| tCONST
+
 Objet : tNB 
 
 
 //Appel d'une fonction en général
-//Peut etre appelé dans affectation de variable
+//Peut etre appelé dans une affectation de variable
 FunctionCall : tVAR tPO {
+		printf("Appel de la fonction %s\n",$1);
 		paramNumber=0;
 		functionCalling = strdup($1);
 	} 
@@ -189,7 +168,7 @@ Arg : Expr {
 		int paramDefNumber = getParamNumber(functionCalling);
 		if (paramNumber != paramDefNumber){
 			printf("Erreur à la ligne %d.\n",yylineno); 
-			printf("Il faut %d argument(s) pour la fonction %s!\n",paramDefNumber,functionCalling);
+			printf("Il faut %d argument(s) pour la fonction %s alors que vous en avez donné %d!\n",paramDefNumber,functionCalling,paramNumber);
 			exit(1);
 		}
 	}
@@ -205,9 +184,7 @@ Print : tPRINT tPO Expr tPF tSTOP{
 	}
 
 //Definition d'une fonction en général
-//Fonction c'est bizarre, QUAND EST-CE QUE rajoute param dans table de fonc
-FunctionDef : Type tVAR tPO {
-	
+FunctionDef : TypeFunc tVAR tPO {
 	tempInit = 0;
 	tempBascule = 0;
 	functionType = $1;
@@ -234,11 +211,12 @@ FunctionDef : Type tVAR tPO {
 		printf("La fonction %s doit retourner une valeur!\n",scope);
 		exit(1);
 	}	
-	addAsmInstruct(BX,1,RETURNADDRESS);
+	if($1==VOID)
+		addAsmInstruct(BX,1,RETURNADDRESS);
 	scope = NULL;
 }
 
-ElemParam : Type tVAR {
+ElemParam : TypeVar tVAR {
 	addParamDefToFunction(scope,$2,$1);
 }
 Param : ElemParam 
@@ -250,13 +228,15 @@ Corps : tCO { depth++; } Instructions tCF {
 		depth--; 
 	}
 
-//Instructions possibles
-Instructions : Instruction {	
+
+Instructions : Instruction {
+		//Réinitialisation des variables temporaires	
 		tempInit = 0;
 		tempBascule = 0;
 	} Instructions 
 	|
 
+//Instructions possibles
 Instruction : DeclareAffect
 	| Declaration 
 	| Affectation 
@@ -379,7 +359,7 @@ DeclareAffect : TypeDecl AddVar tEGAL Expr tSTOP{
 	addAsmInstruct(COP,2,$2,$4);
 }
 
-TypeDecl : Type {type=$1;}
+TypeDecl : TypeVar {type=$1;}
 
 /* IF */
 If : tIF tPO Expr tPF {
@@ -427,6 +407,31 @@ While : tWHILE tPO {
 void yyerror(char *s) { 
 	fprintf(stderr, "%s in line %d\n", s,yylineno); 
 }
+
+// 3 var temp par profondeur
+// quand premiere (accu) utilisée on met dans 2eme
+// si 2eme utilisé on fait mul ou div -> 3eme
+// pour savoir ça on utilise 2 emplacement dans tableau : init et bascule
+int varTemp(int var,int isVariable){
+
+	int adressRet = adresseCalc + tempInit + tempBascule;
+	printf("tempInit : %d\n",tempInit);
+	printf("Bascule : %d\n",tempBascule);
+	// On sauvegarde l'init
+	if(!tempInit)
+		tempInit = 1;
+
+	// On modifie la bascule 
+	else
+		tempBascule = ! tempBascule;
+
+	if(isVariable)
+		addAsmInstruct(COP, 2, adressRet, var);
+	else
+		addAsmInstruct(AFC, 2, adressRet, var);
+	return adressRet;
+}
+
 int main(void) {
 
 #ifdef YYDEBUG

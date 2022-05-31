@@ -60,7 +60,7 @@ class Interpreter:
             case "MUL": self.memory[operandes[0]] = self.memory[operandes[1]] * self.memory[operandes[2]]
             case "SOU": self.memory[operandes[0]] = self.memory[operandes[1]] - self.memory[operandes[2]]
             case "DIV": self.memory[operandes[0]] = self.memory[operandes[1]] / self.memory[operandes[2]]
-            case "CMP": self.memory[operandes[0]] = int(operandes[1] > operandes[2])
+            case "CMP": self.memory[operandes[0]] = int(self.memory[operandes[1]] > self.memory[operandes[2]])
             case "NOT": self.memory[operandes[0]] = int(not operandes[1])
             case "AFC": self.memory[operandes[0]] = operandes[1]
             case "COP": self.memory[operandes[0]] = self.memory[operandes[1]]
@@ -90,8 +90,12 @@ class Interpreter:
                         self.execPointer -= 1 # Pour annuler l'incrémentation de fin de boucle
 
                     case "JMF": 
-                        _, operandes = self.relativeToAbsolute(line)
+                        decalage = self.memory[0]
+                        operandes = line[1:]
+                        operandes = [int(x) for x in operandes]
                         bool, dest = operandes
+                        bool += self.debutZoneMemoireFonc + decalage 
+
                         if not self.memory[bool] : 
                             self.execPointer = dest
                             self.execPointer -= 1 # Pour annuler l'incrémentation de fin de boucle

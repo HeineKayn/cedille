@@ -343,14 +343,23 @@ Else : tELSE {
 	| {addAsmInstruct(NOP,0);} // si c'est un else y'a un JMP en plus à éviter donc on rajoute un NOP de padding
 
 //While
-While : tWHILE tPO Expr tPF {
+While : tWHILE tPO {
+		pileIF[currentPileIF] = addAsmInstruct(NOP,0);
+		currentPileIF ++;
+	}
+	Expr tPF {
 		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
 		currentPileIF ++;
 	} 
 	Corps {
 		currentPileIF --;
-		addAsmInstruct(JMP,1,pileIF[currentPileIF]);
-		editAsmCond(pileIF[currentPileIF],JMF,WHILE);
+		int adressWhile = pileIF[currentPileIF];
+
+		currentPileIF --;
+		int adressCond = pileIF[currentPileIF];
+
+		addAsmInstruct(JMP,1,adressCond);
+		editAsmCond(adressWhile,JMF,WHILE);
 	}
 
 %%

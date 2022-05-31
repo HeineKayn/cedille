@@ -79,7 +79,7 @@ int yylex();
 %type <type> Elem
 
 %right tEGAL
-%left tADD tSOU
+%left tADD tSOU tINFA tSUPA
 %left tMUL tDIV
 
 %start Functions

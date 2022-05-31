@@ -116,7 +116,7 @@ class Interpreter:
 
 if __name__ == "__main__":
 
-    file = "./base.txt"
+    file = "./interpreter/base.txt"
     if len(sys.argv) > 1 :
         file = sys.argv[1]
     

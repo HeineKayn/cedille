@@ -25,6 +25,8 @@ void addDepthScope(char * scope);
 
 enum Type varType(char * var,char * scope);
 
+enum Type varTypeVar(int asmAddr,char * scope);
+
 int varDepth(char * var,char * scope);
 
 void displayTSTable();

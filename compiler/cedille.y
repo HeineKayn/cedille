@@ -92,7 +92,7 @@ Main : tMAIN {
 	editAsmJMP(1,addAsmInstruct(NOP,0));
 	} tPO Param tPF Corps
 
-//Variable et types
+//Variable ou paramètre
 Var : tVAR {
 	int addr = findSymbolAddr($1,scope);
 	if(addr < 0){
@@ -295,6 +295,10 @@ Variables : AddVar
 
 Declaration : TypeDecl Variables tSTOP 
 Affectation : Var tEGAL Expr tSTOP {
+	if(varTypeVar($1,scope)==CONST){
+		printf("ERREUR !!!! On ne peut pas affecter une nouvelle valeur à une constante!\n");
+		exit(1);
+	}
 	printf("COP %d %d\n", $1, $3);
 	addAsmInstruct(COP,2,$1,$3);
 }

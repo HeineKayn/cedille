@@ -217,7 +217,7 @@ void editAsmJMP(int adresseTableAsm, int newAdress)
 void printAsmTable()
 {
     FILE *fp;
-    fp = fopen("AsmTranslated", "w");
+    fp = fopen("../CompiledCode", "w");
     printf("Table ASM\n");
     asmInstruct *asm1;
     for (int i = 0; i < TABLESIZE; i++)

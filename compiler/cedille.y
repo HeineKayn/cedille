@@ -348,7 +348,7 @@ While : tWHILE tPO {
 		currentPileIF ++;
 	}
 	Expr tPF {
-		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$3,0);
+		pileIF[currentPileIF] = addAsmInstruct(JMF,2,$4,0);
 		currentPileIF ++;
 	} 
 	Corps {

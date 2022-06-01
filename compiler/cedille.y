@@ -223,6 +223,8 @@ Corps : tCO {
 		tempBascule = 0;
 		depth++; 
 		} Instructions tCF { 
+		tempInit = 0;
+		tempBascule = 0;
 		deleteVarInDepth(depth);
 		depth--; 
 	}

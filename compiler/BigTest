@@ -6,6 +6,6 @@ int foo(int a){
 }
 
 main(){
-    int a = foo(4);
-    print(a);
+    const b = foo(4);
+    print(b);
 }

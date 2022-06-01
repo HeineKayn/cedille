@@ -9,3 +9,4 @@ main(){
     const b = foo(4);
     print(b);
 }
+
